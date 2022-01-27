@@ -33,9 +33,7 @@ Edit following tsconfig.json lines:
 
 Install dependencies:
 ```shell
-npm i
+npm install oreid-js
+npm install js-cookie
+npm install discord.js @discordjs/rest discord-api-types
 ```
-
-
-
-
