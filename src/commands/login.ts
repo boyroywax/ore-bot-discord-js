@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageEmbed } from "discord.js";
 import { CommandInt } from "../interfaces/CommandInt";
 import { errorHandler } from "../utils/errorHandler";
+import { loginUser } from "../modules/oreid"
 
 export const login: CommandInt = {
   data: new SlashCommandBuilder()
@@ -9,8 +10,24 @@ export const login: CommandInt = {
     .setDescription("Log into your ORE-ID account."),
   run: async (interaction) => {
     try {
-      await interaction.deferReply();
-      const helpEmbed = new MessageEmbed();
+      await interaction.deferReply()
+      const loginEmbed = new MessageEmbed()
+      let loginInfo: string = await loginUser() || ""
+      let loginParse = JSON.parse(loginInfo)
+      loginEmbed.setTitle("Login With Google")
+      loginEmbed.setDescription(
+        "Login to ORE-ID using your Google Account."
+      )
+      loginEmbed.addField(
+        "Google Login",
+        loginParse.loginUrl
+      )
+      await interaction.editReply({ embeds: [loginEmbed] })
+      return;
+    } catch (err) {
+      errorHandler("login command", err);
+    }
+    const helpEmbed = new MessageEmbed();
       helpEmbed.setTitle("100 Days of Code Bot!");
       helpEmbed.setDescription(
         "This discord bot is designed to help you track and share your 100 Days of Code progress."
@@ -30,8 +47,5 @@ export const login: CommandInt = {
       helpEmbed.setFooter(`Version ${process.env.npm_package_version}`);
       await interaction.editReply({ embeds: [helpEmbed] });
       return;
-    } catch (err) {
-      errorHandler("help command", err);
-    }
   },
 };

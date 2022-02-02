@@ -46,6 +46,6 @@ USER 1000
 
 CMD ["node", "--trace-deprecation", "index.js"]
 
-EXPOSE 4000
+EXPOSE 53134
 
 

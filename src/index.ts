@@ -8,7 +8,6 @@ import { onInteraction } from "./events/onInteraction";
 import { logHandler } from './utils/logHandler';
 
 
-
 (async () => {
     dotenv.config()
     validateEnv();

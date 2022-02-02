@@ -1,5 +1,4 @@
 import winston from 'winston'
-import chalk from 'chalk'
 
 // define log levels
 const logLevels = {

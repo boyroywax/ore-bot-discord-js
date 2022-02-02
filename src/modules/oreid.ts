@@ -1,37 +1,38 @@
-// const {OreId} = require('oreid-js')
+import dotenv from 'dotenv'
 import { OreId, OreIdOptions, LoginOptions, AuthProvider, ChainNetwork, AccountName, SignOptions } from 'oreid-js'
+import { logHandler } from '../utils/logHandler'
 
 const TEST_ACCOUNT = 'ore1sbx3rf4j'
-const API_KEY = process.env.OREID_API_KEY || ''
-const APP_ID = process.env.OREID_APP_ID || ''
+dotenv.config()
 
 const oreIdOptions: OreIdOptions = {
     appName: "My Sample App",
-    appId: APP_ID,
-    apiKey: API_KEY,
+    appId: process.env.OREID_APP_ID || '',
+    apiKey: process.env.OREID_API_KEY || '',
     oreIdUrl: "https://service.oreid.io",
-    authCallbackUrl: 'http://localhost:8000',
-    signCallbackUrl: 'http://localhost:8000'
+    authCallbackUrl: 'http://localhost:53134',
+    signCallbackUrl: 'http://localhost:53134'
 }
 
+
 let oreId = new OreId(oreIdOptions)
-console.log(oreId)
+logHandler.info("oreId: " + oreId)
 
-
-async function loginUser() {
+export async function loginUser() {
     try {
         let authProvider = AuthProvider.Google
-        console.log(authProvider)
+        logHandler.info("authProvider: " + authProvider)
         
         let loginOptions: LoginOptions = {
             provider: authProvider,
             chainNetwork: ChainNetwork.EosKylin
         }
-        let loginResponse = await oreId.login(loginOptions)
-        console.log(loginResponse)
+        let loginResponse = await oreId.login(loginOptions).then()
+        logHandler.info("LoginResponse: " + JSON.stringify(loginResponse, null, 4))
+        return JSON.stringify(loginResponse, null, 4)
     }
     catch (error) {
-        console.error(error)
+        logHandler.error(error)
     }
     // window.location = loginResponse.loginUrl
 }
@@ -98,5 +99,5 @@ function run() {
     // loginWithIdToken()
 }
 
-export = run
+// export = loginUser
 
