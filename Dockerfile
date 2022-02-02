@@ -44,7 +44,7 @@ COPY .env ./
 
 USER 1000
 
-CMD ["index.js"]
+CMD ["node", "--trace-deprecation", "index.js"]
 
 EXPOSE 4000
 

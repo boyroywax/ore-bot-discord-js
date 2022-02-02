@@ -1,33 +1,39 @@
-import run from './modules/oreid'
-// import * as Cookie from 'js-cookie'
-import { REST } from '@discordjs/rest'
-import { Routes } from 'discord-api-types/v9'
 import * as dotenv from 'dotenv'
-import { Client, Intents } from 'discord.js'
+import { Client, Collection, Intents, Interaction } from 'discord.js'
+import * as Sentry from "@sentry/node";
+import { RewriteFrames } from "@sentry/integrations";
+import { validateEnv } from "./utils/validateEnv";
+import { onReady } from "./events/onReady";
+import { onInteraction } from "./events/onInteraction";
+import { logHandler } from './utils/logHandler';
 
 
-dotenv.config();
 
-const CLIENT_ID = '936064780081434737'
-const GUILD_ID = '936064058942177301'
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN
+(async () => {
+    dotenv.config()
+    validateEnv();
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+    Sentry.init({
+        dsn: process.env.SENTRY_DSN,
+        tracesSampleRate: 1.0,
+        integrations: [
+        new RewriteFrames({
+            root: global.__dirname,
+        }),
+        ],
+    });
 
-client.on('messageCreate', message => {
-    if (message.content === 'hello') {
-        message.channel.send('Hello World~!');
-    }
-    if (message.content === 'testbot') {
-        message.channel.send("Hi! I'm up and Running~!");
-    }
-    if (message.content === 'ping') {
-        message.channel.send('Pong~!');
-    } 
-})
+    const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
 
-client.once('ready', () => {
-    console.log('The Discord Bot is Ready!');
-})
 
-client.login(DISCORD_TOKEN)
+    client.on("ready", async () => await onReady(client));
+
+    logHandler.info("The Discord Bot is Ready!")
+
+    client.on(
+        "interactionCreate",
+        async (interaction) => await onInteraction(interaction)
+    );
+
+    await client.login(process.env.DISCORD_TOKEN as string);
+    })();

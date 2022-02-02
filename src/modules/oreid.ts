@@ -2,11 +2,13 @@
 import { OreId, OreIdOptions, LoginOptions, AuthProvider, ChainNetwork, AccountName, SignOptions } from 'oreid-js'
 
 const TEST_ACCOUNT = 'ore1sbx3rf4j'
+const API_KEY = process.env.OREID_API_KEY || ''
+const APP_ID = process.env.OREID_APP_ID || ''
 
 const oreIdOptions: OreIdOptions = {
     appName: "My Sample App",
-    appId: "t_fb2b26c75d5345b28228fba1ff45b6f7",
-    apiKey: "t_k071111538d604776a0559a583287daf1",
+    appId: APP_ID,
+    apiKey: API_KEY,
     oreIdUrl: "https://service.oreid.io",
     authCallbackUrl: 'http://localhost:8000',
     signCallbackUrl: 'http://localhost:8000'
