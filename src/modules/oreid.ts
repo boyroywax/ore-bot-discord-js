@@ -10,31 +10,50 @@ const oreIdOptions: OreIdOptions = {
     appId: process.env.OREID_APP_ID || '',
     apiKey: process.env.OREID_API_KEY || '',
     oreIdUrl: "https://service.oreid.io",
-    authCallbackUrl: 'http://localhost:53134',
-    signCallbackUrl: 'http://localhost:53134'
+    authCallbackUrl: 'http://0.0.0.0:53134',
+    signCallbackUrl: 'http://0.0.0.0:53134'
 }
 
 
 let oreId = new OreId(oreIdOptions)
-logHandler.info("oreId: " + oreId)
+logHandler.info("oreId: " + JSON.stringify(oreId))
 
-export async function loginUser() {
+export async function loginUser(authProvider: string) {
+    let authProviderSet: AuthProvider = AuthProvider.Email
+    switch (authProvider) {
+        case "google":
+            authProviderSet = AuthProvider.Google
+            break
+        case "facebook":
+            authProviderSet = AuthProvider.Facebook
+            break
+        case "email":
+            authProviderSet = AuthProvider.Email
+            break
+        case "sms":
+            authProviderSet = AuthProvider.Phone
+            break
+        default:
+            authProviderSet = AuthProvider.Email
+            break
+    }
     try {
-        let authProvider = AuthProvider.Google
-        logHandler.info("authProvider: " + authProvider)
+        logHandler.info("authProvider: " + authProviderSet)
         
         let loginOptions: LoginOptions = {
-            provider: authProvider,
+            provider: authProviderSet,
             chainNetwork: ChainNetwork.EosKylin
         }
         let loginResponse = await oreId.login(loginOptions).then()
-        logHandler.info("LoginResponse: " + JSON.stringify(loginResponse, null, 4))
+        logHandler.info(
+            "LoginResponse: " + 
+            JSON.stringify(loginResponse, null, 4)
+        )
         return JSON.stringify(loginResponse, null, 4)
     }
     catch (error) {
         logHandler.error(error)
     }
-    // window.location = loginResponse.loginUrl
 }
 
 
@@ -91,7 +110,7 @@ async function initiateSign() {
 // }
 
 function run() {
-    loginUser()
+    loginUser("google")
     // getUser()
     getUserFromLocal()
     initiateSign()

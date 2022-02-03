@@ -9,8 +9,9 @@ import { logHandler } from './utils/logHandler';
 
 
 (async () => {
+    logHandler.info("Starting " + process.env.CURRENCY_NAME + " Discord Bot...")
     dotenv.config()
-    validateEnv();
+    validateEnv()
 
     Sentry.init({
         dsn: process.env.SENTRY_DSN,
@@ -20,19 +21,16 @@ import { logHandler } from './utils/logHandler';
             root: global.__dirname,
         }),
         ],
-    });
+    })
 
     const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
 
-
     client.on("ready", async () => await onReady(client));
-
-    logHandler.info("The Discord Bot is Ready!")
 
     client.on(
         "interactionCreate",
-        async (interaction) => await onInteraction(interaction)
+        async (interaction: Interaction) => await onInteraction(interaction)
     );
 
-    await client.login(process.env.DISCORD_TOKEN as string);
-    })();
+    await client.login(process.env.DISCORD_TOKEN as string)
+})()

@@ -11,8 +11,8 @@ export const validateEnv = (): void => {
 //     process.exit(1);
 //   }
 
-//   if (!process.env.SENTRY_DSN) {
-//     logHandler.log("warn", "Missing Sentry DSN.");
-//     process.exit(1);
-//   }
+  if (!process.env.SENTRY_DSN) {
+    logHandler.log("warn", "Missing Sentry DSN.");
+    process.exit(1);
+  }
 };
