@@ -6,16 +6,15 @@ const TEST_ACCOUNT = 'ore1sbx3rf4j'
 dotenv.config()
 
 const oreIdOptions: OreIdOptions = {
-    appName: "My Sample App",
+    appName: process.env.OREID_APP_NAME || "My Sample App",
     appId: process.env.OREID_APP_ID || '',
     apiKey: process.env.OREID_API_KEY || '',
-    oreIdUrl: "https://service.oreid.io",
-    authCallbackUrl: 'http://0.0.0.0:53134',
-    signCallbackUrl: 'http://0.0.0.0:53134'
+    oreIdUrl: process.env.OREID_URL || "https://service.oreid.io",
+    authCallbackUrl: process.env.OREID_AUTH_CALLBACK_URL + ':' + process.env.OREID_CALLBACK_PORT,
+    signCallbackUrl: process.env.OREID_SIGN_CALLBACK_URL + ':' + process.env.OREID_CALLBACK_PORT
 }
 
-
-let oreId = new OreId(oreIdOptions)
+const oreId = new OreId(oreIdOptions)
 logHandler.info("oreId: " + JSON.stringify(oreId))
 
 export async function loginUser(authProvider: string) {
@@ -56,25 +55,23 @@ export async function loginUser(authProvider: string) {
     }
 }
 
-
-async function getUser() {
+export async function getUser(account: AccountName) {
     try {
-        let account: AccountName = TEST_ACCOUNT
-        console.log(account)
+        console.log("Fetching user: " + account + "...")
         let userInfo = await oreId.getUserInfoFromApi(account)
-        console.log(userInfo)
+        console.log(account + " info:" + JSON.stringify(userInfo))
     }
     catch (error) {
         console.error(error)     
     }
 }
 
-async function getUserFromLocal() {
-    // let accessToken = oreId.accessToken
-    // if(!accessToken) return
-    let userInfo = await oreId.getUser()
-    console.log(userInfo)
-}
+// async function getUserFromLocal() {
+//     // let accessToken = oreId.accessToken
+//     // if(!accessToken) return
+//     let userInfo = await oreId.getUser()
+//     console.log(userInfo)
+// }
 
 // async function loginWithIdToken() {
 //     try {
