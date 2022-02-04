@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js";
-import { CommandInt } from "../interfaces/CommandInt";
-import { errorHandler } from "../utils/errorHandler";
+import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js"
+import { CommandInt } from "../interfaces/CommandInt"
+import { errorHandler } from "../utils/errorHandler"
 import { loginUser } from "../modules/oreid"
 
 export const login: CommandInt = {
@@ -31,7 +31,7 @@ export const login: CommandInt = {
 
       loginEmbed.setTitle("Login to ORE ID")
       loginEmbed.setDescription(
-        "Login to ORE-ID using a social account."
+        "Login to ORE-ID using a method below."
       )
       // loginEmbed.addField(
       //   "Google Login",
