@@ -1,16 +1,17 @@
-import * as dotenv from 'dotenv'
+// import * as dotenv from 'dotenv'
 import { Client, Collection, Intents, Interaction } from 'discord.js'
-import * as Sentry from "@sentry/node";
-import { RewriteFrames } from "@sentry/integrations";
-import { validateEnv } from "./utils/validateEnv";
-import { onReady } from "./events/onReady";
-import { onInteraction } from "./events/onInteraction";
-import { logHandler } from './utils/logHandler';
+import * as Sentry from '@sentry/node'
+import { RewriteFrames } from '@sentry/integrations'
+import { validateEnv } from './utils/validateEnv'
+import { onReady } from './events/onReady'
+import { onInteraction } from './events/onInteraction'
+import { logHandler } from './utils/logHandler'
+import { demo } from './modules/mongo'
 
 
 (async () => {
     logHandler.info("Starting " + process.env.CURRENCY_NAME + " Discord Bot...")
-    dotenv.config()
+    // dotenv.config()
     validateEnv()
 
     Sentry.init({
@@ -22,6 +23,14 @@ import { logHandler } from './utils/logHandler';
         }),
         ],
     })
+
+    try {
+        logHandler.info('Connecting to MongoDB...')
+        await demo()
+    }
+    catch (error) {
+        logHandler.error(error)
+    }
 
     const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
 

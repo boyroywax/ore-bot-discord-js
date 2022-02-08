@@ -1,0 +1,12 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: mongo-sc-dev
+  namespace: ore-dev
+provisioner: kubernetes.io/gce-pd
+parameters:
+  # https://cloud.google.com/compute/docs/disks/performance#type_comparison
+  type: pd-ssd
+  fstype: ext4
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true

@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-callback
+  namespace: ore-dev
+  labels:
+    app: discord-callback
+    tier: backend
+    env: development
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: discord-callback
+      tier: backend
+      env: development
+  template:
+    metadata:
+      labels:
+        app: discord-callback
+        tier: backend
+        env: development
+    spec:
+      containers:
+      - name: ore-discord-callback-dev
+        image: boyroywax/ore-discord-callback-dev
+        envFrom:
+          - configMapRef:
+              name: config-dev
+        ports:
+        - containerPort: 53134
+          name: ore-callback-d
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ore-callback-d
+  namespace: ore-dev
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 53134
+      protocol: TCP
+      targetPort: 53134
+      name: http
+  selector:
+    app: discord-callback
+    tier: backend
+    env: development
+---

@@ -1,17 +1,17 @@
-import dotenv from 'dotenv'
+// import dotenv from 'dotenv'
 import { OreId, OreIdOptions, LoginOptions, AuthProvider, ChainNetwork, AccountName, SignOptions } from 'oreid-js'
 import { logHandler } from '../utils/logHandler'
 
 const TEST_ACCOUNT = 'ore1sbx3rf4j'
-dotenv.config()
+// dotenv.config()
 
 const oreIdOptions: OreIdOptions = {
     appName: process.env.OREID_APP_NAME || "Discord Bot",
     appId: process.env.OREID_APP_ID || '',
     apiKey: process.env.OREID_API_KEY || '',
     oreIdUrl: process.env.OREID_URL || "https://service.oreid.io",
-    authCallbackUrl: process.env.OREID_AUTH_CALLBACK_URL + ':' + process.env.OREID_CALLBACK_PORT,
-    signCallbackUrl: process.env.OREID_SIGN_CALLBACK_URL + ':' + process.env.OREID_CALLBACK_PORT
+    authCallbackUrl: process.env.OREID_AUTH_CALLBACK_URL,
+    signCallbackUrl: process.env.OREID_SIGN_CALLBACK_URL
 }
 
 const oreId = new OreId(oreIdOptions)
@@ -57,13 +57,17 @@ export async function loginUser(authProvider: string) {
 
 export async function getUser(account: AccountName) {
     try {
-        console.log("Fetching user: " + account + "...")
+        logHandler.info("Fetching user: " + account + "...")
         let userInfo = await oreId.getUserInfoFromApi(account)
-        console.log(account + " info:" + JSON.stringify(userInfo))
+        logHandler.info(account + " info:" + JSON.stringify(userInfo))
     }
     catch (error) {
-        console.error(error)     
+        logHandler.error(error)     
     }
+}
+
+export async function logoutUser(account: AccountName){
+    logHandler.info("logging out user")
 }
 
 // async function loginWithIdToken() {

@@ -33,6 +33,8 @@
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.6.0",
     "dotenv": "^14.3.2",
+    "mongodb": "^4.3.1",
+    "mongoose": "^6.2.0",
     "oreid-js": "^2.15.0",
     "winston": "^3.5.0"
   }

@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-bot-dev
+  namespace: ore-dev
+  labels:
+    app: discord-bot
+    tier: backend
+    env: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-bot
+      tier: backend
+      env: development
+  template:
+    metadata:
+      labels:
+        app: discord-bot
+        tier: backend
+        env: development
+    spec:
+      containers:
+      - name: ore-discord-bot-dev
+        image: boyroywax/ore-discord-dev
+        envFrom:
+          - configMapRef:
+              name: config-dev
+      restartPolicy: Always

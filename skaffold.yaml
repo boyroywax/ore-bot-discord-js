@@ -1,0 +1,63 @@
+apiVersion: skaffold/v2beta10
+kind: Config
+
+profiles:
+- name: init-deploy-dev
+  deploy:
+    kubectl:
+      manifests:
+        - ./k8s-spec/dev/mongo-sc.yaml
+        - ./k8s-spec/dev/mongo-pvc.yaml
+        - ./k8s-spec/dev/mongo-dep.yaml
+        - ./k8s-spec/dev/auth-ingress.yaml
+
+- name: ingress-dev
+  deploy:
+    kubectl:
+      manifests:
+        - ./k8s-spec/dev/auth-ingress.yaml
+
+- name: development
+  build:
+    artifacts:
+    - image: boyroywax/ore-discord-dev
+      context: ./bot/
+      docker:
+        dockerfile: ./Dockerfile
+    - image: boyroywax/ore-discord-callback-dev
+      context: ./callback/
+      docker:
+        dockerfile: ./Dockerfile
+  deploy:
+    kubectl:
+      manifests:
+        - ./k8s-spec/dev/configmap.yaml
+        - ./k8s-spec/dev/discord-bot-dep.yaml
+        - ./k8s-spec/dev/discord-callback-dep.yaml
+
+- name: init-deploy
+  build:
+    artifacts:
+    - image: boyroywax/ore-redis-prod
+      context: ./redis/
+      docker:
+        dockerfile: ./Dockerfile.prod
+  deploy:
+    kubectl:
+      manifests:
+        - ./k8s-spec/prod/telegram-bot-sc.yaml
+        - ./k8s-spec/prod/telegram-bot-pvc.yaml
+        - ./k8s-spec/prod/redis-pvc.yaml
+        - ./k8s-spec/prod/redis-dep.yaml
+- name: production
+  build:
+    artifacts:
+    - image: boyroywax/ore-bot-telegram-prod
+      context: ./
+      docker:
+        dockerfile: ./Dockerfile
+  deploy:
+    kubectl:
+      manifests:
+        - ./k8s-spec/prod/configmap.yaml
+        - ./k8s-spec/prod/telegram-bot-dep.yaml

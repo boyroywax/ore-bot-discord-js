@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-dev
+  namespace: ore-dev
+data:
+  # General
+  STAGE: Development
+
+  # MongoDB
+  MONGO_HOST: ore-discord-bot-mongo-dev
+  MONGO_PORT: "27017"
+
+  # Currency Info
+  CURRENCY: ORE
+  CURRENCY_NAME: Open Rights Exchange
+  CURRENCY_TOKEN: ORE
+  CURRENCY_BLOCK_EXPLORER: https://explorer.ore.network/
+
+  # Discord
+  DISCORD_CLIENT_ID: "936064780081434737"
+  DISCORD_GUILD_ID: "936062852278665227"
+  DISCORD_TOKEN: OTM2MDY0NzgwMDgxNDM0NzM3.YfHwQg.SXdnywHWwMQmKKGWABu4kRdwfr8
+
+  # ORE-ID
+  OREID_APP_ID: t_fb2b26c75d5345b28228fba1ff45b6f7
+  OREID_API_KEY: t_k071111538d604776a0559a583287daf1
+  OREID_APP_NAME: ORE Network Bot
+  OREID_URL: https://service.oreid.io
+  OREID_AUTH_CALLBACK_URL: http://34.149.23.111/auth
+  OREID_SIGN_CALLBACK_URL: http://34.149.23.111/sign
+  OREID_CALLBACK_PORT: "53134"
+
+  # Sentry Logging
+  SENTRY_DSN: https://cca9305bd2704e07a5557bbb69319422@o1133711.ingest.sentry.io/6180496"
