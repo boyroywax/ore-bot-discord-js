@@ -36,6 +36,7 @@ Install dependencies:
 ```shell
 npm install oreid-js
 npm install discord.js @discordjs/rest @discordjs/builders discord-api-types
+npm install @open-rights-exchange/chainjs
 ```
 
 Bot adapted from:
