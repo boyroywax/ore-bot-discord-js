@@ -5,15 +5,21 @@ metadata:
   namespace: ore-dev
   annotations:
     kubernetes.io/ingress.class: "gce"
+# spec:
+#   rules:
+#   - host: ore.cx
+#     http:
+#       paths:
+#       - pathType: ImplementationSpecific
+#         path: "/*"
+#         backend:
+#           service:
+#             name: ore-callback-d
+#             port:
+#               name: http
 spec:
-  rules:
-  - host: ore.cx
-    http:
-      paths:
-      - pathType: ImplementationSpecific
-        path: "/*"
-        backend:
-          service:
-            name: ore-callback-d
-            port:
-              name: http
+  defaultBackend:
+    service:
+      name: ore-callback-d
+      port:
+        name: http

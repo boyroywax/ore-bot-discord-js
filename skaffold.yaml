@@ -31,6 +31,7 @@ profiles:
   deploy:
     kubectl:
       manifests:
+        - ./k8s-spec/dev/secrets.yaml
         - ./k8s-spec/dev/configmap.yaml
         - ./k8s-spec/dev/discord-bot-dep.yaml
         - ./k8s-spec/dev/discord-callback-dep.yaml

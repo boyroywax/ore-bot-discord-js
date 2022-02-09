@@ -9,7 +9,7 @@ data:
   STAGE: Development
 
   # MongoDB
-  MONGO_HOST: ore-discord-bot-mongo-dev
+  MONGO_HOST: ore-mongo-dev
   MONGO_PORT: "27017"
 
   # Currency Info

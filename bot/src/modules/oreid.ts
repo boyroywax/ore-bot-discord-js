@@ -41,7 +41,8 @@ export async function loginUser(authProvider: string) {
         
         let loginOptions: LoginOptions = {
             provider: authProviderSet,
-            chainNetwork: ChainNetwork.EosKylin
+            chainNetwork: ChainNetwork.EosKylin,
+            state: 'stateIsSet'
         }
         let loginResponse = await oreId.login(loginOptions).then()
         logHandler.info(

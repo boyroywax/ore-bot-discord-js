@@ -27,4 +27,6 @@ spec:
         envFrom:
           - configMapRef:
               name: config-dev
+          - secretRef:
+              name: bot-secrets-dev
       restartPolicy: Always

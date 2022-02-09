@@ -29,6 +29,7 @@
     "@discordjs/rest": "^0.3.0",
     "@sentry/integrations": "^6.17.3",
     "@sentry/node": "^6.17.3",
+    "chainjs": "^0.2.1",
     "chalk": "^5.0.0",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.6.0",

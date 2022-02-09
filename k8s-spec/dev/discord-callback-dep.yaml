@@ -27,6 +27,8 @@ spec:
         envFrom:
           - configMapRef:
               name: config-dev
+          - secretRef:
+              name: bot-secrets-dev
         ports:
         - containerPort: 53134
           name: ore-callback-d
@@ -38,7 +40,7 @@ metadata:
   name: ore-callback-d
   namespace: ore-dev
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
     - port: 53134
       protocol: TCP
