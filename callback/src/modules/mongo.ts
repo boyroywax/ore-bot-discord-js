@@ -23,6 +23,7 @@ export async function verifyLogin(
         const verification = await OreIdUser.findOneAndDelete({ "state": stateIn }).exec().then(async function(doc) {
             logHandler.info('then verification: ' + doc)
             const userDiscordId: number = doc?.discordId || 0
+            const userDateCreated: Date = doc?.dateCreated || new Date
 
             if (userDiscordId === 0) {
                 logHandler.error(userOreId + ' attempted an unverified login')
@@ -31,7 +32,8 @@ export async function verifyLogin(
                 const updatedDoc = new OreIdUserModel({
                     oreId: userOreId,
                     discordId: userDiscordId,
-                    lastLogin: Date.now(),
+                    lastLogin: new Date,
+                    dateCreated: userDateCreated,
                     loggedIn: true,
                     // state: stateIn
                 });
