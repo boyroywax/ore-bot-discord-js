@@ -1,6 +1,7 @@
 // import dotenv from 'dotenv'
 import { OreId, OreIdOptions, LoginOptions, AuthProvider, ChainNetwork, AccountName, SignOptions } from 'oreid-js'
 import { logHandler } from '../utils/logHandler'
+import { createState } from '../utils/stateCall'
 
 const TEST_ACCOUNT = 'ore1sbx3rf4j'
 // dotenv.config()
@@ -39,10 +40,12 @@ export async function loginUser(authProvider: string) {
     try {
         logHandler.info("authProvider: " + authProviderSet)
         
+        const newState = createState()
+
         let loginOptions: LoginOptions = {
             provider: authProviderSet,
             chainNetwork: ChainNetwork.EosKylin,
-            state: 'stateIsSet'
+            state: newState
         }
         let loginResponse = await oreId.login(loginOptions).then()
         logHandler.info(

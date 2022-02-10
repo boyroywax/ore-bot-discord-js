@@ -6,7 +6,7 @@ import { validateEnv } from './utils/validateEnv'
 import { onReady } from './events/onReady'
 import { onInteraction } from './events/onInteraction'
 import { logHandler } from './utils/logHandler'
-import { demo } from './modules/mongo'
+// import { demo } from './modules/mongo'
 
 
 (async () => {
@@ -24,13 +24,13 @@ import { demo } from './modules/mongo'
         ],
     })
 
-    try {
-        logHandler.info('Connecting to MongoDB...')
-        await demo()
-    }
-    catch (error) {
-        logHandler.error(error)
-    }
+    // try {
+    //     logHandler.info('Connecting to MongoDB...')
+    //     await demo()
+    // }
+    // catch (error) {
+    //     logHandler.error(error)
+    // }
 
     const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
 

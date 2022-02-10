@@ -3,6 +3,7 @@ import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { loginUser } from "../modules/oreid"
+import { setUserState } from "../utils/stateCall"
 
 export const login: CommandInt = {
   data: new SlashCommandBuilder()
@@ -65,6 +66,9 @@ export const login: CommandInt = {
 			)
 
 		  await interaction.editReply({ components: [row, row2], embeds: [loginEmbed] })
+      
+      const userDiscordId: string = interaction.user.id
+      await setUserState(userDiscordId)
       return
     } catch (err) {
       errorHandler("login command", err)
