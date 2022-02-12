@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose"
-import { OreIdUser } from "interfaces/OreIdUser"
+import { DiscordUser } from "interfaces/DiscordUser"
 
-export const oreIdSchema = new Schema<OreIdUser>({
+export const discordSchema = new Schema<DiscordUser>({
     dateCreated: {type: Date, required: false },
     discordId: { type: Number, required: true },
     lastLogin: {type: Date, required: false },
@@ -10,4 +10,4 @@ export const oreIdSchema = new Schema<OreIdUser>({
     state: { type: String, required: false, ref: 'state'}
     })
 
-export const OreIdUserModel = model<OreIdUser>('OreIdUser', oreIdSchema)
+export const DiscordUserModel = model<DiscordUser>('DiscordUserUser', discordSchema)

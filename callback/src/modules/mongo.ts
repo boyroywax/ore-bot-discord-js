@@ -1,8 +1,8 @@
-import { connect, Connection, disconnect, model } from 'mongoose'
+import { connect, disconnect, model } from 'mongoose'
 import { logHandler } from '../utils/logHandler'
-import { OreIdUserModel, oreIdSchema } from '../models/oreIdUserModel'
+import { DiscordUserModel, discordSchema } from '../models/discordUserModel'
 
-let database: Connection;
+
 const uri = "mongodb://" 
     + process.env.MONGO_HOST 
     + ":" + process.env.MONGO_PORT 
@@ -11,43 +11,42 @@ const uri = "mongodb://"
 
 export async function verifyLogin(
     userOreId: string,
-    stateIn: string): Promise<void> {
-
+    stateIn: string): Promise<boolean> {
+    //
+    // Validate a user's login
+    // Returns true if the user was logged in correctly
+    //
+    let loggedIn = false
+    await connect(uri)
+    // Connect to mongoDB
+    logHandler.info('Connected to MongoDB!')
     try {
-        await connect(uri);
-        logHandler.info('Connected to MongoDB!')
-        // const filter = {
-        //     state: state
-        // }
-        const OreIdUser = model('OreIdUser', oreIdSchema)
-        const verification = await OreIdUser.findOneAndDelete({ "state": stateIn }).exec().then(async function(doc) {
-            logHandler.info('then verification: ' + doc)
-            const userDiscordId: number = doc?.discordId || 0
-            const userDateCreated: Date = doc?.dateCreated || new Date
+        // Declare the DiscordUser model and search mongodb for
+        // a state that matches the callback value
+        logHandler.info("Finding: " + stateIn)
+        const OreIdUser = model('OreIdUser', discordSchema)
+        const findUser = await OreIdUser.findOne({ "state": String(stateIn) })
+        .exec().then(async function(doc) {
+            logHandler.info('document fetched: ' + doc)
+            // If the doc exists, set the loggedIn value to true
+            if (doc) {
+                doc.loggedIn = true
+                doc.lastLogin = new Date
+                doc.oreId = userOreId
+                doc.state = "None"
+                loggedIn = true
 
-            if (userDiscordId === 0) {
-                logHandler.error(userOreId + ' attempted an unverified login')
+                let saveUser = await doc.save()
+                logHandler.info('Saved the doc to mongodb: ' + saveUser)
             }
             else {
-                const updatedDoc = new OreIdUserModel({
-                    oreId: userOreId,
-                    discordId: userDiscordId,
-                    lastLogin: new Date,
-                    dateCreated: userDateCreated,
-                    loggedIn: true,
-                    // state: stateIn
-                });
-                const saveDoc = await updatedDoc.save()
-                logHandler.info('Saved the doc to mongodb: ' + saveDoc)
+                logHandler.error('verifyLogin failed')
             }
         })
-        // const doc = await verification.exec()
-        // logHandler.info('verification: ' + verification)
-        // logHandler.info('doc: ' + doc)
-        
-        await disconnect()
     }
     catch (error) {
-        logHandler.error(error)
+        logHandler.error("Error verifying login: " + error)
     }
+    await disconnect()
+    return loggedIn
 }

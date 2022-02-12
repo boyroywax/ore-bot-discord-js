@@ -1,4 +1,4 @@
-export interface OreIdUser {
+export interface DiscordUser {
     discordId: number
     loggedIn: boolean
     lastLogin?: Date

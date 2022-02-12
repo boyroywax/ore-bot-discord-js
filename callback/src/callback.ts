@@ -18,15 +18,21 @@ app.get('/auth', async (request: Request, response: Response) => {
 	logHandler.info('Return State: ' + request.query.state)
 	let user: string = request.query.account?.toString() || ''
 	let state: string = request.query.state?.toString() || ''
-	await verifyLogin(user, state)
-	// response.sendFile('./index.html', { root: '.'  a})
-	return response.redirect(redirectUrl)
+	const login = await verifyLogin(user, state).then(async function(loginSuccess) {
+		logHandler.info("loginSuccess: " + loginSuccess)
+		if (loginSuccess == true) {
+			return response.redirect(redirectUrl)
+		}
+		else {
+			return response.sendFile('./index.html', { root: '.' })
+		}
+	})
 })
 
 app.get('/sign', (request: Request, response: Response) => {
-	console.log('Returned User: ' + request.query.account)
+	logHandler.info('Returned User: ' + request.query.account)
 	// response.sendFile('./index.html', { root: '.'  a})
 	return response.redirect(redirectUrl)
 })
 
-app.listen(port, '0.0.0.0', () => console.log(`App listening at http://0.0.0.0:${port}`));
+app.listen(port, '0.0.0.0', () => logHandler.info(`App listening at http://0.0.0.0:${port}`));
