@@ -18,7 +18,12 @@ function setDiscordUser(
     userLoggedIn?: boolean
     ): DiscordUser {
     if (doc) {
-        doc.lastLogin = date || doc.lastLogin
+        if (doc.lastLogin) { 
+           doc.lastLogin = date
+        }
+        else {
+            doc.lastLogin = undefined
+        }
         doc.dateCreated = doc.dateCreated || date
         doc.loggedIn = userLoggedIn || doc.loggedIn
         doc.discordId = userDiscordId || doc.discordId
@@ -55,8 +60,13 @@ export async function setDiscordUserState(
             if (doc) {
                 doc.discordId = doc.discordId || 0
                 doc.state = state || "None"
-                doc.lastLogin = doc.lastLogin || date,
-                doc.dateCreated = doc.dateCreated || date,
+                if (loggedIn) {
+                    doc.lastLogin = doc.lastLogin || date
+                }
+                else {
+                    doc.lastLogin = doc.lastLogin || undefined
+                }
+                doc.dateCreated = doc.dateCreated || date
                 doc.loggedIn = loggedIn || false
 
                 let saveUser = await doc.save()
@@ -97,9 +107,12 @@ export async function checkLoggedIn(
     const verification = await DiscordUserModel.findOne({ "discordId": userDiscordId })
     .exec().then(async function(doc) {
         logHandler.info('then verification: ' + doc)
+        
         if (doc) {
             loggedIn = doc.loggedIn
-            lastLogin = doc.lastLogin?.toString() || "Never"
+            if (doc.lastLogin?.toString()) {
+                lastLogin = doc.lastLogin?.toString() || "Never"
+            }
         }
         else {
             loggedIn = false

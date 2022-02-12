@@ -5,6 +5,7 @@ import { errorHandler } from "../utils/errorHandler"
 import { checkLoggedIn, setDiscordUserState } from "../modules/mongo"
 import { logHandler } from "../utils/logHandler"
 import { set } from "mongoose";
+import { login } from "./login";
 
 export const logout: CommandInt = {
     data: new SlashCommandBuilder()
@@ -28,6 +29,7 @@ export const logout: CommandInt = {
                         "None",
                         false
                     )
+                    loginEmbed.setThumbnail('https://i.imgur.com/A3yS9pl.png')
                     loginEmbed.setTitle("✅ Succes")
                     loginEmbed.setDescription(
                         "You have been logged out your ORE-ID account."
@@ -37,6 +39,7 @@ export const logout: CommandInt = {
                 }
             }
             else {
+                loginEmbed.setThumbnail('https://i.imgur.com/A3yS9pl.png')
                 loginEmbed.setTitle("⭐️ Sorry")
                 loginEmbed.setDescription(
                     "You are already logged out of your ORE-ID account."

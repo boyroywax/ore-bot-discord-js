@@ -20,15 +20,14 @@ export const login: CommandInt = {
         // Check if user is already logged in
         let userCheck = await checkLoggedIn(Number(interaction.user.id))
         .then(async function(response: [boolean, string]) {
-
             logHandler.info("userCheck: " + response)
             if (response[0] == true) {
                 return await interaction.reply({content: "@" + interaction.user.username +" You are already logged in", ephemeral: true })
             }
             else {
                 try {
+                    // Create a message only the user can see
                     await interaction.deferReply({ ephemeral: true })
-                    const loginEmbed = new MessageEmbed()
         
                     // Create State from date
                     const state: string = createState(date)
@@ -49,15 +48,14 @@ export const login: CommandInt = {
                     let phoneLoginInfo: string = await loginUser("sms", state) || ""
                     let phoneLoginParse = JSON.parse(phoneLoginInfo)
         
-                    loginEmbed.setTitle("Login to ORE ID")
-                    loginEmbed.setDescription(
-                        "Login to ORE-ID using a method below."
-                    )
-                    // loginEmbed.addField(
-                    //   "Google Login",
-                    //   loginParse.loginUrl
-                    // )
-                    // ogin Button row 1/2
+                    // Construct login embed and button rows
+                    const loginEmbed = new MessageEmbed()
+                    .setThumbnail('https://i.imgur.com/A3yS9pl.png')
+                    .setTitle("Login to ORE ID")
+                    .setDescription("Login to ORE-ID using a method below.")
+                    .setURL("https://oreid.io")
+
+                    // Login Button row 1/2
                     const row = new MessageActionRow()
                     .addComponents(
                         new MessageButton()
@@ -88,11 +86,10 @@ export const login: CommandInt = {
                     if (response[1] != "None") {
                         loginEmbed.setFooter("Last login: " + response[1])
                     }
-        
+                    // Send the embed to discord
                     await interaction.editReply({ components: [row, row2], embeds: [loginEmbed] })
+                    
                     const userDiscordId: number = Number(interaction.user.id)
-    
-    
                     await setDiscordUserState(userDiscordId, state)
                     return
                 } catch (err) {
