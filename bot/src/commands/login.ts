@@ -18,10 +18,11 @@ export const login: CommandInt = {
         const date: Date = new Date
 
         // Check if user is already logged in
-        let userCheck = await checkLoggedIn(Number(interaction.user.id)).then(async function(response: boolean) {
+        let userCheck = await checkLoggedIn(Number(interaction.user.id))
+        .then(async function(response: [boolean, string]) {
 
             logHandler.info("userCheck: " + response)
-            if (response == true) {
+            if (response[0] == true) {
                 return await interaction.reply({content: "@" + interaction.user.username +" You are already logged in", ephemeral: true })
             }
             else {
@@ -84,6 +85,9 @@ export const login: CommandInt = {
                         .setURL(phoneLoginParse.loginUrl)
                         .setStyle('LINK')
                     )
+                    if (response[1] != "None") {
+                        loginEmbed.setFooter("Last login: " + response[1])
+                    }
         
                     await interaction.editReply({ components: [row, row2], embeds: [loginEmbed] })
                     const userDiscordId: number = Number(interaction.user.id)

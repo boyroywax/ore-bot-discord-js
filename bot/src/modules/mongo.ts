@@ -64,11 +64,14 @@ export async function setDiscordUserState(
                 successful = true
             }
             else {
-                let doc = new DiscordUserModel({
-                    dateCreated: date,
-                    discordId: userDiscordId,
-                    loggedIn: false
-                }) 
+                let doc = setDiscordUser(
+                    userDiscordId,
+                    date,
+                    undefined,
+                    undefined,
+                    undefined,
+                    false
+                ) 
                 await DiscordUserModel.create(doc)
             }
         })    
@@ -82,12 +85,13 @@ export async function setDiscordUserState(
 
 export async function checkLoggedIn(
     userDiscordId: number
-    ): Promise<boolean> {
+    ): Promise<[ boolean, string ]> {
     // 
     // Returns the users login status
     // 
     await connect(uri)
     let loggedIn: boolean = false
+    let lastLogin: string = "Never"
     // let DiscordUser = model('DiscordUser', discordSchema)
     const currentDate: Date = new Date
     const verification = await DiscordUserModel.findOne({ "discordId": userDiscordId })
@@ -95,16 +99,18 @@ export async function checkLoggedIn(
         logHandler.info('then verification: ' + doc)
         if (doc) {
             loggedIn = doc.loggedIn
+            lastLogin = doc.lastLogin?.toString() || "Never"
         }
         else {
             loggedIn = false
-            setDiscordUser(
+            let doc = setDiscordUser(
                 userDiscordId,
                 currentDate
             )
+            await DiscordUserModel.create(doc)
         }
         
     })
     await disconnect()
-    return loggedIn
+    return [ loggedIn, lastLogin ]
 }

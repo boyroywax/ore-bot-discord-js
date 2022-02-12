@@ -29,6 +29,7 @@ export async function verifyLogin(
         .exec().then(async function(doc) {
             logHandler.info('document fetched: ' + doc)
             // If the doc exists, set the loggedIn value to true
+            // Also reset the state to "None"
             if (doc) {
                 doc.loggedIn = true
                 doc.lastLogin = new Date

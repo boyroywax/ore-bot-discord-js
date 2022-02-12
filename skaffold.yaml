@@ -2,14 +2,13 @@ apiVersion: skaffold/v2beta10
 kind: Config
 
 profiles:
-- name: init-deploy-dev
+- name: mongo-dev
   deploy:
     kubectl:
       manifests:
         - ./k8s-spec/dev/mongo-sc.yaml
         - ./k8s-spec/dev/mongo-pvc.yaml
         - ./k8s-spec/dev/mongo-dep.yaml
-        - ./k8s-spec/dev/auth-ingress.yaml
 
 - name: ingress-dev
   deploy:

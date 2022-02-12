@@ -16,11 +16,12 @@ export const logout: CommandInt = {
         // 
 
         // Check if user is already logged in
-        let userCheck = await checkLoggedIn(Number(interaction.user.id)).then(async function(response: boolean) {
+        let userCheck = await checkLoggedIn(Number(interaction.user.id))
+        .then(async function(response: [boolean, string]) {
             logHandler.info("userCheck: " + response)
             await interaction.deferReply({ ephemeral: true })
             const loginEmbed = new MessageEmbed()
-            if (response == true) {
+            if (response[0] == true) {
                 try {
                     await setDiscordUserState(
                         Number(interaction.user.id),
