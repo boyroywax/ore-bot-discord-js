@@ -1,7 +1,7 @@
 // import dotenv from 'dotenv'
 import { OreId, OreIdOptions, LoginOptions, AuthProvider, ChainNetwork, AccountName, SignOptions } from 'oreid-js'
 import { logHandler } from '../utils/logHandler'
-import { createState } from '../utils/stateCall'
+import { createState } from '../utils/stateTools'
 
 const TEST_ACCOUNT = 'ore1sbx3rf4j'
 // dotenv.config()
@@ -18,8 +18,9 @@ const oreIdOptions: OreIdOptions = {
 const oreId = new OreId(oreIdOptions)
 logHandler.info("oreId: " + JSON.stringify(oreId))
 
-export async function loginUser(authProvider: string) {
+export async function loginUser(authProvider: string, newState: string) {
     let authProviderSet: AuthProvider = AuthProvider.Email
+    let date: Date = new Date()
     switch (authProvider) {
         case "google":
             authProviderSet = AuthProvider.Google
@@ -40,7 +41,7 @@ export async function loginUser(authProvider: string) {
     try {
         logHandler.info("authProvider: " + authProviderSet)
         
-        const newState = createState()
+        // const newState = createState(date.toString())
 
         let loginOptions: LoginOptions = {
             provider: authProviderSet,

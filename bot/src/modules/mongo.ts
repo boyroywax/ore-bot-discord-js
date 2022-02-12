@@ -1,52 +1,110 @@
-import { connect, Schema, model, Connection, connection, disconnect } from 'mongoose'
+import { connect, disconnect, Model, model } from 'mongoose'
 import { logHandler } from '../utils/logHandler'
-
-import { OreIdUserModel } from '../utils/stateCall'
-
-let database: Connection;
-const uri = "mongodb://" + process.env.MONGO_HOST + ":" + process.env.MONGO_PORT + "/test?retryWrites=true&w=majority";
+import { DiscordUserModel, discordSchema } from '../models/DiscordUserModel'
+import { DiscordUser } from '../interfaces/DiscordUser'
 
 
-// export async function run() {
-  
-//   if (database) {
-//     return;
-//   }
+const uri = "mongodb://" 
+    + process.env.MONGO_HOST 
+    + ":" + process.env.MONGO_PORT 
+    + "/test?retryWrites=true&w=majority"
 
-//   await connect(uri)
-//   database = connection
-//   database.once("open", async () => {
-//     logHandler.info("Connected to database");
-//   });
-//   database.on("error", () => {
-//     logHandler.error("Error connecting to database")
-//   })
-// }
+function setDiscordUser(
+    userDiscordId: number,
+    date?: Date,
+    doc?: DiscordUser,
+    oreId?: string,
+    state?: string,
+    userLoggedIn?: boolean
+    ): DiscordUser {
+    if (doc) {
+        doc.lastLogin = date || doc.lastLogin
+        doc.dateCreated = doc.dateCreated || date
+        doc.loggedIn = userLoggedIn || doc.loggedIn
+        doc.discordId = userDiscordId || doc.discordId
+        doc.state = state || doc.state
+        doc.oreId = oreId || doc.oreId
+    }
+    else {
+        doc = new DiscordUserModel({
+            dateCreated: date || new Date,
+            discordId: userDiscordId || 0,
+            loggedIn: userLoggedIn || false
+        })
+    } 
+    return doc
+}
 
-// export async function stop() {
-//   if (!database) {
-//     return
-//   }
-//   await disconnect()
-// }
 
-export async function setOreIdUser(
-    userDiscordId: string,
-    state: string): Promise<void> {
-
+export async function setDiscordUserState(
+    userDiscordId: number,
+    state: string,
+    loggedIn?: boolean): Promise<boolean> {
+    // 
+    // Returns true if successfully
+    // 
+    // 
+    const date = new Date
+    let successful = false
+    await connect(uri)
     try {
-        await connect(uri);
-        logHandler.info('Connected to MongoDB!')
-        const doc = new OreIdUserModel({
-            discordId: userDiscordId,
-            state: state
-        });
-        await doc.save()
-        logHandler.info('Saved the doc to mongodb')
-        await disconnect()
+        
+        const verification = await DiscordUserModel.findOne({ "discordId": userDiscordId })
+        .exec().then(async function(doc) {
+            logHandler.info("File found: " + doc)
+            if (doc) {
+                doc.discordId = doc.discordId || 0
+                doc.state = state || "None"
+                doc.lastLogin = doc.lastLogin || date,
+                doc.dateCreated = doc.dateCreated || date,
+                doc.loggedIn = loggedIn || false
+
+                let saveUser = await doc.save()
+                logHandler.info('Saved the doc to mongodb: ' + saveUser)
+                successful = true
+            }
+            else {
+                let doc = new DiscordUserModel({
+                    dateCreated: date,
+                    discordId: userDiscordId,
+                    loggedIn: false
+                }) 
+                await DiscordUserModel.create(doc)
+            }
+        })    
     }
     catch (error) {
         logHandler.error(error)
     }
-    // logHandler.info(doc.email); // 'bill@initech.com'
+    await disconnect()
+    return successful
+}
+
+export async function checkLoggedIn(
+    userDiscordId: number
+    ): Promise<boolean> {
+    // 
+    // Returns the users login status
+    // 
+    await connect(uri)
+    let loggedIn: boolean = false
+    // let DiscordUser = model('DiscordUser', discordSchema)
+    const currentDate: Date = new Date
+    const verification = await DiscordUserModel.findOne({ "discordId": userDiscordId })
+    .exec().then(async function(doc) {
+        logHandler.info('then verification: ' + doc)
+        if (doc) {
+            loggedIn = doc.loggedIn
+        }
+        else {
+            loggedIn = false
+            setDiscordUser(
+                userDiscordId,
+                currentDate
+            )
+        }
+        
+    })
+    await disconnect()
+    return loggedIn
 }
