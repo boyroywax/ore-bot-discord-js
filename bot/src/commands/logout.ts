@@ -30,7 +30,7 @@ export const logout: CommandInt = {
                         "None",
                         false
                     )
-                    loginEmbed.setTitle("✅ Succes")
+                    loginEmbed.setTitle("✅ Success!")
                     loginEmbed.setDescription(
                         "You have been logged out of your ORE-ID account."
                     )

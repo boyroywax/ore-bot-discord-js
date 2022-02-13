@@ -21,10 +21,10 @@ app.get('/auth', async (request: Request, response: Response) => {
 	const login = await verifyLogin(user, state).then(async function(loginSuccess) {
 		logHandler.info("loginSuccess: " + loginSuccess)
 		if (loginSuccess == true) {
-			return response.redirect(redirectUrl)
+			return response.sendFile('./login-success.html', { root: '.' })
 		}
 		else {
-			return response.sendFile('./index.html', { root: '.' })
+			return response.sendFile('./login-failure.html', { root: '.' })
 		}
 	})
 })
