@@ -97,7 +97,7 @@ export async function checkLoggedIn(
     userDiscordId: number
     ): Promise<[ boolean, string ]> {
     // 
-    // Returns the users login status
+    // Returns the users login status and lastLogin Date in string form
     // 
     await connect(uri)
     let loggedIn: boolean = false

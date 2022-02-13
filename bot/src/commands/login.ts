@@ -21,14 +21,26 @@ export const login: CommandInt = {
         let userCheck = await checkLoggedIn(Number(interaction.user.id))
         .then(async function(response: [boolean, string]) {
             logHandler.info("userCheck: " + response)
+            // Create a message only the user can see
+            await interaction.deferReply({ ephemeral: true })
+            const loginEmbed = new MessageEmbed().setThumbnail('https://i.imgur.com/A3yS9pl.png')
+
+            // Alert the user if they are already logged in
             if (response[0] == true) {
-                return await interaction.reply({content: "@" + interaction.user.username +" You are already logged in", ephemeral: true })
+                // Construct login embed and button rows
+                loginEmbed.setTitle("👍 Surprise!")
+                loginEmbed.setDescription("You are already logged in")
+                loginEmbed.setURL("https://oreid.io")
+                loginEmbed.addField(
+                    "Last login",
+                    response[1],
+                    false
+                )
+                await interaction.editReply({ embeds: [loginEmbed] })
             }
+            // Present the login menu if the user is not logged in
             else {
                 try {
-                    // Create a message only the user can see
-                    await interaction.deferReply({ ephemeral: true })
-        
                     // Create State from date
                     const state: string = createState(date)
         
@@ -49,11 +61,14 @@ export const login: CommandInt = {
                     let phoneLoginParse = JSON.parse(phoneLoginInfo)
         
                     // Construct login embed and button rows
-                    const loginEmbed = new MessageEmbed()
-                    .setThumbnail('https://i.imgur.com/A3yS9pl.png')
-                    .setTitle("Login to ORE ID")
-                    .setDescription("Login to ORE-ID using a method below.")
-                    .setURL("https://oreid.io")
+                    loginEmbed.setTitle("Login to ORE ID")
+                    loginEmbed.setDescription("Login to ORE-ID using a method below.")
+                    loginEmbed.setURL("https://oreid.io")
+                    loginEmbed.addField(
+                        "Last login",
+                        response[1] || "Never",
+                        false
+                    )
 
                     // Login Button row 1/2
                     const row = new MessageActionRow()
@@ -84,7 +99,9 @@ export const login: CommandInt = {
                         .setStyle('LINK')
                     )
                     if (response[1] != "None") {
-                        loginEmbed.setFooter("Last login: " + response[1])
+                        loginEmbed.addField,
+                        "Last login",
+                        response[1]
                     }
                     // Send the embed to discord
                     await interaction.editReply({ components: [row, row2], embeds: [loginEmbed] })

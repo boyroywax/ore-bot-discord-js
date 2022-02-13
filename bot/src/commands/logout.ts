@@ -22,6 +22,7 @@ export const logout: CommandInt = {
             logHandler.info("userCheck: " + response)
             await interaction.deferReply({ ephemeral: true })
             const loginEmbed = new MessageEmbed()
+            loginEmbed.setThumbnail('https://i.imgur.com/A3yS9pl.png')
             if (response[0] == true) {
                 try {
                     await setDiscordUserState(
@@ -29,18 +30,16 @@ export const logout: CommandInt = {
                         "None",
                         false
                     )
-                    loginEmbed.setThumbnail('https://i.imgur.com/A3yS9pl.png')
                     loginEmbed.setTitle("✅ Succes")
                     loginEmbed.setDescription(
-                        "You have been logged out your ORE-ID account."
+                        "You have been logged out of your ORE-ID account."
                     )
                 } catch (err) {
                 errorHandler("logout command failed: ", err)
                 }
             }
             else {
-                loginEmbed.setThumbnail('https://i.imgur.com/A3yS9pl.png')
-                loginEmbed.setTitle("⭐️ Sorry")
+                loginEmbed.setTitle("⭐️ Surprise")
                 loginEmbed.setDescription(
                     "You are already logged out of your ORE-ID account."
                 )
