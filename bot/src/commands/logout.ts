@@ -5,7 +5,7 @@ import { errorHandler } from "../utils/errorHandler"
 import { checkLoggedIn, setDiscordUserState } from "../modules/mongo"
 import { logHandler } from "../utils/logHandler"
 import axios from "axios"
-import { RequestMethod } from "@discordjs/rest"
+
 
 // async function logoutOreId() {
 //     try {

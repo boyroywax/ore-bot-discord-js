@@ -6,6 +6,7 @@ import { loginUser } from "../modules/oreid"
 import { createState } from "../utils/stateTools"
 import { checkLoggedIn, setDiscordUserState } from "../modules/mongo"
 import { logHandler } from "../utils/logHandler"
+import { alreadyLoggedIn } from "../utils/loginCheck";
 
 export const login: CommandInt = {
     data: new SlashCommandBuilder()
@@ -16,31 +17,23 @@ export const login: CommandInt = {
         // Login prompt for OreId
         // 
         const date: Date = new Date
-
-        // Check if user is already logged in
-        let userCheck = await checkLoggedIn(Number(interaction.user.id))
-        .then(async function(response: [boolean, string]) {
-            logHandler.info("userCheck: " + response)
-            // Create a message only the user can see
-            await interaction.deferReply({ ephemeral: true })
-            const loginEmbed = new MessageEmbed().setThumbnail('https://i.imgur.com/A3yS9pl.png')
-
-            // Alert the user if they are already logged in
-            if (response[0] == true) {
-                // Construct login embed and button rows
-                loginEmbed.setTitle("👍 Surprise!")
-                loginEmbed.setDescription("You are already logged in")
-                loginEmbed.setURL("https://oreid.io")
-                loginEmbed.addField(
-                    "Last login",
-                    response[1],
-                    false
-                )
-                await interaction.editReply({ embeds: [loginEmbed] })
-            }
-            // Present the login menu if the user is not logged in
-            else {
-                try {
+        try {
+            // Check if user is already logged in
+            let userCheck = await checkLoggedIn(Number(interaction.user.id))
+            .then(async function(response: [boolean, string]) {
+                logHandler.info("userCheck: " + response)
+                
+                // Alert the user if they are already logged in
+                if (response[0] == true) {
+                    return await alreadyLoggedIn(interaction, response[1])
+                }
+                // Present the login menu if the user is not logged in
+                else {
+                    // Create a message only the user can see
+                    await interaction.deferReply({ ephemeral: true })
+                    const loginEmbed = new MessageEmbed()
+                    .setThumbnail(process.env.OREID_LOGO || 'https://i.imgur.com/A3yS9pl.png')
+                    
                     // Create State from date
                     const state: string = createState(date)
         
@@ -63,7 +56,7 @@ export const login: CommandInt = {
                     // Construct login embed and button rows
                     loginEmbed.setTitle("Login to ORE ID")
                     loginEmbed.setDescription("Login to ORE-ID using a method below.")
-                    loginEmbed.setURL("https://oreid.io")
+                    loginEmbed.setURL(process.env.OREID_HOME || "https://oreid.io")
                     loginEmbed.addField(
                         "Last login",
                         response[1] || "Never",
@@ -109,10 +102,10 @@ export const login: CommandInt = {
                     const userDiscordId: number = Number(interaction.user.id)
                     await setDiscordUserState(userDiscordId, state)
                     return
-                } catch (err) {
-                errorHandler("login command", err)
                 }
-            }   
-        })
+            })
+        } catch (err) {
+            errorHandler("/login command error", err)
+        }
     }
 }
