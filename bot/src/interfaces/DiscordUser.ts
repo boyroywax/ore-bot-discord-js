@@ -6,3 +6,9 @@ export interface DiscordUser {
     oreId?: string
     state?: string
 }
+
+export interface BotBalance {
+    discordId: number
+    botToken: string
+    botBalance: number
+}

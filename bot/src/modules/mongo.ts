@@ -1,15 +1,21 @@
-import { connect, disconnect, Model, model } from 'mongoose'
+import { connect, disconnect, FilterQuery, Model, model, Schema } from 'mongoose'
 import { logHandler } from '../utils/logHandler'
-import { DiscordUserModel, discordSchema } from '../models/DiscordUserModel'
-import { DiscordUser } from '../interfaces/DiscordUser'
+import { errorHandler } from '../utils/errorHandler'
+import { DiscordUserModel, BotBalanceModel } from '../models/DiscordUserModel'
+import { BotBalance, DiscordUser } from '../interfaces/DiscordUser'
+import { Filter, UpdateFilter } from 'mongodb'
 
 
-const uri = "mongodb://" 
+const uri = process.env.MONGO_URI || "mongodb://" 
     + process.env.MONGO_HOST 
     + ":" + process.env.MONGO_PORT 
     + "/test?retryWrites=true&w=majority"
 
 function setDiscordUser(
+    // 
+    // Returns a DiscordUser object
+    // creates a new discordUser if one does not exist
+    // 
     userDiscordId: number,
     date?: Date,
     doc?: DiscordUser,
@@ -46,8 +52,8 @@ export async function setDiscordUserState(
     state: string,
     loggedIn?: boolean): Promise<boolean> {
     // 
-    // Returns true if successfully
-    // 
+    // Returns true if successfully set user state in mongodb
+    // Creates a new user record if the discordId does not exist
     // 
     const date = new Date
     let successful = false
@@ -98,22 +104,25 @@ export async function checkLoggedIn(
     ): Promise<[ boolean, string ]> {
     // 
     // Returns the users login status and lastLogin Date in string form
+    // Creastes a new user if one does not exist
     // 
     await connect(uri)
     let loggedIn: boolean = false
     let lastLogin: string = "Never"
-    // let DiscordUser = model('DiscordUser', discordSchema)
     const currentDate: Date = new Date
+
+    // Find the users mongodb doc by discordaiId
     const verification = await DiscordUserModel.findOne({ "discordId": userDiscordId })
     .exec().then(async function(doc) {
         logHandler.info('then verification: ' + doc)
-        
+        // Get the users last login date as a string
         if (doc) {
             loggedIn = doc.loggedIn
             if (doc.lastLogin?.toString()) {
                 lastLogin = doc.lastLogin?.toString() || "Never"
             }
         }
+        // Create the user if they do not exist
         else {
             loggedIn = false
             let doc = setDiscordUser(
@@ -126,4 +135,40 @@ export async function checkLoggedIn(
     })
     await disconnect()
     return [ loggedIn, lastLogin ]
+}
+
+export async function getOreIdUser( userDiscordId: number): Promise<string> {
+    let oreId: string = "None"
+    await connect(uri)
+    try {
+        const oreIdUser = await DiscordUserModel.findOne({ "discordId": userDiscordId })
+        .exec().then(async function(doc) {
+            if (doc) {
+                oreId = doc.oreId || "None"
+            }  
+        })
+    } catch (err) {
+        errorHandler("Failed getOreIdUser: ", err)
+    }
+    await disconnect()
+    return oreId
+}
+
+export async function updateBotBalance( userDiscordId: number, botBalance: number ): Promise<boolean> {
+    let saveStatus: boolean = false
+    await connect(uri)
+    try {        
+        const updateOutput = await BotBalanceModel.findOne({ "discordId": userDiscordId }).exec().then( async function(doc) {
+            if (doc) {
+                doc.botBalance = botBalance
+                await doc.save()
+                saveStatus = true
+            }
+        })
+    }
+    catch (err) {
+        errorHandler("saveChanges Failed: ", err)
+    }
+    await disconnect()
+    return saveStatus
 }

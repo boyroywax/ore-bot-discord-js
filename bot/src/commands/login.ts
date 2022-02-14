@@ -52,8 +52,9 @@ export const login: CommandInt = {
                     // Create SMS Login Link
                     let phoneLoginInfo: string = await loginUser("sms", state) || ""
                     let phoneLoginParse = JSON.parse(phoneLoginInfo)
-        
+
                     // Construct login embed and button rows
+                    // loginEmbed.setTitle("<:emoji name:oreidlogo:> Login to ORE ID") BROKEN
                     loginEmbed.setTitle("Login to ORE ID")
                     loginEmbed.setDescription("Login to ORE-ID using a method below.")
                     loginEmbed.setURL(process.env.OREID_HOME || "https://oreid.io")

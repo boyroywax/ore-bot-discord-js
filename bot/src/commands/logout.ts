@@ -4,24 +4,7 @@ import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { checkLoggedIn, setDiscordUserState } from "../modules/mongo"
 import { logHandler } from "../utils/logHandler"
-import axios from "axios"
 
-
-// async function logoutOreId() {
-//     try {
-//         const response = await axios.get(process.env.OREID_URL + '/logout', {
-//             params: {
-//                 app_id: process.env.OREID_APP_ID,
-//                 providers: "all",
-//                 callback_url: process.env.OREID_AUTH_CALLBACK_URL
-//             }
-//         })
-//         console.log(response);
-//     } 
-//     catch (error) {
-//         console.error(error);
-//     }
-// }
 
 export const logout: CommandInt = {
     data: new SlashCommandBuilder()

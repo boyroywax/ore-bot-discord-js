@@ -1,10 +1,10 @@
-// import dotenv from 'dotenv'
+import axios from "axios"
 import { OreId, OreIdOptions, LoginOptions, AuthProvider, ChainNetwork, AccountName, SignOptions } from 'oreid-js'
 import { logHandler } from '../utils/logHandler'
-import { createState } from '../utils/stateTools'
+import { errorHandler } from '../utils/errorHandler'
 
-const TEST_ACCOUNT = 'ore1sbx3rf4j'
-// dotenv.config()
+import { getOreIdUser } from "./mongo"
+
 
 const oreIdOptions: OreIdOptions = {
     appName: process.env.OREID_APP_NAME || "Discord Bot",
@@ -55,24 +55,53 @@ export async function loginUser(authProvider: string, newState: string) {
         )
         return JSON.stringify(loginResponse, null, 4)
     }
-    catch (error) {
-        logHandler.error(error)
+    catch (err) {
+        errorHandler("loginUser failed: ", err)
     }
 }
 
-export async function getUser(account: AccountName) {
+export async function getUser(account: AccountName): Promise<JSON> {
+    let user: JSON = JSON
     try {
         logHandler.info("Fetching user: " + account + "...")
-        let userInfo = await oreId.getUserInfoFromApi(account)
+        let userInfo: JSON = await oreId.getUserInfoFromApi(account)
         logHandler.info(account + " info:" + JSON.stringify(userInfo))
+        user = userInfo
     }
-    catch (error) {
-        logHandler.error(error)     
+    catch (err) {
+        errorHandler("getUser failed: ", err)
     }
+    return user
+}
+
+export async function getOreIdBalance(discordId: number): Promise<number> {
+    let oreIdBalance: number = 0
+    try{
+        const oreIdUser: string = await getOreIdUser(discordId)
+        logHandler.info("oreIdUser returned from getOreIdBalance: ", oreIdUser)
+        const response: JSON = await getUser(oreIdUser)
+        logHandler.info("getUserfromApi response: ", response)
+    } catch (err) {
+        errorHandler('getOreIdBalance failed: ', err)
+    }
+    return oreIdBalance
 }
 
 export async function logoutUser(account: AccountName){
     logHandler.info("logging out user")
+    try {
+        const response = await axios.get(process.env.OREID_URL + '/logout', {
+            params: {
+                app_id: process.env.OREID_APP_ID,
+                providers: "all",
+                callback_url: process.env.OREID_AUTH_CALLBACK_URL
+            }
+        })
+        logHandler.info("logoutUser response: ", response);
+    } 
+    catch (error) {
+        errorHandler("logoutUser failed: ", error);
+    }
 }
 
 // async function loginWithIdToken() {
@@ -86,19 +115,18 @@ export async function logoutUser(account: AccountName){
 //     }
 // }
 
-async function initiateSign() {
-    let accountName: AccountName = TEST_ACCOUNT
+async function initiateSign(accountName: string) {
     let signOptions: SignOptions = {
         account: accountName,
-        chainNetwork: ChainNetwork.EosKylin,
+        chainNetwork: ChainNetwork.OreTest,
         provider: AuthProvider.Google,
         transaction: 'null' // String
     }
     try {
         let signResponse = await oreId.sign(signOptions)
-        console.log(signResponse)
+        logHandler.info("signResponse: ", signResponse)
     }
-    catch (error) {
-        console.error(error)
+    catch (err) {
+        errorHandler("initiateSign failed: ", err)
     }
 }

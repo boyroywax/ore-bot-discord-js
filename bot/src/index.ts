@@ -24,14 +24,6 @@ import { logHandler } from './utils/logHandler'
         ],
     })
 
-    // try {
-    //     logHandler.info('Connecting to MongoDB...')
-    //     await demo()
-    // }
-    // catch (error) {
-    //     logHandler.error(error)
-    // }
-
     const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
 
     client.on("ready", async () => await onReady(client));
@@ -39,7 +31,8 @@ import { logHandler } from './utils/logHandler'
     client.on(
         "interactionCreate",
         async (interaction: Interaction) => await onInteraction(interaction)
-    );
+    )
 
     await client.login(process.env.DISCORD_TOKEN as string)
+
 })()

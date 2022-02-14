@@ -1,10 +1,14 @@
 import {
     SlashCommandBuilder,
+    SlashCommandNumberOption,
+    SlashCommandOptionsOnlyBuilder,
     SlashCommandSubcommandsOnlyBuilder,
-  } from "@discordjs/builders";
-  import { CommandInteraction } from "discord.js";
+    SlashCommandUserOption
+  } from "@discordjs/builders"
+import { Options } from "@sentry/types"
+  import { ApplicationCommandOption, CommandInteraction } from "discord.js"
   
   export interface CommandInt {
-    data: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder;
-    run: (interaction: CommandInteraction) => Promise<void>;
+    data: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder | any
+    run: (interaction: CommandInteraction) => Promise<void>
   }

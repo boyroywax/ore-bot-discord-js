@@ -3,7 +3,7 @@ import { logHandler } from '../utils/logHandler'
 import { DiscordUserModel, discordSchema } from '../models/discordUserModel'
 
 
-const uri = "mongodb://" 
+const uri = process.env.MONGO_URI || "mongodb://" 
     + process.env.MONGO_HOST 
     + ":" + process.env.MONGO_PORT 
     + "/test?retryWrites=true&w=majority"
@@ -24,8 +24,8 @@ export async function verifyLogin(
         // Declare the DiscordUser model and search mongodb for
         // a state that matches the callback value
         logHandler.info("Finding: " + stateIn)
-        const OreIdUser = model('OreIdUser', discordSchema)
-        const findUser = await OreIdUser.findOne({ "state": String(stateIn) })
+        // const OreIdUser = model('OreIdUser', discordSchema)
+        const findUser = await DiscordUserModel.findOne({ "state": String(stateIn) })
         .exec().then(async function(doc) {
             logHandler.info('document fetched: ' + doc)
             // If the doc exists, set the loggedIn value to true

@@ -4,6 +4,7 @@ import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { checkLoggedIn } from "../modules/mongo"
 import { logHandler } from "../utils/logHandler"
+import { getUser, getOreIdBalance } from "../modules/oreid";
 import { unauthorizedCommand } from "../utils/loginCheck";
 
 export const balance: CommandInt = {
@@ -30,7 +31,7 @@ export const balance: CommandInt = {
                     const botBalance: number = 0
 
                     // Fetch the user ORE-ID balance
-                    const oreIdBalance: number =  0
+                    const oreIdBalance: number =  await getOreIdBalance(Number(interaction.user.id))
 
                     // Construct login embed
                     balanceEmbed.setTitle("💰 Balances")
