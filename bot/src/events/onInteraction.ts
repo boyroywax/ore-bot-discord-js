@@ -10,9 +10,9 @@ export const onInteraction = async (
     if (interaction.isCommand()) {
       for (const Command of CommandList) {
         if (interaction.commandName === Command.data.name) {
-          await Command.run(interaction);
-          logHandler.info("Running a Command")
-          break;
+          await Command.run(interaction)
+          logHandler.info("Running a Command: " + interaction.commandName + " by " + interaction.user.id)
+          break
         }
       }
     }

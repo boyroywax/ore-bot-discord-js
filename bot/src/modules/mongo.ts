@@ -3,7 +3,6 @@ import { logHandler } from '../utils/logHandler'
 import { errorHandler } from '../utils/errorHandler'
 import { DiscordUserModel, BotBalanceModel } from '../models/DiscordUserModel'
 import { BotBalance, DiscordUser } from '../interfaces/DiscordUser'
-import { Filter, UpdateFilter } from 'mongodb'
 
 
 const uri = process.env.MONGO_URI || "mongodb://" 
@@ -59,7 +58,6 @@ export async function setDiscordUserState(
     let successful = false
     await connect(uri)
     try {
-        
         const verification = await DiscordUserModel.findOne({ "discordId": userDiscordId })
         .exec().then(async function(doc) {
             logHandler.info("File found: " + doc)
@@ -125,7 +123,7 @@ export async function checkLoggedIn(
         // Create the user if they do not exist
         else {
             loggedIn = false
-            let doc = setDiscordUser(
+            let doc: DiscordUser = setDiscordUser(
                 userDiscordId,
                 currentDate
             )
@@ -151,13 +149,17 @@ export async function getOreIdUser( userDiscordId: number): Promise<string> {
             }  
         })
     } catch (err) {
-        errorHandler("Failed getOreIdUser: ", err)
+        errorHandler("getOreIdUser failed: ", err)
     }
     await disconnect()
     return oreId
 }
 
 export async function zeroBotBalance ( userDiscordId: number ): Promise<boolean> {
+    // 
+    // Sets a user's bot balance back to zero, used when
+    // creating a new user.
+    // 
     let balanceZeroed = false
     await connect(uri)
     try {
@@ -198,7 +200,7 @@ export async function updateBotBalance( userDiscordId: number, botBalance: numbe
         })
     }
     catch (err) {
-        errorHandler("saveChanges Failed: ", err)
+        errorHandler("updateBotBalance Failed: ", err)
     }
     await disconnect()
     return saveStatus

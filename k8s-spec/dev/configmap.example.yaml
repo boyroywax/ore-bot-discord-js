@@ -11,26 +11,26 @@ data:
   # MongoDB
   MONGO_HOST: ore-mongo-dev
   MONGO_PORT: "27017"
+  MONGO_URI: mongodb://...
 
   # Currency Info
   CURRENCY: ORE
   CURRENCY_NAME: Open Rights Exchange
   CURRENCY_TOKEN: ORE
+  CURRENCY_PREICISON: 8
   CURRENCY_BLOCK_EXPLORER: https://explorer.ore.network/
 
   # Discord
   DISCORD_CLIENT_ID: "936064780081434737"
   DISCORD_GUILD_ID: "936062852278665227"
-  DISCORD_TOKEN: O...
+  DISCORD_INVITE_URL: https://discord.com/invite/zcW8tncqq4
 
   # ORE-ID
   OREID_APP_ID: t_fb2...
-  OREID_API_KEY: t_k07...
   OREID_APP_NAME: ORE Network Bot
   OREID_URL: https://service.oreid.io
   OREID_AUTH_CALLBACK_URL: http://34.149.23.111/auth
   OREID_SIGN_CALLBACK_URL: http://34.149.23.111/sign
   OREID_CALLBACK_PORT: "53134"
-
-  # Sentry Logging
-  SENTRY_DSN: https://cca...
+  OREID_LOGO: https://i.imgur.com/A3yS9pl.png
+  OREID_HOME: https://oreid.io

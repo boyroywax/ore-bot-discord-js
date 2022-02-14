@@ -16,7 +16,8 @@ export const tipAdmin: CommandInt = {
         .addNumberOption(option => option.setName("amount").setDescription("Enter tip amount").setRequired(true)),
     run: async (interaction) => {
         // 
-        // 
+        // For Testing purposes ONLY
+        // Creates coins from thin-air, do not use - it will throw off the wallet balance.
         // 
         try {
             // Make sure the user is logged in
