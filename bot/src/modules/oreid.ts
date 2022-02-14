@@ -80,7 +80,7 @@ export async function getOreIdBalance(discordId: number): Promise<number> {
         const oreIdUser: string = await getOreIdUser(discordId)
         logHandler.info("oreIdUser returned from getOreIdBalance: ", oreIdUser)
         const response: JSON = await getUser(oreIdUser)
-        logHandler.info("getUserfromApi response: ", response)
+        logHandler.info("getUserfromApi response: ", JSON.stringify(response))
     } catch (err) {
         errorHandler('getOreIdBalance failed: ', err)
     }

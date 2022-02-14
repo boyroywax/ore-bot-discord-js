@@ -111,7 +111,7 @@ export async function checkLoggedIn(
     let lastLogin: string = "Never"
     const currentDate: Date = new Date
 
-    // Find the users mongodb doc by discordaiId
+    // Find the users mongodb doc by discordId
     const verification = await DiscordUserModel.findOne({ "discordId": userDiscordId })
     .exec().then(async function(doc) {
         logHandler.info('then verification: ' + doc)
@@ -138,6 +138,9 @@ export async function checkLoggedIn(
 }
 
 export async function getOreIdUser( userDiscordId: number): Promise<string> {
+    // 
+    // Fetches a user's oreID when passed in a discordId
+    // 
     let oreId: string = "None"
     await connect(uri)
     try {
@@ -152,6 +155,34 @@ export async function getOreIdUser( userDiscordId: number): Promise<string> {
     }
     await disconnect()
     return oreId
+}
+
+export async function zeroBotBalance ( userDiscordId: number ): Promise<boolean> {
+    let balanceZeroed = false
+    await connect(uri)
+    try {
+        const updateOutput = await BotBalanceModel.findOne({ "discordId": userDiscordId }).exec().then( async function(doc) {
+            if (!doc) {
+                // Generate a BotBalance for the user
+                const botBalanceDoc = new BotBalanceModel
+                botBalanceDoc.discordId = userDiscordId
+                botBalanceDoc.botBalance = 0.0
+                botBalanceDoc.botToken = process.env.CURRENCY_TOKEN || "ORE"
+                await botBalanceDoc.save()
+                balanceZeroed = true
+            }
+            else {
+                doc.botBalance = 0.0
+                await doc.save()
+                balanceZeroed = true
+            }
+        })
+    }
+    catch (err) {
+        errorHandler("zeroBotBalance failed: ", err)
+    }
+    await disconnect()
+    return balanceZeroed
 }
 
 export async function updateBotBalance( userDiscordId: number, botBalance: number ): Promise<boolean> {

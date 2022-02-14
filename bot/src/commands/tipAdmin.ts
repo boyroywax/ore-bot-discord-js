@@ -3,14 +3,14 @@ import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { checkLoggedIn } from '../modules/mongo'
-import { doTip } from "../modules/tipper"
+import { adminTip } from "../modules/tipper"
 import { unauthorizedCommand } from "../utils/loginCheck";
 import { logHandler } from "../utils/logHandler";
 
 
-export const tip: CommandInt = {
+export const tipAdmin: CommandInt = {
     data: new SlashCommandBuilder()
-        .setName("tip")
+        .setName("tip-admin")
         .setDescription("Tip " + process.env.CURRENCY + " tokens to another user")
         .addUserOption(option => option.setName("recipient").setDescription("Select a user to tip").setRequired(true))
         .addNumberOption(option => option.setName("amount").setDescription("Enter tip amount").setRequired(true)),
@@ -28,7 +28,7 @@ export const tip: CommandInt = {
                     const recipient = interaction.options.getUser('recipient')?.id || 0
                     const amount: number = interaction.options.getNumber('amount') || 0.00
                     logHandler.info("message from /tip: " + recipient + " " + amount)
-                    const tipResult: [boolean, string] = await doTip(Number(interaction.user.id), Number(recipient), amount) 
+                    const tipResult: [boolean, string] = await adminTip( Number(recipient), amount) 
 
                     // Create a message only the user can see
                     await interaction.deferReply({ ephemeral: true })
@@ -36,13 +36,13 @@ export const tip: CommandInt = {
 
                     if (tipResult[0]) {
                         tipEmbed.setTitle("✅ Tip Complete")
-                        tipEmbed.setDescription("Your tip to @" + recipientUserName + " succeeded!")
-                        tipEmbed.addField("Tip Amount", String(amount) + " " + process.env.CURRENCY_TOKEN, false)
+                        tipEmbed.setDescription("Your adminTip to @" + recipientUserName + " succeeded!")
+                        tipEmbed.addField("Tip Amount", String(amount), false)
                     }
                     else {
                         tipEmbed.setTitle("❌ Tip Failed")
-                        tipEmbed.setDescription("Your tip to @" + recipientUserName + " was canceled!")
-                        tipEmbed.addField("Tip Amount", String(amount) + " " + process.env.CURRENCY_TOKEN, false)
+                        tipEmbed.setDescription("Your adminTip to @" + recipientUserName + " was canceled!")
+                        tipEmbed.addField("Tip Amount", String(amount), false)
                         tipEmbed.addField("Reason for failure: ", tipResult[1])
                     }
                     await interaction.editReply( {embeds: [tipEmbed]})

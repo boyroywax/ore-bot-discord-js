@@ -6,6 +6,7 @@ import { checkLoggedIn } from "../modules/mongo"
 import { logHandler } from "../utils/logHandler"
 import { getUser, getOreIdBalance } from "../modules/oreid";
 import { unauthorizedCommand } from "../utils/loginCheck";
+import { getBotBalance } from "../modules/tipper";
 
 export const balance: CommandInt = {
     data: new SlashCommandBuilder()
@@ -28,7 +29,7 @@ export const balance: CommandInt = {
                     .setThumbnail(process.env.OREID_LOGO || 'https://i.imgur.com/A3yS9pl.png')
 
                     // Fetch the user's balance on the bot
-                    const botBalance: number = 0
+                    const botBalance: number = await getBotBalance(Number(interaction.user.id))
 
                     // Fetch the user ORE-ID balance
                     const oreIdBalance: number =  await getOreIdBalance(Number(interaction.user.id))
