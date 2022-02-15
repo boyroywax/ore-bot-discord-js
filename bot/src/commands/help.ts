@@ -9,29 +9,30 @@ export const help: CommandInt = {
     .setDescription("Provides information on using this bot."),
   run: async (interaction) => {
     try {
-      await interaction.deferReply();
-      const helpEmbed = new MessageEmbed();
-      helpEmbed.setTitle("100 Days of Code Bot!");
+      await interaction.deferReply({ ephemeral: true});
+      const helpEmbed = new MessageEmbed()
+      helpEmbed.setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
+      helpEmbed.setTitle("ORE Network Bot Help")
       helpEmbed.setDescription(
-        "This discord bot is designed to help you track and share your 100 Days of Code progress."
-      );
+        "Your gateway to the ORE Network Galaxy!"
+      )
       helpEmbed.addField(
-        "Create today's update",
-        "Use the `/100` command to create your update for today. The `message` will be displayed in your embed."
-      );
+        "Login to ORE-ID to get started",
+        "Use the `/login` command to login to ORE-ID.  If you do not have an account, you will sign up in one easy step."
+      )
       helpEmbed.addField(
-        "Edit today's update",
-        "Do you see a typo in your embed? Right click it and copy the ID (you may need developer mode on for this), and use the `/edit` command to update that embed with a new message."
-      );
+        "Easily check your balance",
+        "Use the `/balance` command to bring up your balances. You have two balances on this system.  Your bot balance represents the coins that are readily spendable (Think of this as your Checking Account). The ORE-ID balance is the token balance of your connected ORE-ID account (Think of this as your Savings Account)."
+      )
       helpEmbed.addField(
-        "Show your progress",
-        "To see your current progress in the challenge, and the day you last checked in, use `/view`."
-      );
-      helpEmbed.setFooter(`Version ${process.env.npm_package_version}`);
-      await interaction.editReply({ embeds: [helpEmbed] });
-      return;
+        "Tip other Discord users",
+        "Simply type the `/tip` command to begin the process.  Add the name of the recipient, and the amount to tip (in that order).  Don't sweat it if you can't remember this.  Discord will help you fill out the message."
+      )
+      helpEmbed.setFooter("Version: " + process.env.VERSION, process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
+      await interaction.editReply({ embeds: [helpEmbed] })
+      return
     } catch (err) {
-      errorHandler("help command", err);
+      errorHandler("help command", err)
     }
   },
 };

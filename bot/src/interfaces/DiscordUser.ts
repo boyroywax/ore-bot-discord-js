@@ -1,3 +1,6 @@
+// 
+// Interface for a discord user.
+// 
 export interface DiscordUser {
     discordId: number
     loggedIn: boolean
@@ -7,8 +10,36 @@ export interface DiscordUser {
     state?: string
 }
 
+// 
+// Interface for the discord user's bot balance.
+// 
 export interface BotBalance {
     discordId: number
     botToken: string
     botBalance: number
+}
+
+//
+// Interface for the discord user's log.
+// 
+export interface UserLog {
+    id?: Number
+    action: string
+    date: Date
+    discordId: number   
+    oreId?: string
+    recipient?: number
+    amount?: number
+    txnId?: string
+    comment?: string
+    stage?: string
+}
+
+export interface UserLogKWArgs {
+    stage?: string
+    oreId?: string
+    recipient?: number
+    amount?: number
+    txnId?: string
+    comment?: string
 }

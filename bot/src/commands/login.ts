@@ -7,6 +7,7 @@ import { createState } from "../utils/stateTools"
 import { checkLoggedIn, setDiscordUserState } from "../modules/mongo"
 import { logHandler } from "../utils/logHandler"
 import { alreadyLoggedIn } from "../utils/loginCheck";
+import { logEntry } from "../modules/userLog";
 
 export const login: CommandInt = {
     data: new SlashCommandBuilder()
@@ -102,6 +103,10 @@ export const login: CommandInt = {
                     
                     const userDiscordId: number = Number(interaction.user.id)
                     await setDiscordUserState(userDiscordId, state)
+                    
+                    
+                    const savedLogEntry = await logEntry( "AttemptLogin", userDiscordId )
+                    logHandler.info("Log entry saved?: " + savedLogEntry)
                     return
                 }
             })

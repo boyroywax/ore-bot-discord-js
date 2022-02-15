@@ -1,8 +1,8 @@
-import { connect, disconnect, FilterQuery, Model, model, Schema } from 'mongoose'
+import { connect, disconnect, FilterQuery, Model, model, now, Schema } from 'mongoose'
 import { logHandler } from '../utils/logHandler'
 import { errorHandler } from '../utils/errorHandler'
-import { DiscordUserModel, BotBalanceModel } from '../models/DiscordUserModel'
-import { BotBalance, DiscordUser } from '../interfaces/DiscordUser'
+import { DiscordUserModel, BotBalanceModel, UserLogModel } from '../models/DiscordUserModel'
+import { DiscordUser, UserLog } from '../interfaces/DiscordUser'
 
 
 const uri = process.env.MONGO_URI || "mongodb://" 
@@ -11,10 +11,6 @@ const uri = process.env.MONGO_URI || "mongodb://"
     + "/test?retryWrites=true&w=majority"
 
 function setDiscordUser(
-    // 
-    // Returns a DiscordUser object
-    // creates a new discordUser if one does not exist
-    // 
     userDiscordId: number,
     date?: Date,
     doc?: DiscordUser,
@@ -22,6 +18,10 @@ function setDiscordUser(
     state?: string,
     userLoggedIn?: boolean
     ): DiscordUser {
+    // 
+    // Returns a DiscordUser object
+    // creates a new discordUser if one does not exist
+    // 
     if (doc) {
         if (doc.lastLogin) { 
            doc.lastLogin = date
@@ -201,6 +201,20 @@ export async function updateBotBalance( userDiscordId: number, botBalance: numbe
     }
     catch (err) {
         errorHandler("updateBotBalance Failed: ", err)
+    }
+    await disconnect()
+    return saveStatus
+}
+
+export async function addLogEntry( entry: UserLog ): Promise<boolean> {
+    let saveStatus: boolean = false
+    await connect(uri)
+    try {        
+        await UserLogModel.create(entry)
+        saveStatus = true
+    }
+    catch (err) {
+        errorHandler("addLog Entry Failed: ", err)
     }
     await disconnect()
     return saveStatus

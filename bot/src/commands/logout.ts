@@ -3,6 +3,7 @@ import { MessageEmbed } from "discord.js"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { checkLoggedIn, setDiscordUserState } from "../modules/mongo"
+import { logEntry } from "../modules/userLog"
 import { logHandler } from "../utils/logHandler"
 
 
@@ -25,7 +26,7 @@ export const logout: CommandInt = {
             
             // Begin the message embed object
             const loginEmbed = new MessageEmbed()
-            loginEmbed.setThumbnail('https://i.imgur.com/A3yS9pl.png')
+            loginEmbed.setThumbnail(process.env.OREID_LOGO || 'https://i.imgur.com/A3yS9pl.png')
 
             // If logged in
             if (response[0] == true) {
@@ -41,6 +42,10 @@ export const logout: CommandInt = {
                         "None",
                         false
                     )
+
+                    // Create an entry in the user's log
+                    await logEntry( "LogOut", Number(interaction.user.id) )
+
                     loginEmbed.setTitle("✅ Success!")
                     loginEmbed.setDescription(
                         "You have been logged out of your ORE-ID account."

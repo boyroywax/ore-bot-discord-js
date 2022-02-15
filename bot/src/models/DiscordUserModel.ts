@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose"
-import { DiscordUser, BotBalance } from "../interfaces/DiscordUser"
+import { DiscordUser, BotBalance, UserLog } from "../interfaces/DiscordUser"
 
 // 
 // User's Discord info
@@ -25,3 +25,20 @@ export const botBalanceSchema = new Schema<BotBalance>({
 })
 
 export const BotBalanceModel = model<BotBalance>('BotBalance', botBalanceSchema)
+
+// 
+// Logging a user's actions
+// 
+export const userLogSchema = new Schema<UserLog>({
+    id: { type: Number, required: false, index: true, default: 0, unique: true, ref: "id" },
+    action: { type: String, required: true },
+    amount: { type: Number, required: false },
+    date: {type: Date, required: true },
+    discordId: { type: Number, required: true},
+    oreId: { type: String, required: false },
+    recipient: { type: Number, required: false },
+    txnId: { type: String, required: false },
+    comment: { type: String, required: false}
+})
+
+export const UserLogModel = model<UserLog>('UserLog', userLogSchema)

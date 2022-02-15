@@ -26,7 +26,7 @@ export const balance: CommandInt = {
                     // Create a message only the user can see
                     await interaction.deferReply({ ephemeral: true })
                     const balanceEmbed = new MessageEmbed()
-                    .setThumbnail(process.env.OREID_LOGO || 'https://i.imgur.com/A3yS9pl.png')
+                    .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
 
                     // Fetch the user's balance on the bot
                     const botBalance: number = await getBotBalance(Number(interaction.user.id))

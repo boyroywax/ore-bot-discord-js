@@ -58,15 +58,26 @@ export async function doTip( fromUser: number, recipient: number, amount: number
         let fromUserBalance: number = await getBotBalance(fromUser)
         let recipientBalance: number = await getBotBalance(recipient)
 
-        // CHeck that the fromUser has adequate funds
-        if (amount == 0.00) {
+        if (recipient == ( Number(process.env.DISCORD_CLIENT_ID) || Number(936064780081434737))) {
+            tipCompleted = false
+            tipStatus = "You cannot tip the ORE Network Bot"
+        }
+        // Check that the amount being tipped is not zero
+        else if (amount == 0.00) {
             tipCompleted = false
             tipStatus = "You cannot tip 0.00 " + process.env.CURRENCY_TOKEN
         }
-        else if (amount <= 0.00) {
+        // Check that the amount is greater than zero
+        else if (amount < 0.00) {
             tipCompleted = false
             tipStatus = "You cannot tip less than 0.00 " + process.env.CURRENCY_TOKEN
         }
+        // Check that the user is not sending funds to themselves
+        else if (fromUser == recipient) {
+            tipCompleted = false
+            tipStatus = "You cannot tip yourself!"
+        }
+        // CHeck that the fromUser has adequate funds
         else if (amount <= fromUserBalance) {
             // Adjust the balances
             fromUserBalance = precisionRound( fromUserBalance - amount, Number(process.env.CURRENCY_PRECISION) || 8 )
@@ -86,7 +97,7 @@ export async function doTip( fromUser: number, recipient: number, amount: number
             }
         }
         else {
-            tipStatus = "User does not have adequate funds!"
+            tipStatus = "You cannot tip more tokens than you own!"
         }
     }
     catch (err) {
@@ -96,52 +107,47 @@ export async function doTip( fromUser: number, recipient: number, amount: number
     return [ tipCompleted, tipStatus ]
 }
 
-export async function adminTip( recipient: number, amount: number ): Promise<[ boolean, string ]> {
-    // 
-    // Creates tokens and adds them to an account
-    // Checks that the sendUser has adequate funds
-    // Returns tipCompleted, and tipStatus
-    // 
-    await connect(uri)
-    let tipCompleted: boolean = false
-    let tipStatus: string = "Tip Initiated"
-    try {
-        // Retrive both users balances
-        // Creates an entry in botBalance if none exists
-        // let fromUserBalance: number = await getBotBalance(fromUser)
-        let recipientBalance: number = await getBotBalance(recipient)
+// export async function adminTip( recipient: number, amount: number ): Promise<[ boolean, string ]> {
+//     await connect(uri)
+//     let tipCompleted: boolean = false
+//     let tipStatus: string = "Tip Initiated"
+//     try {
+//         // Retrive both users balances
+//         // Creates an entry in botBalance if none exists
+//         // let fromUserBalance: number = await getBotBalance(fromUser)
+//         let recipientBalance: number = await getBotBalance(recipient)
 
-        // CHeck that the fromUser has adequate funds
-        if (amount == 0.00) {
-            tipCompleted = false
-            tipStatus = "You cannot tip 0.00 " + process.env.CURRENCY_TOKEN
-        }
-        else if (amount <= 0.00) {
-            tipCompleted = false
-            tipStatus = "You cannot tip less than 0.00 " + process.env.CURRENCY_TOKEN
-        }
-        else {
-            // Adjust the balances
-            // fromUserBalance -= amount
-            recipientBalance += amount
-            logHandler.info("new balances: " + recipientBalance)
+//         // CHeck that the fromUser has adequate funds
+//         if (amount == 0.00) {
+//             tipCompleted = false
+//             tipStatus = "You cannot tip 0.00 " + process.env.CURRENCY_TOKEN
+//         }
+//         else if (amount <= 0.00) {
+//             tipCompleted = false
+//             tipStatus = "You cannot tip less than 0.00 " + process.env.CURRENCY_TOKEN
+//         }
+//         else {
+//             // Adjust the balances
+//             // fromUserBalance -= amount
+//             recipientBalance += amount
+//             logHandler.info("new balances: " + recipientBalance)
 
-            // Write the changed balances to mongo
-            // const fromUserUpdate = await updateBotBalance( fromUser, fromUserBalance )
-            const recipientUpdate = await updateBotBalance( recipient, recipientBalance )
+//             // Write the changed balances to mongo
+//             // const fromUserUpdate = await updateBotBalance( fromUser, fromUserBalance )
+//             const recipientUpdate = await updateBotBalance( recipient, recipientBalance )
 
-            if (recipientUpdate) {
-                tipCompleted = true
-                tipStatus = "adminTip Completed"
-            }
-            else {
-                tipStatus = "adminTip Failed"
-            }
-        }
-    }
-    catch (err) {
-        errorHandler("adminTip failed: ", err)
-    }
-    await disconnect()
-    return [ tipCompleted, tipStatus ]
-}
+//             if (recipientUpdate) {
+//                 tipCompleted = true
+//                 tipStatus = "adminTip Completed"
+//             }
+//             else {
+//                 tipStatus = "adminTip Failed"
+//             }
+//         }
+//     }
+//     catch (err) {
+//         errorHandler("adminTip failed: ", err)
+//     }
+//     await disconnect()
+//     return [ tipCompleted, tipStatus ]
+// }
