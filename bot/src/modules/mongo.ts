@@ -226,7 +226,7 @@ export async function getLogEntries( discordId: number ): Promise<UserLog[]> {
     try {        
         await UserLogModel.find({"discordId": discordId}).exec().then( async function(docs) {
             for (let doc in docs) {
-                logHandler.info(docs[doc])
+                // logHandler.info(docs[doc])
                 logEntries.push(docs[doc])
             }
         })

@@ -7,6 +7,7 @@ import { logHandler } from "../utils/logHandler"
 import { UserLog } from "../interfaces/DiscordUser"
 import { listActivity } from "../modules/userLog"
 import { UserLogModel } from "../models/DiscordUserModel"
+import { User } from "@sentry/node"
 
 export const activity: CommandInt = {
     data: new SlashCommandBuilder()
@@ -39,7 +40,7 @@ export const activity: CommandInt = {
                     String("Your activity has been privately sent to your DM."),
                     false
                 )
-                
+
                 let index = 0
                 const userActivity = new MessageEmbed()
                 for (let entry in logEntries) {
@@ -49,6 +50,7 @@ export const activity: CommandInt = {
                     // There should never be no logs
                     if (logEntries.length == 0) {
                         const noActivity = new MessageEmbed()
+                        noActivity.setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
                         noActivity.setTitle("🏃 Activity")
                         noActivity.setDescription("Your Latest actions on the ORE Network")
                         noActivity.setURL("https://oreid.io")
@@ -61,7 +63,7 @@ export const activity: CommandInt = {
                     }
                     else if (index == 1) {
                         // Construct the list items to embed
-                        
+                        userActivity.setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
                         userActivity.setTitle("🏃 Activity")
                         userActivity.setDescription("Your Latest actions on the ORE Network")
                         userActivity.setURL("https://oreid.io")
@@ -71,6 +73,9 @@ export const activity: CommandInt = {
                             false
                         )
                     }
+                    else if (index > 10) {
+                        break;
+                    }
                     else if (index <= logEntries.length) {
                         // const userActivityEntry = new MessageEmbed()
                         userActivity.addField(
@@ -78,13 +83,9 @@ export const activity: CommandInt = {
                             String(parseEntry.action) + " " + String(parseEntry.stage) + " " + String(parseEntry?.recipient) + " " + String(parseEntry?.amount),
                             false
                         )
-                        // await interaction.user.send({embeds: [userActivityEntry]})
-                    }
-                    else // if (index > logEntries.length)
-                    {
-
                     }
                 }
+                userActivity.setFooter(Date.now().toString(), process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
                 await userObj.send({ embeds: [userActivity] })
                 // send the reply to the user in the channel
                 await interaction.editReply({ embeds: [userActivityChannel] })

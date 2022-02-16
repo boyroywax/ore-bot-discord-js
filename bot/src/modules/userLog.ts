@@ -16,6 +16,7 @@ export async function logEntry (
         logHandler.info("logEntry passed to logEntry function: " + entry)
         let userLogEntry: UserLog = new UserLogModel({
             action: action,
+            amount: entry?.amount || "NA",
             date: new Date,
             discordId: discordId,
             oreId: entry?.oreId || "NA",
@@ -33,13 +34,16 @@ export async function logEntry (
     return savedLogEntry
 }
 
+
 export async function listActivity ( discordId: number ): Promise<UserLog[]> {
     // 
     // Returns a list of logEntries for a user
+    // Sorted in descending date order
     // 
     let userLogEntries: UserLog[] = []
     try {
         userLogEntries = await getLogEntries(discordId)
+        userLogEntries.sort((a: UserLog ,b: UserLog) => +new Date(b.date) - +new Date(a.date))
     }
     catch (err) {
         errorHandler("listActivity failed: ", err)
