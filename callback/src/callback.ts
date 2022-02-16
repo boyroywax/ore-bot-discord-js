@@ -1,11 +1,11 @@
 import { Request, Response } from "express"
 import express from 'express'
 import { logHandler } from "./utils/logHandler"
-import { readState } from "./utils/stateCall"
 import { verifyLogin } from "./modules/mongo"
 
+
 const app = express()
-const port = 53134
+const port = Number(process.env.OREID_CALLBACK_PORT) || 53134
 const redirectUrl = process.env.DISCORD_INVITE_URL || ''
 
 app.get('/', (request: Request, response: Response) => {

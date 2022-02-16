@@ -5,6 +5,7 @@ import { errorHandler } from "../utils/errorHandler"
 import { checkLoggedIn, setDiscordUserState } from "../modules/mongo"
 import { logEntry } from "../modules/userLog"
 import { logHandler } from "../utils/logHandler"
+import { UserLogKWArgs } from "../interfaces/DiscordUser"
 
 
 export const logout: CommandInt = {
@@ -44,7 +45,10 @@ export const logout: CommandInt = {
                     )
 
                     // Create an entry in the user's log
-                    await logEntry( "LogOut", Number(interaction.user.id) )
+                    const logArgs: UserLogKWArgs = { 
+                        stage: "Complete"
+                    } 
+                    await logEntry( "LogOut", Number(interaction.user.id),  logArgs)
 
                     loginEmbed.setTitle("✅ Success!")
                     loginEmbed.setDescription(

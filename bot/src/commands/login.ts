@@ -6,8 +6,9 @@ import { loginUser } from "../modules/oreid"
 import { createState } from "../utils/stateTools"
 import { checkLoggedIn, setDiscordUserState } from "../modules/mongo"
 import { logHandler } from "../utils/logHandler"
-import { alreadyLoggedIn } from "../utils/loginCheck";
-import { logEntry } from "../modules/userLog";
+import { alreadyLoggedIn } from "../utils/loginCheck"
+import { logEntry } from "../modules/userLog"
+import { UserLogKWArgs } from "../interfaces/DiscordUser"
 
 export const login: CommandInt = {
     data: new SlashCommandBuilder()
@@ -104,8 +105,10 @@ export const login: CommandInt = {
                     const userDiscordId: number = Number(interaction.user.id)
                     await setDiscordUserState(userDiscordId, state)
                     
-                    
-                    const savedLogEntry = await logEntry( "AttemptLogin", userDiscordId )
+                    const logArgs: UserLogKWArgs = { 
+                        stage: "Initiated"
+                    } 
+                    const savedLogEntry = await logEntry( "Login", userDiscordId, logArgs )
                     logHandler.info("Log entry saved?: " + savedLogEntry)
                     return
                 }
