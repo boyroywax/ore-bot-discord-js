@@ -7,7 +7,7 @@ import { logHandler } from "../utils/logHandler"
 import { UserLog } from "../interfaces/DiscordUser"
 import { listActivity } from "../modules/userLog"
 import { UserLogModel } from "../models/DiscordUserModel"
-import { User } from "@sentry/node"
+import { unauthorizedCommand } from "../utils/loginCheck"
 
 export const activity: CommandInt = {
     data: new SlashCommandBuilder()
@@ -90,6 +90,9 @@ export const activity: CommandInt = {
                 // send the reply to the user in the channel
                 await interaction.editReply({ embeds: [userActivityChannel] })
                 return
+            }
+            else {
+                await unauthorizedCommand(interaction, lastLogin)
             }
         }
         catch (err) {

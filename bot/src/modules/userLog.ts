@@ -16,7 +16,7 @@ export async function logEntry (
         logHandler.info("logEntry passed to logEntry function: " + entry)
         let userLogEntry: UserLog = new UserLogModel({
             action: action,
-            amount: entry?.amount || "NA",
+            amount: entry?.amount || 0,
             date: new Date,
             discordId: discordId,
             oreId: entry?.oreId || "NA",
