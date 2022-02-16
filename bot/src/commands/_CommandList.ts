@@ -5,5 +5,6 @@ import { login } from "./login"
 import { logout } from './logout'
 import { tip } from './tip'
 // import { tipAdmin } from './tipAdmin'
+import { activity } from "./activity"
 
-export const CommandList: CommandInt[] = [ balance, help, login, logout, tip ];
+export const CommandList: CommandInt[] = [ activity, balance, help, login, logout, tip ];

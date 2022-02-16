@@ -219,3 +219,21 @@ export async function addLogEntry( entry: UserLog ): Promise<boolean> {
     await disconnect()
     return saveStatus
 }
+
+export async function getLogEntries( discordId: number ): Promise<UserLog[]> {
+    let logEntries: UserLog[] = []
+    await connect(uri)
+    try {        
+        await UserLogModel.find({"discordId": discordId}).exec().then( async function(docs) {
+            for (let doc in docs) {
+                logHandler.info(docs[doc])
+                logEntries.push(docs[doc])
+            }
+        })
+    }
+    catch (err) {
+        errorHandler("addLog Entry Failed: ", err)
+    }
+    await disconnect()
+    return logEntries
+}

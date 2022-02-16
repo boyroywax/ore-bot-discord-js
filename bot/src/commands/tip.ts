@@ -18,7 +18,7 @@ export const tip: CommandInt = {
         .addNumberOption(option => option.setName("amount").setDescription("Enter tip amount").setRequired(true)),
     run: async (interaction) => {
         // 
-        // 
+        // Tip another user some tokens from your bot account
         // 
         try {
             // Make sure the user is logged in
@@ -42,7 +42,7 @@ export const tip: CommandInt = {
                         tipEmbed.setDescription("Your tip to " + recipientUserName?.toString() + " succeeded!")
                         tipEmbed.addField("Tip Amount", String(amount) + " " + process.env.CURRENCY_TOKEN, false)
 
-                        // Send messages to the sender and recipient
+                        // Send PM to the sender of the tip
                         await interaction.user.send({embeds: [tipEmbed]})
 
                         // Create message embed for recipient
@@ -52,6 +52,7 @@ export const tip: CommandInt = {
                             .setDescription(interaction.user.toString() + " sent you some funds.")
                             .addField("Tip Amount", String(amount) + " " + process.env.CURRENCY_TOKEN, false)
                         
+                        // Send PM to receiver of the tip
                         await recipientUserName?.send({embeds: [recipientEmbed]})
 
                         // Compose User's log entry for a succesfull tip

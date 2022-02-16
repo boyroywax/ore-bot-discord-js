@@ -2,9 +2,15 @@ import { logHandler } from '../utils/logHandler'
 import { errorHandler } from '../utils/errorHandler'
 import { UserLog, UserLogKWArgs } from '../interfaces/DiscordUser'
 import { UserLogModel } from '../models/DiscordUserModel'
-import { addLogEntry } from './mongo'
+import { addLogEntry, getLogEntries } from './mongo'
 
-export async function logEntry (action: string, discordId: number, entry?: UserLogKWArgs  ): Promise<boolean> {
+export async function logEntry (
+    action: string,
+    discordId: number,
+    entry?: UserLogKWArgs ): Promise<boolean> {
+    // 
+    // Logs the user's activity into their user log.
+    // 
     let savedLogEntry = false
     try  {
         logHandler.info("logEntry passed to logEntry function: " + entry)
@@ -25,4 +31,18 @@ export async function logEntry (action: string, discordId: number, entry?: UserL
         errorHandler('logEntry failed: ', err)
     }
     return savedLogEntry
+}
+
+export async function listActivity ( discordId: number ): Promise<UserLog[]> {
+    // 
+    // Returns a list of logEntries for a user
+    // 
+    let userLogEntries: UserLog[] = []
+    try {
+        userLogEntries = await getLogEntries(discordId)
+    }
+    catch (err) {
+        errorHandler("listActivity failed: ", err)
+    }
+    return userLogEntries
 }

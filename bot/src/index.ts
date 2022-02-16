@@ -24,7 +24,7 @@ import { logHandler } from './utils/logHandler'
         ],
     })
 
-    const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
+    const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.DIRECT_MESSAGES] })
 
     client.on("ready", async () => await onReady(client));
 
