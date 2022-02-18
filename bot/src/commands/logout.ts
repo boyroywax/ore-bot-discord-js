@@ -46,7 +46,7 @@ export const logout: CommandInt = {
 
                     // Create an entry in the user's log
                     const logArgs: UserLogKWArgs = { 
-                        stage: "Complete"
+                        status: "Complete"
                     } 
                     await logEntry( "LogOut", Number(interaction.user.id),  logArgs)
 

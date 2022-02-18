@@ -32,7 +32,7 @@ export const BotBalanceModel = model<BotBalance>('BotBalance', botBalanceSchema)
 export const userLogSchema = new Schema<UserLog>({
     id: { type: Number, required: false, index: true, default: 0, unique: true, ref: "id" },
     action: { type: String, required: true },
-    stage: { type: String, required: false },
+    status: { type: String, required: false },
     amount: { type: Number, required: false },
     date: {type: Date, required: true },
     discordId: { type: Number, required: true },

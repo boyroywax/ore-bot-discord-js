@@ -45,7 +45,7 @@ export async function verifyLogin(
 
                 const logArgs: UserLogKWArgs = { 
                     oreId: userOreId,
-                    stage: "Complete"
+                    status: "Complete"
                 } 
                 await logEntry('Login', doc.discordId, logArgs)
             }
@@ -55,7 +55,7 @@ export async function verifyLogin(
                     if (doc?.discordId) {
                         const logArgs: UserLogKWArgs = {
                             oreId: userOreId,
-                            stage: "Failed",
+                            status: "Failed",
                             comment: "User needs to request new /login"
                         } 
                         await logEntry('Login', doc?.discordId, logArgs)
@@ -64,7 +64,7 @@ export async function verifyLogin(
                     else {
                         const logArgs: UserLogKWArgs = {
                             oreId: userOreId,
-                            stage: "Failed",
+                            status: "Failed",
                             comment: "Cannot verify discordID, This may be the users first time logging in."
                         } 
                         await logEntry('Login', 0, logArgs)

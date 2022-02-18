@@ -59,7 +59,7 @@ export const tip: CommandInt = {
                         const logArgs: UserLogKWArgs = { 
                             recipient: Number(recipient),
                             amount: amount,
-                            stage: "Complete"
+                            status: "Complete"
                         } 
                         const tipLogSuccess = await logEntry( "Tip", Number(interaction.user.id), logArgs )
                         // logHandler.info("tipLogSuccess: " + tipLogSuccess)
@@ -75,7 +75,7 @@ export const tip: CommandInt = {
                         const logArgs: UserLogKWArgs = { 
                             recipient: Number(recipient),
                             amount: amount,
-                            stage: "Failed"
+                            status: "Failed"
                         } 
                         await logEntry( "Tip", Number(interaction.user.id), logArgs)
                     }

@@ -32,11 +32,11 @@ export interface UserLog {
     amount?: number
     txnId?: string
     comment?: string
-    stage?: string
+    status?: string
 }
 
 export interface UserLogKWArgs {
-    stage?: string
+    status?: string
     oreId?: string
     recipient?: number
     amount?: number

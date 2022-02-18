@@ -22,7 +22,7 @@ export async function logEntry (
             oreId: entry?.oreId || "NA",
             recipient: entry?.recipient || 0,
             txnId: entry?.txnId || "NA",
-            stage: entry?.stage || "NA",
+            status: entry?.status || "NA",
             comment: entry?.comment || "NA"
         })
         await addLogEntry(userLogEntry)

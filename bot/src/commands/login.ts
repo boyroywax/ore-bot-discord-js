@@ -106,7 +106,7 @@ export const login: CommandInt = {
                     await setDiscordUserState(userDiscordId, state)
                     
                     const logArgs: UserLogKWArgs = { 
-                        stage: "Initiated"
+                        status: "Initiated"
                     } 
                     const savedLogEntry = await logEntry( "Login", userDiscordId, logArgs )
                     logHandler.info("Log entry saved?: " + savedLogEntry)

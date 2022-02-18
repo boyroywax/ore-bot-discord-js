@@ -9,6 +9,8 @@ import { listActivity } from "../modules/userLog"
 import { UserLogModel } from "../models/DiscordUserModel"
 import { unauthorizedCommand } from "../utils/loginCheck"
 
+const maxLogActivity: number = Number(process.env.BOT_ACTIVITY_LOG_MAX) || 10
+
 export const activity: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("activity")
@@ -20,29 +22,33 @@ export const activity: CommandInt = {
         try {
             // Check if user is already logged in and retrive the lastLogin date as a string
             let [ loggedIn, lastLogin ] = await checkLoggedIn(Number(interaction.user.id)) 
-            logHandler.info(loggedIn + " "  + lastLogin)
+
             // Only display the acctivity info if the user is logged in
-            if (loggedIn == true) {
+            if (loggedIn == false) {
+                await unauthorizedCommand(interaction, lastLogin)
+            }
+            else if (loggedIn == true) {
                 const userObj = interaction.user
                 // Create a message only the user can see
                 await interaction.deferReply({ ephemeral: true })
-                const userActivityChannel = new MessageEmbed()
-                .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
 
                 // Fetch the user's activites on the bot
                 const logEntries: UserLog[] = await listActivity(Number(interaction.user.id))
 
-                userActivityChannel.setTitle("🏃 Activity")
-                userActivityChannel.setDescription("Your Latest actions on the ORE Network")
-                userActivityChannel.setURL("https://oreid.io")
-                userActivityChannel.addField(
+                const userActivityChannel = new MessageEmbed()
+                    .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
+                    .setTitle("🏃 Activity")
+                    .setDescription("Your Latest actions on the ORE Network")
+                    .setURL("https://oreid.io")
+                    .addField(
                     String("Check Your DM"),
                     String("Your activity has been privately sent to your DM."),
                     false
-                )
+                    )
 
-                let index = 0
-                const userActivity = new MessageEmbed()
+                // Create the Embed from the logEntries
+                let index: number = 0
+                const userActivity: MessageEmbed = new MessageEmbed()
                 for (let entry in logEntries) {
                     index += 1
                     let parseEntry: UserLog = new UserLogModel(logEntries[entry])
@@ -50,49 +56,69 @@ export const activity: CommandInt = {
                     // There should never be no logs
                     if (logEntries.length == 0) {
                         const noActivity = new MessageEmbed()
-                        noActivity.setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
-                        noActivity.setTitle("🏃 Activity")
-                        noActivity.setDescription("Your Latest actions on the ORE Network")
-                        noActivity.setURL("https://oreid.io")
-                        noActivity.addField(
+                            .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
+                            .setTitle("🏃 Activity")
+                            .setDescription("Your Latest actions on the ORE Network")
+                            .setURL("https://oreid.io")
+                            .addField(
                             String("No Activity"),
                             String("No one should ever see this..."),
                             false
-                        )
+                            )
                         await userObj.send({ embeds: [noActivity] })
                     }
+                    // Prepare the header and first message peice
                     else if (index == 1) {
                         // Construct the list items to embed
                         userActivity.setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
                         userActivity.setTitle("🏃 Activity")
-                        userActivity.setDescription("Your Latest actions on the ORE Network")
+                        userActivity.setDescription("Your latest 10 actions on the ORE Network Bot")
                         userActivity.setURL("https://oreid.io")
-                        userActivity.addField(
-                            String(parseEntry.date),
-                            String(parseEntry.action) + " " + String(parseEntry.stage) + " " + String(parseEntry?.recipient) + " " + String(parseEntry?.amount),
-                            false
-                        )
+                        if (parseEntry?.recipient) {
+                            userActivity.addField(
+                                index + ". " + String(parseEntry.action) + " | " + String(parseEntry.date.toLocaleString()),
+                                String(parseEntry.status) + " " + String(parseEntry?.recipient) + " " + String(parseEntry?.amount),
+                                false
+                            )
+                        }
+                        else {
+                            userActivity.addField(
+                                index + ". " + String(parseEntry.action) + " | " + String(parseEntry.date.toLocaleString()),
+                                String(parseEntry.status),
+                                false
+                            )
+                        }
                     }
-                    else if (index > 10) {
+                    // If the index is greater than 10, exit the for loop
+                    else if (index > maxLogActivity) {
                         break;
                     }
+                    // Add fields to the first message peice for each of 9 remaining entries
                     else if (index <= logEntries.length) {
                         // const userActivityEntry = new MessageEmbed()
-                        userActivity.addField(
-                            String(parseEntry.date),
-                            String(parseEntry.action) + " " + String(parseEntry.stage) + " " + String(parseEntry?.recipient) + " " + String(parseEntry?.amount),
-                            false
-                        )
+                        if (parseEntry?.recipient) {
+                            userActivity.addField(
+                                index + ". " + String(parseEntry.action) + " | " + String(parseEntry.date.toLocaleString()),
+                                String(parseEntry.status) + " " + String(parseEntry?.recipient) + " " + String(parseEntry?.amount),
+                                false
+                            )
+                        }
+                        else {
+                            userActivity.addField(
+                                index + ". " + String(parseEntry.action) + " | " + String(parseEntry.date.toLocaleString()),
+                                String(parseEntry.status),
+                                false
+                            )
+                        }
                     }
                 }
-                userActivity.setFooter(Date.now().toString(), process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
-                await userObj.send({ embeds: [userActivity] })
+                let now = new Date
+                userActivity.setFooter(now.toDateString(), process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
+                // await userObj.send({ embeds: [userActivity] })
                 // send the reply to the user in the channel
-                await interaction.editReply({ embeds: [userActivityChannel] })
+                // await interaction.editReply({ embeds: [userActivityChannel] })
+                await interaction.editReply({ embeds: [userActivity] })
                 return
-            }
-            else {
-                await unauthorizedCommand(interaction, lastLogin)
             }
         }
         catch (err) {

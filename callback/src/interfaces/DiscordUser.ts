@@ -23,13 +23,13 @@ export interface UserLog {
     amount?: number
     txnId?: string
     comment?: string
-    stage?: string
+    status?: string
 }
 // 
 // Additional Arguments object for adding extra info to the log entry
 // 
 export interface UserLogKWArgs {
-    stage?: string
+    status?: string
     oreId?: string
     recipient?: number
     amount?: number
