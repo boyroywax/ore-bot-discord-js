@@ -1,16 +1,17 @@
 import axios from "axios"
 import { OreId, OreIdOptions, LoginOptions, AuthProvider, ChainNetwork, AccountName, SignOptions, ChainAccount } from 'oreid-js'
-import { OreConnection } from "./chains"
-// import { Chain } from '@open-rights-exchange/chainjs'
+import { createOreConnection } from "./chains"
+import { Chain } from '@open-rights-exchange/chainjs'
 // import { ChainEntityNameBrand, ChainSymbolBrand } from '@open-rights-exchange/chainjs/src/models/generalModels'
 // import { ModelsEos } from '@open-rights-exchange/chainjs'
 // @ts-ignore
-import * as EosHelpers from '@open-rights-exchange/chainjs/src/chains/eos_2/helpers'
+// import * as EosHelpers from '@open-rights-exchange/chainjs/src/chains/eos_2/helpers'
 // import { EosAsset, EosSymbol } from '@open-rights-exchange/chainjs/src/chains/eos_2/models/generalModels'
 
 import { logHandler } from '../utils/logHandler'
 import { errorHandler } from '../utils/errorHandler'
 import { getOreIdUser } from "./mongo"
+import { loggers } from "winston"
 
 
 const oreIdOptions: OreIdOptions = {
@@ -67,13 +68,13 @@ export async function loginUser(authProvider: string, newState: string) {
     }
 }
 
-export async function getUser(account: AccountName) {
+export async function getUser(account: AccountName)  {
     let user
     try {
         logHandler.info("Fetching user: " + account + "...")
         let userInfo = await oreId.getUserInfoFromApi(account)
         // logHandler.info(account + " info: " + JSON.stringify(userInfo))
-        user = userInfo.toEntity
+        user = userInfo
         logHandler.info("user object: " + user)
         return user
     }
@@ -92,17 +93,17 @@ export async function getOreIdBalance(discordId: number): Promise<number> {
         logHandler.info("getUserfromApi response: ", response)
 
         // Connect to the ORE network to retrieve the balance
-        const oreConnection = await OreConnection()
+        const oreConnection = await createOreConnection()
         logHandler.info("oreConnection status: " + oreConnection?.isConnected)
         logHandler.info("ore Network Info: " + JSON.stringify(oreConnection?.chainInfo))
         // const chainSymbol = "ORE"
 
         const chainSymbol = oreConnection?.nativeToken.symbol
+        logHandler.info("chainSymbol: " + chainSymbol)
         // Fetch the ORE-ID user's balance from the chain
-        let balance = oreConnection?.fetchBalance(response.toEntity(), EosHelpers.toEosSymbol(chainSymbol))
+        // let balance = oreConnection?.fetchBalance(response.toEntity(), EosHelpers.toEosSymbol(chainSymbol))
         // logHandler.info("user OREID balance: " + balance)
         
-
     } catch (err) {
         errorHandler('getOreIdBalance failed: ', err)
     }

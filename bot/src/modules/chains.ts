@@ -1,14 +1,12 @@
 import { ChainFactory, ChainType, Chain } from '@open-rights-exchange/chainjs'
-import { ChainEndpoint, ChainActionType  } from '@open-rights-exchange/chainjs/src/models/'
+import { ChainEndpoint, ChainInfo  } from '@open-rights-exchange/chainjs/src/models/'
 import { logHandler } from "../utils/logHandler"
 import { errorHandler } from "../utils/errorHandler"
 
 
-// 
-// Create ORE Network Connection
-// 
-export async function OreConnection() {
-    let oreChain: Chain
+
+export async function newOreConnection(): Promise<Chain | undefined> {
+    let oreChain = undefined
     try {
         const chainType =  ChainType.EosV2
         const oreEndpoints: ChainEndpoint[] = [
@@ -17,11 +15,31 @@ export async function OreConnection() {
             },
         ]
         oreChain = new ChainFactory().create( chainType, oreEndpoints )
-        await oreChain.connect()
-        return oreChain
+        
+    } 
+    catch (err) {
+        errorHandler("newOreConnection failed: ", err)
+    }
+    return oreChain
+}
+
+
+// 
+// Create ORE Network Connection
+// 
+export async function createOreConnection() {
+    // 
+    // 
+    let oreChain = await newOreConnection()
+    try {
+        if (oreChain) {
+           await oreChain.connect()
+        }
     }
     catch (err) {
-        errorHandler('OreConnection failed: ', err)
+        errorHandler('oreConnection failed: ', err)
     }
+    return oreChain
 }
+
 
