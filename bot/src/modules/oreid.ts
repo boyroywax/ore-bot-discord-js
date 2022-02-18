@@ -1,10 +1,8 @@
 import axios from "axios"
-import { OreId, OreIdOptions, LoginOptions, AuthProvider, ChainNetwork, AccountName, SignOptions, ChainAccount } from 'oreid-js'
-import { createOreConnection } from "./chains"
-import { Chain } from '@open-rights-exchange/chainjs'
-import { HelpersEos } from '@open-rights-exchange/chainjs'
-// import * as ChainJs from '@open-rights-exchange/chainjs'
+import { AccountName, AuthProvider, ChainAccount, ChainNetwork, LoginOptions, OreId, OreIdOptions ,SignOptions } from 'oreid-js'
+import { Chain, HelpersEos } from '@open-rights-exchange/chainjs'
 
+import { createOreConnection } from "./chains"
 import { logHandler } from '../utils/logHandler'
 import { errorHandler } from '../utils/errorHandler'
 import { getOreIdUser } from "./mongo"
@@ -112,22 +110,40 @@ export async function getOreIdBalance(discordId: number): Promise<[string, numbe
     return [oreIdUserName, oreIdBalance]
 }
 
-export async function logoutUser(account: AccountName){
-    logHandler.info("logging out user")
+export function logoutUserAddress(state: string): string {
+    let logoutUrl: string = ""
     try {
-        const response = await axios.get(process.env.OREID_URL + '/logout', {
-            params: {
-                app_id: process.env.OREID_APP_ID,
-                providers: "all",
-                callback_url: process.env.OREID_AUTH_CALLBACK_URL
-            }
-        })
-        logHandler.info("logoutUser response: ", response);
+        const logoutBaseUrl = new URL(process.env.OREID_URL + '/logout')
+        logoutBaseUrl.searchParams.append("app_id", process.env.OREID_APP_ID || "")
+        logoutBaseUrl.searchParams.append("providers", "all")
+        logoutBaseUrl.searchParams.append("callback_url", process.env.OREID_LOGOUT_CALLBACK_URL || "")
+        logoutBaseUrl.searchParams.append("state", state)
+
+        logHandler.info("logoutUser address: ", logoutBaseUrl.href);
+        logoutUrl = logoutBaseUrl.href
     } 
     catch (error) {
         errorHandler("logoutUser failed: ", error);
     }
+    return logoutUrl
 }
+
+// export async function logoutUser(account?: AccountName){
+//     logHandler.info("logging out user: " + account)
+//     try {
+//         const response = await axios.get(process.env.OREID_URL + '/logout', {
+//             params: {
+//                 app_id: process.env.OREID_APP_ID,
+//                 providers: "all",
+//                 callback_url: process.env.OREID_AUTH_CALLBACK_URL
+//             }
+//         })
+//         logHandler.info("logoutUser response: ", response);
+//     } 
+//     catch (error) {
+//         errorHandler("logoutUser failed: ", error);
+//     }
+// }
 
 // async function loginWithIdToken() {
 //     try {
