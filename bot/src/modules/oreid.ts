@@ -118,6 +118,9 @@ export function logoutUserAddress(state: string): string {
         logoutBaseUrl.searchParams.append("providers", "all")
         logoutBaseUrl.searchParams.append("callback_url", process.env.OREID_LOGOUT_CALLBACK_URL || "")
         logoutBaseUrl.searchParams.append("state", state)
+        
+        // const logoutBaseUrl = new URL(process.env.OREID_URL + '/logout#app_id=' + process.env.OREID_APP_ID + '&providers=all&state=' + state +"&callback_url=" + process.env.OREID_LOGOUT_CALLBACK_URL)
+
 
         logHandler.info("logoutUser address: ", logoutBaseUrl.href);
         logoutUrl = logoutBaseUrl.href
