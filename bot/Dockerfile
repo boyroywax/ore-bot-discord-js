@@ -7,11 +7,12 @@ FROM node:17.4-alpine3.15 as base
 WORKDIR /home/app
 
 COPY package*.json ./
-COPY tsconfig.json ./
 
 RUN npm i
 
 RUN npm i -g typescript --save-dev
+
+COPY tsconfig.json ./
 
 COPY src/ src/
 

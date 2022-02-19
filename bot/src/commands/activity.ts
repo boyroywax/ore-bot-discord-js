@@ -35,16 +35,17 @@ export const activity: CommandInt = {
                 // Fetch the user's activites on the bot
                 const logEntries: UserLog[] = await listActivity(Number(interaction.user.id))
 
-                const userActivityChannel = new MessageEmbed()
-                    .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
-                    .setTitle("🏃 Activity")
-                    .setDescription("Your Latest actions on the ORE Network")
-                    .setURL("https://oreid.io")
-                    .addField(
-                    String("Check Your DM"),
-                    String("Your activity has been privately sent to your DM."),
-                    false
-                    )
+                // Embed for the main channel if sending the activity to DM
+                // const userActivityChannel = new MessageEmbed()
+                //     .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
+                //     .setTitle("🏃 Activity")
+                //     .setDescription("Your Latest actions on the ORE Network")
+                //     .setURL("https://oreid.io")
+                //     .addField(
+                //     String("Check Your DM"),
+                //     String("Your activity has been privately sent to your DM."),
+                //     false
+                //     )
 
                 // Create the Embed from the logEntries
                 let index: number = 0
@@ -61,9 +62,9 @@ export const activity: CommandInt = {
                             .setDescription("Your Latest actions on the ORE Network")
                             .setURL("https://oreid.io")
                             .addField(
-                            String("No Activity"),
-                            String("No one should ever see this..."),
-                            false
+                                String("No Activity"),
+                                String("No one should ever see this..."),
+                                false
                             )
                         await userObj.send({ embeds: [noActivity] })
                     }
@@ -93,7 +94,7 @@ export const activity: CommandInt = {
                     else if (index > maxLogActivity) {
                         break;
                     }
-                    // Add fields to the first message peice for each of 9 remaining entries
+                    // Add fields to the first message peice for each of X-1 remaining entries
                     else if (index <= logEntries.length) {
                         // const userActivityEntry = new MessageEmbed()
                         if (parseEntry?.recipient) {

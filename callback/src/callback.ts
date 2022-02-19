@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import express from 'express'
 import { logHandler } from "./utils/logHandler"
-import { verifyLogin } from "./modules/mongo"
+import { verifyLogin, verifyLogout } from "./modules/mongo"
 
 
 const app = express()
@@ -25,6 +25,23 @@ app.get('/auth', async (request: Request, response: Response) => {
 		}
 		else {
 			return response.sendFile('./login-failure.html', { root: '.' })
+		}
+	})
+})
+
+app.get('/logout', async (request: Request, response: Response) => {
+	// console.log('Returned Request: ' + JSON.stringify(request))
+	logHandler.info('Returned User: ' + request.query.account)
+	logHandler.info('Return State: ' + request.query.state)
+	let user: string = request.query.account?.toString() || ''
+	let state: string = request.query.state?.toString() || ''
+	const logout = await verifyLogout(user, state).then(async function(logoutSuccess) {
+		logHandler.info("logoutSuccess: " + logoutSuccess)
+		if (logoutSuccess == true) {
+			return response.sendFile('./logout-success.html', { root: '.' })
+		}
+		else {
+			return response.sendFile('./logout-failure.html', { root: '.' })
 		}
 	})
 })

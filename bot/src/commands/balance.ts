@@ -25,29 +25,29 @@ export const balance: CommandInt = {
                 if (response[0] == true) {
                     // Create a message only the user can see
                     await interaction.deferReply({ ephemeral: true })
-                    const balanceEmbed = new MessageEmbed()
-                    .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
 
                     // Fetch the user's balance on the bot
                     const botBalance: number = await getBotBalance(Number(interaction.user.id))
 
                     // Fetch the user ORE-ID balance
-                    const oreIdBalance: number =  await getOreIdBalance(Number(interaction.user.id))
+                    const [ oreIdUserName, oreIdBalance]=  await getOreIdBalance(Number(interaction.user.id))
 
                     // Construct login embed
-                    balanceEmbed.setTitle("💰 Balances")
-                    balanceEmbed.setDescription("Your " + process.env.CURRENCY + " Balances")
-                    balanceEmbed.setURL("https://oreid.io")
-                    balanceEmbed.addField(
-                        "🤖 Bot Balance",
-                        String(botBalance),
-                        true
-                    )
-                    balanceEmbed.addField(
-                        "⛅️ ORE-ID Balance",
-                        String(oreIdBalance),
-                        true
-                    )
+                    const balanceEmbed = new MessageEmbed()
+                        .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
+                        .setTitle("💰 Balances")
+                        .setDescription("Your " + process.env.CURRENCY + " Balances")
+                        .setURL("https://oreid.io")
+                        .addField(
+                            "🤖 Bot Balance",
+                            String(botBalance),
+                            false
+                        )
+                        .addField(
+                            "⛅️ ORE-ID Balance | " + oreIdUserName,
+                            String(oreIdBalance),
+                            false
+                        )
                     return await interaction.editReply({ embeds: [balanceEmbed] })
                 }
                 // Alert the user that they are not logged in

@@ -81,6 +81,74 @@ export async function verifyLogin(
     return loggedIn
 }
 
+export async function verifyLogout(
+    userOreId: string,
+    stateIn: string): Promise<boolean> {
+    //
+    // Validate a user's login
+    // Returns true if the user was logged in correctly
+    //
+    let logoutSuccess: boolean = false
+    await connect(uri)
+    // Connect to mongoDB
+    logHandler.info('Connected to MongoDB!')
+    try {
+        // Declare the DiscordUser model and search mongodb for
+        // a state that matches the callback value
+        logHandler.info("Finding: " + stateIn)
+        // const OreIdUser = model('OreIdUser', discordSchema)
+        const findUser = await DiscordUserModel.findOne({ "state": String(stateIn) })
+        .exec().then(async function(doc) {
+            logHandler.info('document fetched: ' + doc)
+            // If the doc exists, set the loggedIn value to true
+            // Also reset the state to "None"
+            if (doc) {
+                doc.loggedIn = false
+                doc.oreId = userOreId
+                doc.state = "None"
+                logoutSuccess = true
+
+                let saveUser = await doc.save()
+                logHandler.info('Saved the doc to mongodb: ' + saveUser)
+
+                const logArgs: UserLogKWArgs = { 
+                    oreId: userOreId,
+                    status: "Complete"
+                } 
+                await logEntry('LogOut', doc.discordId, logArgs)
+            }
+            else {
+                const findUser = await DiscordUserModel.findOne({ "oreId": userOreId })
+                .exec().then(async function(doc) {
+                    if (doc?.discordId) {
+                        const logArgs: UserLogKWArgs = {
+                            oreId: userOreId,
+                            status: "Failed",
+                            comment: "User needs to request new /logout"
+                        } 
+                        await logEntry('LogOut', doc?.discordId, logArgs)
+                        logHandler.error('verifyLogout failed')
+                    }
+                    else {
+                        const logArgs: UserLogKWArgs = {
+                            oreId: userOreId,
+                            status: "Failed",
+                            comment: "Cannot verify discordID."
+                        } 
+                        await logEntry('LogOut', 0, logArgs)
+                        logHandler.error('verifyLogout failed')
+                    }
+                })
+            }
+        })
+    }
+    catch (error) {
+        logHandler.error("Error verifying logout: " + error)
+    }
+    await disconnect()
+    return logoutSuccess
+}
+
 export async function addLogEntry( entry: UserLog ): Promise<boolean> {
     let saveStatus: boolean = false
     await connect(uri)
