@@ -16,13 +16,11 @@ export const logout: CommandInt = {
         .setDescription("Log out of your ORE-ID account."),
     run: async (interaction) => {
         // 
-        // Logout from OreId
+        // Logout from OreId Prompt
         // 
-
-        // Check if user is already logged in and lastLogin Date
         let userCheck = await checkLoggedIn(Number(interaction.user.id))
-        .then(async function(response: [boolean, string]) {
-            logHandler.info("checkLoggedIn: " + response)
+            .then(async function([loggedIn, loginDate]: [boolean, string]) {
+            logHandler.info("checkLoggedIn: " + loggedIn)
 
             // Create reply object that only the user can see
             await interaction.deferReply({ ephemeral: true })
@@ -33,7 +31,7 @@ export const logout: CommandInt = {
 
             const date: Date = new Date
             // If logged in
-            if (response[0] == true) {
+            if (loggedIn == true) {
                 try {
                     // call the api /logout endpoint to fully
                     // logout the user from ORE-ID

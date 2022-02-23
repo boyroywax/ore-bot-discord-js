@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  namespace: ore
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+      tier: backend
+      env: production
+  template:
+    metadata:
+      labels:
+        app: mongo
+        tier: backend
+        env: production
+    spec:
+      containers:
+      - image: mongo:5.0.6-focal
+        name: ore-discord-bot-mongo
+        ports:
+        - containerPort: 27017
+        livenessProbe:
+          exec:
+            command:
+            - mongo
+            - --eval
+            - db.adminCommand('ping')
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+            - mongo
+            - --eval
+            - db.adminCommand('ping')
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          requests:
+            memory: "768Mi"
+            cpu: "500m"
+          limits:
+            memory: "1536Mi"
+            cpu: "1000m"
+        volumeMounts:
+        - mountPath: /data/db
+          name: mongo-vol1
+          readOnly: false
+          subPath: ./
+      volumes:
+      - name: mongo-vol1
+        persistentVolumeClaim:
+          claimName: ore-pvc-mongo
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ore-mongo
+  namespace: ore
+spec:
+  type: ClusterIP
+  ports:
+  - port: 27017
+    targetPort: 27017
+  clusterIP: None
+  selector:
+    app: mongo
+    tier: backend
+    env: production
+---

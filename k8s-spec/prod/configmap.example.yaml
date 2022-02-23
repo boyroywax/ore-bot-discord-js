@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: config-dev
-  namespace: ore-dev
+  name: config
+  namespace: ore
 data:
   # General
-  STAGE: Development
+  STAGE: production
 
   # Bot Options
   BOT_ACTIVITY_LOG_MAX: "10"
@@ -18,18 +18,18 @@ data:
   CURRENCY_PRECISION: "8"
   CURRENCY_BLOCK_EXPLORER: https://explorer.ore.network/
   CURRENCY_LOGO: https://imgur.com/5M8hB6N.png
-  CURRENCY_STAGE: testnet
+  CURRENCY_STAGE: mainnet
   CURRENCY_MAINNET: https://ore.openrights.exchange
   CURRENCY_TESTNET: https://ore-staging.openrights.exchange
 
   # Discord
-  DISCORD_CLIENT_ID: "945759694411157544"
-  DISCORD_GUILD_ID: "945764140520189952"
+  DISCORD_CLIENT_ID: "936064780081434737"
+  DISCORD_GUILD_ID: "936062852278665227"
   DISCORD_INVITE_URL: https://discord.com/invite/zcW8tncqq4
   DISCORD_CHANNEL: https://discord.com/channels/936062852278665227/939223397051818014
 
   # MongoDB
-  MONGO_HOST: ore-mongo-dev
+  MONGO_HOST: ore-mongo
   MONGO_PORT: "27017"
   MONGO_URI: mongodb://...
 
@@ -37,9 +37,9 @@ data:
   OREID_APP_ID: t_fb2...
   OREID_APP_NAME: ORE Network Bot
   OREID_URL: https://service.oreid.io
-  OREID_AUTH_CALLBACK_URL: http://34.149.23.111/auth
-  OREID_LOGOUT_CALLBACK_URL: http://34.149.23.111/logout
-  OREID_SIGN_CALLBACK_URL: http://34.149.23.111/sign
+  OREID_AUTH_CALLBACK_URL: http://cb.ore.network/auth
+  OREID_LOGOUT_CALLBACK_URL: http://cb.ore.network/logout
+  OREID_SIGN_CALLBACK_URL: http://cb.ore.network/sign
   OREID_CALLBACK_PORT: "53134"
   OREID_LOGO: https://i.imgur.com/A3yS9pl.png
   OREID_HOME: https://oreid.io

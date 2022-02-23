@@ -35,29 +35,41 @@ profiles:
         - ./k8s-spec/dev/discord-bot-dep.yaml
         - ./k8s-spec/dev/discord-callback-dep.yaml
 
-- name: init-deploy
-  build:
-    artifacts:
-    - image: boyroywax/ore-redis-prod
-      context: ./redis/
-      docker:
-        dockerfile: ./Dockerfile.prod
+- name: mongo-prod
   deploy:
     kubectl:
       manifests:
-        - ./k8s-spec/prod/telegram-bot-sc.yaml
-        - ./k8s-spec/prod/telegram-bot-pvc.yaml
-        - ./k8s-spec/prod/redis-pvc.yaml
-        - ./k8s-spec/prod/redis-dep.yaml
+        - ./k8s-spec/prod/mongo-sc.yaml
+        - ./k8s-spec/prod/mongo-pvc.yaml
+        - ./k8s-spec/prod/mongo-dep.yaml
+
+- name: ingress-prod
+  deploy:
+    kubectl:
+      manifests:
+        - ./k8s-spec/prod/auth-ingress.yaml
+
+- name: loadbalance-prod
+  deploy:
+    kubectl:
+      manifests:
+        - ./k8s-spec/prod/discord-callback-lb.yaml
+
 - name: production
   build:
     artifacts:
-    - image: boyroywax/ore-bot-telegram-prod
-      context: ./
+    - image: boyroywax/ore-discord-bot
+      context: ./bot/
+      docker:
+        dockerfile: ./Dockerfile
+    - image: boyroywax/ore-discord-callback
+      context: ./callback/
       docker:
         dockerfile: ./Dockerfile
   deploy:
     kubectl:
       manifests:
+        - ./k8s-spec/prod/secrets.yaml
         - ./k8s-spec/prod/configmap.yaml
-        - ./k8s-spec/prod/telegram-bot-dep.yaml
+        - ./k8s-spec/prod/discord-bot-dep.yaml
+        - ./k8s-spec/prod/discord-callback-dep.yaml
