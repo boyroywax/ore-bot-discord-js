@@ -22,12 +22,11 @@ export const login: CommandInt = {
         try {
             // Check if user is already logged in
             let userCheck = await checkLoggedIn(Number(interaction.user.id))
-            .then(async function(response: [boolean, string]) {
-                logHandler.info("userCheck: " + response)
+                .then(async function([loggedIn, loginDate]: [boolean, string]) {
                 
                 // Alert the user if they are already logged in
-                if (response[0] == true) {
-                    return await alreadyLoggedIn(interaction, response[1])
+                if (loggedIn == true) {
+                    return await alreadyLoggedIn(interaction, loginDate)
                 }
                 // Present the login menu if the user is not logged in
                 else {
@@ -56,13 +55,12 @@ export const login: CommandInt = {
                     let phoneLoginParse = JSON.parse(phoneLoginInfo)
 
                     // Construct login embed and button rows
-                    // loginEmbed.setTitle("<:emoji name:oreidlogo:> Login to ORE ID") BROKEN
                     loginEmbed.setTitle("Login to ORE ID")
                     loginEmbed.setDescription("Login to ORE-ID using a method below.")
                     loginEmbed.setURL(process.env.OREID_HOME || "https://oreid.io")
                     loginEmbed.addField(
                         "Last login",
-                        response[1] || "Never",
+                        loginDate || "Never",
                         false
                     )
 
@@ -94,10 +92,10 @@ export const login: CommandInt = {
                         .setURL(phoneLoginParse.loginUrl)
                         .setStyle('LINK')
                     )
-                    if (response[1] != "None") {
+                    if (loginDate != "None") {
                         loginEmbed.addField,
                         "Last login",
-                        response[1]
+                        loginDate
                     }
                     // Send the embed to discord
                     await interaction.editReply({ components: [row, row2], embeds: [loginEmbed] })

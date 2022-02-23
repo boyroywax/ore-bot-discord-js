@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-bot
+  namespace: ore
+  labels:
+    app: discord-bot
+    tier: backend
+    env: production
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-bot
+      tier: backend
+      env: production
+  template:
+    metadata:
+      labels:
+        app: discord-bot
+        tier: backend
+        env: production
+    spec:
+      containers:
+      - name: ore-discord-bot
+        image: boyroywax/ore-discord-bot
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "750m"
+        envFrom:
+          - configMapRef:
+              name: config
+          - secretRef:
+              name: bot-secrets
+      restartPolicy: Always

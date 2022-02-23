@@ -22,19 +22,16 @@ export interface BotBalance {
 //
 // Interface for the discord user's log.
 // 
-export interface UserLog {
+export interface UserLog extends UserLogKWArgs {
     id?: Number
     action: string
     date: Date
-    discordId: number   
-    oreId?: string
-    recipient?: number
-    amount?: number
-    txnId?: string
-    comment?: string
-    status?: string
+    discordId: number
 }
 
+// 
+// Additional Arguments object for adding extra info to the log entry
+// 
 export interface UserLogKWArgs {
     status?: string
     oreId?: string

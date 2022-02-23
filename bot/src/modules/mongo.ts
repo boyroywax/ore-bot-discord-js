@@ -1,8 +1,9 @@
-import { connect, disconnect, FilterQuery, Model, model, now, Schema } from 'mongoose'
-import { logHandler } from '../utils/logHandler'
-import { errorHandler } from '../utils/errorHandler'
-import { DiscordUserModel, BotBalanceModel, UserLogModel } from '../models/DiscordUserModel'
+import { connect, disconnect } from 'mongoose'
+
 import { DiscordUser, UserLog } from '../interfaces/DiscordUser'
+import { DiscordUserModel, BotBalanceModel, UserLogModel } from '../models/DiscordUserModel'
+import { errorHandler } from '../utils/errorHandler'
+import { logHandler } from '../utils/logHandler'
 
 
 const uri = process.env.MONGO_URI || "mongodb://" 
@@ -44,7 +45,6 @@ function setDiscordUser(
     } 
     return doc
 }
-
 
 export async function setDiscordUserState(
     userDiscordId: number,
@@ -102,7 +102,7 @@ export async function checkLoggedIn(
     ): Promise<[ boolean, string ]> {
     // 
     // Returns the users login status and lastLogin Date in string form
-    // Creastes a new user if one does not exist
+    // Creates a new user if one does not exist
     // 
     await connect(uri)
     let loggedIn: boolean = false
@@ -157,8 +157,7 @@ export async function getOreIdUser( userDiscordId: number): Promise<string> {
 
 export async function zeroBotBalance ( userDiscordId: number ): Promise<boolean> {
     // 
-    // Sets a user's bot balance back to zero, used when
-    // creating a new user.
+    // Sets a user's bot balance back to zero, used when creating a new user.
     // 
     let balanceZeroed = false
     await connect(uri)
@@ -188,6 +187,9 @@ export async function zeroBotBalance ( userDiscordId: number ): Promise<boolean>
 }
 
 export async function updateBotBalance( userDiscordId: number, botBalance: number ): Promise<boolean> {
+    // 
+    // Update the Botbalance of a user in mongodb
+    // 
     let saveStatus: boolean = false
     await connect(uri)
     try {        
@@ -207,6 +209,9 @@ export async function updateBotBalance( userDiscordId: number, botBalance: numbe
 }
 
 export async function addLogEntry( entry: UserLog ): Promise<boolean> {
+    // 
+    // Adds a log entry to the User's log
+    // 
     let saveStatus: boolean = false
     await connect(uri)
     try {        
@@ -221,6 +226,9 @@ export async function addLogEntry( entry: UserLog ): Promise<boolean> {
 }
 
 export async function getLogEntries( discordId: number ): Promise<UserLog[]> {
+    // 
+    // Fetches a UserLog list
+    // 
     let logEntries: UserLog[] = []
     await connect(uri)
     try {        

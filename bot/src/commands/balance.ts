@@ -19,10 +19,10 @@ export const balance: CommandInt = {
         try {
             // Check if user is already logged in and retrive the lastLogin date as a string
             let userCheck = await checkLoggedIn(Number(interaction.user.id))
-            .then(async function(response: [boolean, string]) {
-                logHandler.info("userCheck for balance: " + response)
+                .then(async function([loggedIn, loginDate]: [boolean, string]) {
+
                 // Only display the balance if the user is logged in
-                if (response[0] == true) {
+                if (loggedIn == true) {
                     // Create a message only the user can see
                     await interaction.deferReply({ ephemeral: true })
 
@@ -52,7 +52,7 @@ export const balance: CommandInt = {
                 }
                 // Alert the user that they are not logged in
                 else {
-                    return await unauthorizedCommand(interaction, response[1])
+                    return await unauthorizedCommand(interaction, loginDate)
                 }   
             })
         }

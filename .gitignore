@@ -104,8 +104,13 @@ dist
 # TernJS port file
 .tern-port
 
+# node.js
 package-lock.json
 .env
 
+# k8s configs and secrets
 k8s-spec/dev/configmap.yaml
 k8s-spec/dev/secrets.yaml
+
+k8s-spec/prod/configmap.yaml
+k8s-spec/prod/secrets.yaml
