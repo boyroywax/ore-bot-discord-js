@@ -5,21 +5,21 @@ metadata:
   namespace: ore
   annotations:
     kubernetes.io/ingress.class: "gce"
-# spec:
-#   rules:
-#   - host: cb.ore.network
-#     http:
-#       paths:
-#       - pathType: ImplementationSpecific
-#         path: "/*"
-#         backend:
-#           service:
-#             name: ore-callback-p
-#             port:
-#               name: http
+    # kubernetes.io/ingress.global-static-ip-name: "ore-discord-bot"
 spec:
   defaultBackend:
     service:
       name: ore-callback-p
       port:
         name: http
+  # rules:
+  # - host: "cb.ore.network"
+  #   http:
+  #     paths:
+  #     - pathType: Prefix
+  #       path: "/"
+  #       backend:
+  #         service:
+  #           name: ore-callback-p
+  #           port:
+  #             name: http

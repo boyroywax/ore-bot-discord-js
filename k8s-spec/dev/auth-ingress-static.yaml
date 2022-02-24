@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: auth-ingress-dev
+  namespace: ore-dev
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "dev-ore-discord-bot"
+spec:
+  defaultBackend:
+    service:
+      name: ore-callback-d
+      port:
+        name: http
+  rules:
+  - host: "cb.ore.network"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: ore-callback-d
+            port:
+              name: http
+# spec:
+#   defaultBackend:
+#     service:
+#       name: ore-callback-d
+#       port:
+#         name: http

@@ -14,7 +14,7 @@ profiles:
   deploy:
     kubectl:
       manifests:
-        - ./k8s-spec/dev/auth-ingress.yaml
+        - ./k8s-spec/dev/auth-ingress-static.yaml
 
 - name: development
   build:
