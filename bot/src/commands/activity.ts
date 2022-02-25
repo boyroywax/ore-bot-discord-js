@@ -19,9 +19,10 @@ export const activity: CommandInt = {
         // 
         // Displays the information about the users actions on the bot
         // 
+        const userDiscordId: bigint = BigInt(interaction.user.id)
         try {
             // Check if user is already logged in and retrive the lastLogin date as a string
-            let [ loggedIn, lastLogin ] = await checkLoggedIn(Number(interaction.user.id)) 
+            let [ loggedIn, lastLogin ] = await checkLoggedIn(userDiscordId) 
 
             // Only display the acctivity info if the user is logged in
             if (loggedIn == false) {
@@ -33,7 +34,7 @@ export const activity: CommandInt = {
                 await interaction.deferReply({ ephemeral: true })
 
                 // Fetch the user's activites on the bot
-                const logEntries: UserLog[] = await listActivity(Number(interaction.user.id))
+                const logEntries: UserLog[] = await listActivity(userDiscordId)
 
                 // Embed for the main channel if sending the activity to DM
                 // const userActivityChannel = new MessageEmbed()

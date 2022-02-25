@@ -18,7 +18,8 @@ export const logout: CommandInt = {
         // 
         // Logout from OreId Prompt
         // 
-        let userCheck = await checkLoggedIn(Number(interaction.user.id))
+        const userDiscordId: bigint = BigInt(interaction.user.id)
+        let userCheck = await checkLoggedIn(userDiscordId)
             .then(async function([loggedIn, loginDate]: [boolean, string]) {
             logHandler.info("checkLoggedIn: " + loggedIn)
 
@@ -42,7 +43,7 @@ export const logout: CommandInt = {
                     // Reset the Discord Users State to "None" and
                     // set the loggedIn status to false
                     await setDiscordUserState(
-                        Number(interaction.user.id),
+                        userDiscordId,
                         state,
                         true
                     )
@@ -51,7 +52,7 @@ export const logout: CommandInt = {
                     const logArgs: UserLogKWArgs = { 
                         status: "Initiated"
                     } 
-                    await logEntry( "LogOut", Number(interaction.user.id),  logArgs)
+                    await logEntry( "LogOut", userDiscordId,  logArgs)
 
                     logoutEmbed.setTitle("🪵 Logout Started!")
                     logoutEmbed.setDescription(

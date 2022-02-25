@@ -20,11 +20,12 @@ export const donate: CommandInt = {
         // 
         // Donates an amount of a user's funds to the faucet fund.
         // 
+        const userDiscordId: bigint = BigInt(interaction.user.id)
+        const amount: number = interaction.options.getNumber('amount') || 0.00 
         try {
             // Check if user is already logged in and retrive the lastLogin date as a string
-            let [ loggedIn, lastLogin ] = await checkLoggedIn(Number(interaction.user.id)) 
-            const amount: number = interaction.options.getNumber('amount') || 0.00
-
+            let [ loggedIn, lastLogin ] = await checkLoggedIn(userDiscordId) 
+            
             // Create a message only the user can see
             await interaction.deferReply({ ephemeral: true })
             const donationEmbed = new MessageEmbed()
@@ -36,7 +37,7 @@ export const donate: CommandInt = {
             }
             else if (loggedIn == true) {
                 const userObj = interaction.user
-                let [ donationCompleted, donationComment, donationFundTotal ] = await faucetDonate(amount, Number(interaction.user.id), )
+                let [ donationCompleted, donationComment, donationFundTotal ] = await faucetDonate(amount, userDiscordId)
             
                 if (donationCompleted) {
                     donationEmbed.setTitle("✅ Donation Complete")
@@ -46,12 +47,12 @@ export const donate: CommandInt = {
 
                     // Compose User's log entry for a succesfull donation
                     const logArgs: UserLogKWArgs = { 
-                        recipient: Number(99),
+                        recipient: BigInt(99),
                         amount: amount,
                         status: "Complete",
                         comment: donationComment
                     }
-                    await logEntry( "FaucetDonate", Number(interaction.user.id), logArgs )
+                    await logEntry( "FaucetDonate", userDiscordId, logArgs )
 
                     // Send PM to the sender of the donation
                     await interaction.user.send( {embeds: [donationEmbed]} )
@@ -64,18 +65,18 @@ export const donate: CommandInt = {
                     donationEmbed.setDescription("Your donation to the 🚰 Faucet Fund Failed!")
                     donationEmbed.addField("Amount Donated", String(amount) + " " + process.env.CURRENCY_TOKEN, false)
                     donationEmbed.addField("Faucet Balance", String(donationFundTotal) + " " + process.env.CURRENCY_TOKEN, false)
-                    donationEmbed.addField("Reason for failiure", donationComment )
+                    donationEmbed.addField("Reason for failure", donationComment )
 
                     await interaction.editReply( {embeds: [donationEmbed]} )
 
                     // Compose User's log entry for a failed donation
                     const logArgs: UserLogKWArgs = { 
-                        recipient: Number(99),
+                        recipient: BigInt(99),
                         amount: amount,
                         status: "Failed",
                         comment: donationComment
                     } 
-                    await logEntry( "FaucetDonate", Number(interaction.user.id), logArgs )
+                    await logEntry( "FaucetDonate", userDiscordId, logArgs )
                    
                 }
             }

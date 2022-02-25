@@ -1,5 +1,5 @@
 import { ChainFactory, ChainType, Chain } from '@open-rights-exchange/chainjs'
-import { ChainEndpoint, ChainInfo  } from '@open-rights-exchange/chainjs/src/models/'
+import { ChainEndpoint } from '@open-rights-exchange/chainjs/src/models/'
 import { logHandler } from "../utils/logHandler"
 import { errorHandler } from "../utils/errorHandler"
 

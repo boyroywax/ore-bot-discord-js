@@ -16,9 +16,10 @@ export const balance: CommandInt = {
         // 
         // Displays the bot balance and OreId balance for a user
         // 
+        const userDiscordId: bigint = BigInt(interaction.user.id)
         try {
             // Check if user is already logged in and retrive the lastLogin date as a string
-            let userCheck = await checkLoggedIn(Number(interaction.user.id))
+            let userCheck = await checkLoggedIn(userDiscordId)
                 .then(async function([loggedIn, loginDate]: [boolean, string]) {
 
                 // Only display the balance if the user is logged in
@@ -27,10 +28,10 @@ export const balance: CommandInt = {
                     await interaction.deferReply({ ephemeral: true })
 
                     // Fetch the user's balance on the bot
-                    const botBalance: number = await getBotBalance(Number(interaction.user.id))
+                    const botBalance: number = await getBotBalance(userDiscordId)
 
                     // Fetch the user ORE-ID balance
-                    const [ oreIdUserName, oreIdBalance]=  await getOreIdBalance(Number(interaction.user.id))
+                    const [ oreIdUserName, oreIdBalance ]=  await getOreIdBalance(userDiscordId)
 
                     // Construct login embed
                     const balanceEmbed = new MessageEmbed()
@@ -39,7 +40,7 @@ export const balance: CommandInt = {
                         .setDescription("Your " + process.env.CURRENCY + " Balances")
                         .setURL("https://oreid.io")
                         .addField(
-                            "🤖 Bot Balance",
+                            "🤖 Balance",
                             String(botBalance) + " " + process.env.CURRENCY_TOKEN,
                             false
                         )

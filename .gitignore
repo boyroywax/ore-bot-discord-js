@@ -108,6 +108,11 @@ dist
 package-lock.json
 .env
 
+# Apple garbage
+.DS_Store
+bot/.DS_Store
+callback/.DS_Store
+
 # k8s configs and secrets
 k8s-spec/dev/configmap.yaml
 k8s-spec/dev/secrets.yaml

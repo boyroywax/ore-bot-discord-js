@@ -20,17 +20,18 @@ export const tip: CommandInt = {
         // 
         // Tip another user some tokens from your bot account
         // 
+        const userDiscordId: bigint = BigInt(interaction.user.id)
         try {
             // Make sure the user is logged in
-            let userCheck = await checkLoggedIn(Number(interaction.user.id))
+            let userCheck = await checkLoggedIn(userDiscordId)
             .then(async function(response: [boolean, string]) {
                 if (response[0] == true) {
                     // parse incoming command
                     const recipientUserName = interaction.options.getUser('recipient')
-                    const recipient = interaction.options.getUser('recipient')?.id || 0
+                    const recipient: bigint = BigInt(interaction.options.getUser('recipient')?.id || 0)
                     const amount: number = interaction.options.getNumber('amount') || 0.00
                     // logHandler.info("Command MSG /tip - from: " + recipient + " for: " + amount)
-                    const tipResult: [boolean, string] = await doTip(Number(interaction.user.id), Number(recipient), amount) 
+                    const tipResult: [boolean, string] = await doTip(userDiscordId, recipient, amount) 
 
                     // Create a message only the user can see
                     await interaction.deferReply({ ephemeral: true })
@@ -57,11 +58,11 @@ export const tip: CommandInt = {
 
                         // Compose User's log entry for a succesfull tip
                         const logArgs: UserLogKWArgs = { 
-                            recipient: Number(recipient),
+                            recipient: recipient,
                             amount: amount,
                             status: "Complete"
                         } 
-                        const tipLogSuccess = await logEntry( "Tip", Number(interaction.user.id), logArgs )
+                        await logEntry( "Tip", userDiscordId, logArgs )
                     }
                     // The tip was unsuccessful
                     else {
@@ -72,11 +73,11 @@ export const tip: CommandInt = {
 
                         // compose User's log entry for failed tip
                         const logArgs: UserLogKWArgs = { 
-                            recipient: Number(recipient),
+                            recipient: recipient,
                             amount: amount,
                             status: "Failed"
                         } 
-                        await logEntry( "Tip", Number(interaction.user.id), logArgs)
+                        await logEntry( "Tip", userDiscordId, logArgs)
                     }
                     return await interaction.editReply( {embeds: [tipEmbed]})
                 }

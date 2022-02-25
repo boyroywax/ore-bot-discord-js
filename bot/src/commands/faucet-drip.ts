@@ -18,14 +18,15 @@ export const drip: CommandInt = {
         // 
         // Create a faucet user to manage the faucets balance.
         // 
+        const userDiscordId: bigint = BigInt(interaction.user.id)
         try {
             // Make sure the user is logged in
-            let userCheck = await checkLoggedIn(Number(interaction.user.id))
+            let userCheck = await checkLoggedIn(userDiscordId)
             .then(async function(response: [boolean, string]) {
                 if (response[0] == true) {
                     // parse command
                     const recipientUserName = interaction.user
-                    const recipient: number = Number(interaction.user.id)
+                    const recipient: bigint = userDiscordId
 
                     const [ dripCompletion, dripAmount, dripComment ] = await faucetDrip( recipient ) 
 
@@ -48,7 +49,7 @@ export const drip: CommandInt = {
                             comment: dripComment,
                             status: "Complete"
                         } 
-                        await logEntry( "FaucetDrip", Number(interaction.user.id), logArgs )
+                        await logEntry( "FaucetDrip", userDiscordId, logArgs )
                         
                     }
                     else {
@@ -61,7 +62,7 @@ export const drip: CommandInt = {
                             comment: dripComment, 
                             status: "Failed"
                         } 
-                        await logEntry( "FaucetDrip", Number(interaction.user.id), logArgs)
+                        await logEntry( "FaucetDrip", userDiscordId, logArgs)
                     }
                     await interaction.editReply( {embeds: [dripEmbed]})
                 }

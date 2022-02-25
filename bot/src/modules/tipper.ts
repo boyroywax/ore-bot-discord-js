@@ -6,6 +6,8 @@ import { connect, disconnect } from 'mongoose'
 import { checkLoggedIn, updateBotBalance, zeroBotBalance } from './mongo'
 import { listActivity } from './userLog'
 
+const faucetUser = BigInt(process.env.BOT_FAUCET_USER || BigInt("000000000000000099"))
+
 const uri = process.env.MONGO_URI || "mongodb://" 
     + process.env.MONGO_HOST 
     + ":" + process.env.MONGO_PORT 
@@ -23,7 +25,7 @@ function getRandomArbitrary(min: number, max: number): number {
     return Math.random() * (max - min) + min;
     }
 
-export async function getBotBalance( userDiscordId: number): Promise<number> {
+export async function getBotBalance( userDiscordId: bigint): Promise<number> {
     // 
     // Retrieves the user's balance in the user's bot account
     // Creates a botBalance entry for the user if they do not have one
@@ -49,7 +51,7 @@ export async function getBotBalance( userDiscordId: number): Promise<number> {
     return botBalance
 }
 
-export async function doTip( fromUser: number, recipient: number, amount: number ): Promise<[ boolean, string ]> {
+export async function doTip( fromUser: bigint, recipient: bigint, amount: number ): Promise<[ boolean, string ]> {
     // 
     // Attempts to complete a tip transaction
     // Checks that the sendUser has adequate funds
@@ -64,7 +66,7 @@ export async function doTip( fromUser: number, recipient: number, amount: number
         let fromUserBalance: number = await getBotBalance(fromUser)
         let recipientBalance: number = await getBotBalance(recipient)
 
-        if (recipient == ( Number(process.env.DISCORD_CLIENT_ID) || Number(936064780081434737))) {
+        if (recipient == BigInt(process.env.DISCORD_CLIENT_ID || "936064780081434737") ) {
             tipCompleted = false
             tipStatus = "You cannot tip the ORE Network Bot"
         }
@@ -113,7 +115,7 @@ export async function doTip( fromUser: number, recipient: number, amount: number
     return [ tipCompleted, tipStatus ]
 }
 
-async function checkLastDrip( recipient: number ): Promise<Date> {
+async function checkLastDrip( recipient: bigint ): Promise<Date> {
     let lastDripDate: Date = new Date(0)
     try {
         let logEntries = await listActivity(recipient)
@@ -132,7 +134,7 @@ async function checkLastDrip( recipient: number ): Promise<Date> {
     return lastDripDate
 }
 
-export async function faucetDrip( recipient: number ): Promise<[ boolean, number, string ]> {
+export async function faucetDrip( recipient: bigint ): Promise<[ boolean, number, string ]> {
     await connect(uri)
     let dripCompleted: boolean = false
     let dripAmount: number = 0.00
@@ -157,7 +159,6 @@ export async function faucetDrip( recipient: number ): Promise<[ boolean, number
 
             // Retreive the bot's faucet balance
             // Creates a faucet balance if one does not exist
-            const faucetUser = Number(process.env.BOT_FAUCET_USER) || Number("000000000000000099")
             let faucetBalance: number = await getBotBalance( faucetUser )
 
             // Generate a random number from Faucet MIN and MAX
@@ -203,12 +204,11 @@ export async function faucetDrip( recipient: number ): Promise<[ boolean, number
     return [ dripCompleted, dripAmount, dripComment ]
 }
 
-export async function faucetDonate ( amount: number, donor: number ): Promise<[ boolean, string, number ]> {
+export async function faucetDonate ( amount: number, donor: bigint ): Promise<[ boolean, string, number ]> {
     let donationCompleted: boolean = false
     let donationComment: string = "Faucet Donation from " + donor + " for "+ amount + " initiated"
     let donationFundTotal: number = await getBotBalance(donor)
     try {
-        const faucetUser = Number(process.env.BOT_FAUCET_USER) || Number("000000000000000099")
         const [ donationComplete, donationStatus ] = await doTip( donor, faucetUser, amount)
         
         if ( donationComplete ) {

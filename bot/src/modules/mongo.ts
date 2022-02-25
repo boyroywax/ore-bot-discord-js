@@ -12,7 +12,7 @@ const uri = process.env.MONGO_URI || "mongodb://"
     + "/test?retryWrites=true&w=majority"
 
 function setDiscordUser(
-    userDiscordId: number,
+    userDiscordId: bigint,
     date?: Date,
     doc?: DiscordUser,
     oreId?: string,
@@ -39,7 +39,7 @@ function setDiscordUser(
     else {
         doc = new DiscordUserModel({
             dateCreated: date || new Date,
-            discordId: userDiscordId || 0,
+            discordId: userDiscordId || BigInt(0),
             loggedIn: userLoggedIn || false
         })
     } 
@@ -47,7 +47,7 @@ function setDiscordUser(
 }
 
 export async function setDiscordUserState(
-    userDiscordId: number,
+    userDiscordId: bigint,
     state: string,
     loggedIn?: boolean): Promise<boolean> {
     // 
@@ -62,7 +62,7 @@ export async function setDiscordUserState(
         .exec().then(async function(doc) {
             logHandler.info("File found: " + doc)
             if (doc) {
-                doc.discordId = doc.discordId || 0
+                doc.discordId = doc.discordId || BigInt(0)
                 doc.state = state || "None"
                 if (loggedIn) {
                     doc.lastLogin = doc.lastLogin || date
@@ -97,9 +97,7 @@ export async function setDiscordUserState(
     return successful
 }
 
-export async function checkLoggedIn(
-    userDiscordId: number
-    ): Promise<[ boolean, string ]> {
+export async function checkLoggedIn( userDiscordId: bigint ): Promise<[ boolean, string ]> {
     // 
     // Returns the users login status and lastLogin Date in string form
     // Creates a new user if one does not exist
@@ -135,7 +133,7 @@ export async function checkLoggedIn(
     return [ loggedIn, lastLogin ]
 }
 
-export async function getOreIdUser( userDiscordId: number): Promise<string> {
+export async function getOreIdUser( userDiscordId: bigint): Promise<string> {
     // 
     // Fetches a user's oreID when passed in a discordId
     // 
@@ -155,7 +153,7 @@ export async function getOreIdUser( userDiscordId: number): Promise<string> {
     return oreId
 }
 
-export async function zeroBotBalance ( userDiscordId: number ): Promise<boolean> {
+export async function zeroBotBalance ( userDiscordId: bigint ): Promise<boolean> {
     // 
     // Sets a user's bot balance back to zero, used when creating a new user.
     // 
@@ -186,7 +184,7 @@ export async function zeroBotBalance ( userDiscordId: number ): Promise<boolean>
     return balanceZeroed
 }
 
-export async function updateBotBalance( userDiscordId: number, botBalance: number ): Promise<boolean> {
+export async function updateBotBalance( userDiscordId: bigint, botBalance: number ): Promise<boolean> {
     // 
     // Update the Botbalance of a user in mongodb
     // 
@@ -225,7 +223,7 @@ export async function addLogEntry( entry: UserLog ): Promise<boolean> {
     return saveStatus
 }
 
-export async function getLogEntries( discordId: number ): Promise<UserLog[]> {
+export async function getLogEntries( discordId: bigint ): Promise<UserLog[]> {
     // 
     // Fetches a UserLog list
     // 
