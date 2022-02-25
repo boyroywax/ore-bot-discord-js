@@ -30,7 +30,7 @@ export interface UserLog extends UserLogKWArgs {
 }
 
 // 
-// Additional Arguments object for adding extra info to the log entry
+// Additional Arguments for adding extra info to the log entry
 // 
 export interface UserLogKWArgs {
     status?: string

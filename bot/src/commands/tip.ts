@@ -62,7 +62,6 @@ export const tip: CommandInt = {
                             status: "Complete"
                         } 
                         const tipLogSuccess = await logEntry( "Tip", Number(interaction.user.id), logArgs )
-                        // logHandler.info("tipLogSuccess: " + tipLogSuccess)
                     }
                     // The tip was unsuccessful
                     else {
@@ -81,7 +80,6 @@ export const tip: CommandInt = {
                     }
                     return await interaction.editReply( {embeds: [tipEmbed]})
                 }
-
                 else {
                     return await unauthorizedCommand(interaction, response[1])
                 }

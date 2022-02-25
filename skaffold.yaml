@@ -14,7 +14,9 @@ profiles:
   deploy:
     kubectl:
       manifests:
+        - ./k8s-spec/dev/managed-certs.yaml
         - ./k8s-spec/dev/auth-ingress-static.yaml
+
 
 - name: development
   build:
@@ -47,13 +49,8 @@ profiles:
   deploy:
     kubectl:
       manifests:
+        - ./k8s-spec/prod/managed-cert.yaml
         - ./k8s-spec/prod/auth-ingress.yaml
-
-- name: loadbalance-prod
-  deploy:
-    kubectl:
-      manifests:
-        - ./k8s-spec/prod/discord-callback-lb.yaml
 
 - name: production
   build:

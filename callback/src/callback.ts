@@ -24,7 +24,7 @@ app.get('/auth', async (request: Request, response: Response) => {
 	const state: string = request.query.state?.toString() || ''
 	try {
 		const login = await verifyLogin(user, state).then(async function(loginSuccess) {
-			if (loginSuccess == true) {
+			if ((loginSuccess == true) && (user != '')) {
 				return response.sendFile('./login-success.html', { root: '.' })
 			}
 			else {

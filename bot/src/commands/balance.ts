@@ -40,12 +40,12 @@ export const balance: CommandInt = {
                         .setURL("https://oreid.io")
                         .addField(
                             "🤖 Bot Balance",
-                            String(botBalance),
+                            String(botBalance) + " " + process.env.CURRENCY_TOKEN,
                             false
                         )
                         .addField(
                             "⛅️ ORE-ID Balance | " + oreIdUserName,
-                            String(oreIdBalance),
+                            String(oreIdBalance) + " " + process.env.CURRENCY_TOKEN,
                             false
                         )
                     return await interaction.editReply({ embeds: [balanceEmbed] })

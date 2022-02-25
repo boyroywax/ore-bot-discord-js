@@ -13,17 +13,17 @@ export async function logEntry (
     // 
     let savedLogEntry = false
     try  {
-        logHandler.info("logEntry passed to logEntry function: " + entry)
+        logHandler.info("logEntry passed to logEntry function: " + JSON.stringify(entry))
         let userLogEntry: UserLog = new UserLogModel({
             action: action,
             amount: entry?.amount || 0,
+            comment: entry?.comment || "NA",
             date: new Date,
             discordId: discordId,
             oreId: entry?.oreId || "NA",
             recipient: entry?.recipient || 0,
-            txnId: entry?.txnId || "NA",
             status: entry?.status || "NA",
-            comment: entry?.comment || "NA"
+            txnId: entry?.txnId || "NA"
         })
         await addLogEntry(userLogEntry)
         savedLogEntry = true
