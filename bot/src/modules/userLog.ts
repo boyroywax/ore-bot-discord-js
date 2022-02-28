@@ -14,7 +14,7 @@ export async function logEntry (
     let savedLogEntry = false
     try  {
         // logHandler.info("logEntry passed to logEntry function: " + JSON.stringify(entry))
-        let userLogEntry: UserLog = new UserLogModel({
+        const userLogEntry: UserLog = new UserLogModel({
             action: action,
             amount: entry?.amount || 0,
             comment: entry?.comment || "NA",

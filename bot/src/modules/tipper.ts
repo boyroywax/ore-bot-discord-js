@@ -1,8 +1,9 @@
+import { connect, disconnect } from 'mongoose'
+
 import { logHandler } from '../utils/logHandler'
 import { errorHandler } from '../utils/errorHandler'
 import { BotBalanceModel, UserLogModel } from '../models/DiscordUserModel'
 import { BotBalance, UserLog } from '../interfaces/DiscordUser'
-import { connect, disconnect } from 'mongoose'
 import { checkLoggedIn, updateBotBalance, zeroBotBalance } from './mongo'
 import { listActivity } from './userLog'
 
@@ -18,14 +19,14 @@ const dripTimeLimit: number = Number(process.env.BOT_FAUCET_TIME_LIMIT) || Numbe
 function precisionRound(number: number, precision: number): number {
     const factor = Math.pow(10, precision)
     const n = precision < 0 ? number : 0.01 / factor + number
-    return Math.round( n * factor) / factor;
+    return Math.round( n * factor ) / factor;
     }
 
 function getRandomArbitrary(min: number, max: number): number {
     return Math.random() * (max - min) + min;
     }
 
-export async function getBotBalance( userDiscordId: bigint): Promise<number> {
+export async function getBotBalance( userDiscordId: bigint ): Promise<number> {
     // 
     // Retrieves the user's balance in the user's bot account
     // Creates a botBalance entry for the user if they do not have one
@@ -118,7 +119,7 @@ export async function doTip( fromUser: bigint, recipient: bigint, amount: number
 async function checkLastDrip( recipient: bigint ): Promise<Date> {
     let lastDripDate: Date = new Date(0)
     try {
-        let logEntries = await listActivity(recipient)
+        const logEntries = await listActivity(recipient)
         for (let entry in logEntries) {
             let parseEntry: UserLog = new UserLogModel(logEntries[entry])
             if (parseEntry.action == "FaucetDrip" && parseEntry.status == "Complete") {
@@ -207,7 +208,7 @@ export async function faucetDrip( recipient: bigint ): Promise<[ boolean, number
 export async function faucetDonate ( amount: number, donor: bigint ): Promise<[ boolean, string, number ]> {
     let donationCompleted: boolean = false
     let donationComment: string = "Faucet Donation from " + donor + " for "+ amount + " initiated"
-    let donationFundTotal: number = await getBotBalance(donor)
+    let donationFundTotal: number = await getBotBalance(faucetUser)
     try {
         const [ donationComplete, donationStatus ] = await doTip( donor, faucetUser, amount)
         

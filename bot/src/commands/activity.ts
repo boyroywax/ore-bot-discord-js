@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { MessageEmbed } from "discord.js"
+
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { checkLoggedIn } from "../modules/mongo"
@@ -14,7 +15,7 @@ const maxLogActivity: number = Number(process.env.BOT_ACTIVITY_LOG_MAX) || 10
 export const activity: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("activity")
-        .setDescription("View your activity on the bot"),
+        .setDescription("View your most recent activity"),
     run: async (interaction): Promise<void> => {
         // 
         // Displays the information about the users actions on the bot
@@ -22,7 +23,7 @@ export const activity: CommandInt = {
         const userDiscordId: bigint = BigInt(interaction.user.id)
         try {
             // Check if user is already logged in and retrive the lastLogin date as a string
-            let [ loggedIn, lastLogin ] = await checkLoggedIn(userDiscordId) 
+            const [ loggedIn, lastLogin ] = await checkLoggedIn(userDiscordId) 
 
             // Only display the acctivity info if the user is logged in
             if (loggedIn == false) {
@@ -35,18 +36,6 @@ export const activity: CommandInt = {
 
                 // Fetch the user's activites on the bot
                 const logEntries: UserLog[] = await listActivity(userDiscordId)
-
-                // Embed for the main channel if sending the activity to DM
-                // const userActivityChannel = new MessageEmbed()
-                //     .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
-                //     .setTitle("🏃 Activity")
-                //     .setDescription("Your Latest actions on the ORE Network")
-                //     .setURL("https://oreid.io")
-                //     .addField(
-                //     String("Check Your DM"),
-                //     String("Your activity has been privately sent to your DM."),
-                //     false
-                //     )
 
                 // Create the Embed from the logEntries
                 let index: number = 0
@@ -76,49 +65,66 @@ export const activity: CommandInt = {
                         userActivity.setTitle("🏃 Activity")
                         userActivity.setDescription("Your latest 10 actions on the ORE Network Bot")
                         userActivity.setURL("https://oreid.io")
-                        if (parseEntry?.recipient) {
+                        if (parseEntry?.recipient != BigInt(0)) {
                             userActivity.addField(
-                                index + ". " + String(parseEntry.action) + " | " + String(parseEntry.date.toLocaleString()),
-                                String(parseEntry.status) + " " + String(parseEntry?.recipient) + " " + String(parseEntry?.amount),
-                                false
+                                index + ". " + String(parseEntry.action) + " | " + String(parseEntry.status),
+                                String(parseEntry.date.toDateString()) + " " + String(parseEntry.date.getTime()),
+                                true
+                            )
+                            userActivity.addField(
+                                "Recipient",
+                                String(parseEntry?.recipient),
+                                true
+                            )
+                            userActivity.addField(
+                                "Amount",
+                                String(parseEntry?.amount),
+                                true
                             )
                         }
                         else {
                             userActivity.addField(
-                                index + ". " + String(parseEntry.action) + " | " + String(parseEntry.date.toLocaleString()),
-                                String(parseEntry.status),
+                                index + ". " + String(parseEntry.action) + " | " + String(parseEntry.status),
+                                String(parseEntry.date.toDateString()) + " " + String(parseEntry.date.getTime()),
                                 false
                             )
                         }
                     }
-                    // If the index is greater than 10, exit the for loop
+                    // If the index is greater than the Max Log Activity env variable, exit the for loop
                     else if (index > maxLogActivity) {
                         break;
                     }
                     // Add fields to the first message peice for each of X-1 remaining entries
                     else if (index <= logEntries.length) {
-                        // const userActivityEntry = new MessageEmbed()
-                        if (parseEntry?.recipient) {
+                        if (parseEntry?.recipient != BigInt(0)) {
                             userActivity.addField(
-                                index + ". " + String(parseEntry.action) + " | " + String(parseEntry.date.toLocaleString()),
-                                String(parseEntry.status) + " " + String(parseEntry?.recipient) + " " + String(parseEntry?.amount),
-                                false
+                                index + ". " + String(parseEntry.action) + " | " + String(parseEntry.status),
+                                String(parseEntry.date.toDateString()) + " " + String(parseEntry.date.getTime()),
+                                true
+                            )
+                            userActivity.addField(
+                                "Recipient",
+                                String(parseEntry?.recipient),
+                                true
+                            )
+                            userActivity.addField(
+                                "Amount",
+                                String(parseEntry?.amount),
+                                true
                             )
                         }
                         else {
                             userActivity.addField(
-                                index + ". " + String(parseEntry.action) + " | " + String(parseEntry.date.toLocaleString()),
-                                String(parseEntry.status),
+                                index + ". " + String(parseEntry.action) + " | " + String(parseEntry.status),
+                                String(parseEntry.date.toDateString()) + " " + String(parseEntry.date.getTime()),
                                 false
                             )
                         }
                     }
                 }
-                let now = new Date
+                const now = new Date
                 userActivity.setFooter(now.toDateString(), process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
-                // await userObj.send({ embeds: [userActivity] })
-                // send the reply to the user in the channel
-                // await interaction.editReply({ embeds: [userActivityChannel] })
+
                 await interaction.editReply({ embeds: [userActivity] })
                 return
             }

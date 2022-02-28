@@ -2,9 +2,11 @@ import { connect, disconnect } from 'mongoose'
 
 import { DiscordUser, UserLog } from '../interfaces/DiscordUser'
 import { DiscordUserModel, BotBalanceModel, UserLogModel } from '../models/DiscordUserModel'
+import { PriceDataModel } from '../models/PriceDataModel'
 import { errorHandler } from '../utils/errorHandler'
 import { logHandler } from '../utils/logHandler'
-
+import { getCmcData, getOrePriceUSD, getOreVolume24h, getOreVolume24hChange } from '../utils/priceCheck'
+import { CmcPriceData } from '../interfaces/PriceData'
 
 const uri = process.env.MONGO_URI || "mongodb://" 
     + process.env.MONGO_HOST 
@@ -225,14 +227,18 @@ export async function addLogEntry( entry: UserLog ): Promise<boolean> {
 
 export async function getLogEntries( discordId: bigint ): Promise<UserLog[]> {
     // 
-    // Fetches a UserLog list
+    // Fetches a UserLog list, including activity as a receiver
     // 
     let logEntries: UserLog[] = []
     await connect(uri)
     try {        
         await UserLogModel.find({"discordId": discordId}).exec().then( async function(docs) {
             for (let doc in docs) {
-                // logHandler.info(docs[doc])
+                logEntries.push(docs[doc])
+            }
+        })
+        await UserLogModel.find({"recipient": discordId}).exec().then( async function(docs) {
+            for (let doc in docs) {
                 logEntries.push(docs[doc])
             }
         })
@@ -242,4 +248,49 @@ export async function getLogEntries( discordId: bigint ): Promise<UserLog[]> {
     }
     await disconnect()
     return logEntries
+}
+ 
+export async function getLatestEntry(): Promise<CmcPriceData> {
+    let latestEntry: CmcPriceData = new PriceDataModel
+    await connect(uri)
+    try {
+        await PriceDataModel.findOne().sort('-dateCreated').exec(async function(err, item) {
+            if (item) {
+                latestEntry = item
+            }
+        })
+    }
+    catch (err) {
+        errorHandler('latestEntry in mongo.ts', err)
+    }
+    await disconnect()
+    return latestEntry
+}
+
+export async function createPriceEntry( currentTime: Date ): Promise<CmcPriceData> {
+    let priceData: CmcPriceData = new PriceDataModel
+    await connect(uri)
+    try {
+        const currentPriceData = await getCmcData()
+        const priceUSD: number = getOrePriceUSD(currentPriceData)
+        const volumeUSD: number = getOreVolume24h(currentPriceData)
+        const volumeChange24h: number = getOreVolume24hChange(currentPriceData)
+
+        priceData = {
+            dateCreated: currentTime,
+            priceUSD: priceUSD,
+            priceBTC: 0,
+            volumeBTC: 0,
+            volumeETH: 0,
+            volumeORE: 0,
+            volumeUSD: volumeUSD,
+            volumeChange24h: volumeChange24h
+        }
+        await PriceDataModel.create(priceData)
+    }
+    catch (err) {
+        errorHandler('createPriceEntry', err)
+    }
+    await disconnect()
+    return priceData
 }

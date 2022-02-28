@@ -24,12 +24,7 @@ export const donate: CommandInt = {
         const amount: number = interaction.options.getNumber('amount') || 0.00 
         try {
             // Check if user is already logged in and retrive the lastLogin date as a string
-            let [ loggedIn, lastLogin ] = await checkLoggedIn(userDiscordId) 
-            
-            // Create a message only the user can see
-            await interaction.deferReply({ ephemeral: true })
-            const donationEmbed = new MessageEmbed()
-                .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
+            const [ loggedIn, lastLogin ] = await checkLoggedIn(userDiscordId) 
 
             // Only display the acctivity info if the user is logged in
             if (loggedIn == false) {
@@ -37,8 +32,12 @@ export const donate: CommandInt = {
             }
             else if (loggedIn == true) {
                 const userObj = interaction.user
-                let [ donationCompleted, donationComment, donationFundTotal ] = await faucetDonate(amount, userDiscordId)
-            
+                const [ donationCompleted, donationComment, donationFundTotal ] = await faucetDonate(amount, userDiscordId)
+                // Create a message only the user can see
+                await interaction.deferReply({ ephemeral: true })
+                const donationEmbed = new MessageEmbed()
+                    .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
+
                 if (donationCompleted) {
                     donationEmbed.setTitle("✅ Donation Complete")
                     donationEmbed.setDescription("Your donation to the 🚰 Faucet Fund succeeded!")
@@ -55,7 +54,7 @@ export const donate: CommandInt = {
                     await logEntry( "FaucetDonate", userDiscordId, logArgs )
 
                     // Send PM to the sender of the donation
-                    await interaction.user.send( {embeds: [donationEmbed]} )
+                    await userObj.send( {embeds: [donationEmbed]} )
 
                     // Edit the pending message embed
                     await interaction.editReply( {embeds: [donationEmbed]} )
@@ -77,7 +76,6 @@ export const donate: CommandInt = {
                         comment: donationComment
                     } 
                     await logEntry( "FaucetDonate", userDiscordId, logArgs )
-                   
                 }
             }
         }

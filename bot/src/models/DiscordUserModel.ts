@@ -1,5 +1,6 @@
 import mongoose, { Schema, model } from "mongoose"
 import mongooseLong from 'mongoose-long'
+
 import { BotBalance, DiscordUser, UserLog } from "../interfaces/DiscordUser"
 
 mongooseLong(mongoose)

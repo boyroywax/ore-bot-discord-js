@@ -6,6 +6,7 @@ import { drip } from "./faucet-drip"
 import { help } from "./help"
 import { login } from "./login"
 import { logout } from './logout'
+import { price } from './price'
 import { tip } from './tip'
 
 
@@ -17,5 +18,6 @@ export const CommandList: CommandInt[] = [
     help,
     login,
     logout,
+    price,
     tip 
 ]
