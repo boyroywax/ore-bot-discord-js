@@ -24,22 +24,31 @@ export const price: CommandInt = {
             const priceEmbed = new MessageEmbed()
                 .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
                 .setTitle("ORE Price Info")
-                .setDescription('Latest ' + process.env.CURRENCY_TOKEN + ' price information')
+                .setDescription('')
                 .addField(
                     "Price USD",
-                    String(priceData.priceUSD) + " USD",
+                    "$" + String(priceData.priceUSD),
                     false
                 )
                 .addField(
                     "Volume 24 Hour (USD)",
-                    String(priceData.volumeUSD) + " USD",
+                    "$" + String(priceData.volumeUSD),
                     false
                 )
-                .addField(
-                    "Price Change 24 Hour",
-                    String(priceData.volumeChange24h),
-                    false
-                )
+                if (priceData.volumeChange24h >= 0.00) {
+                    priceEmbed.addField(
+                        "Price Change 24 Hour",
+                        "⬆ " + String(priceData.volumeChange24h),
+                        false
+                    )
+                }
+                else if (priceData.volumeChange24h < 0.00) {
+                    priceEmbed.addField(
+                        "Price Change 24 Hour",
+                        "⬇ " + String(priceData.volumeChange24h),
+                        false
+                    )
+                }
             await interaction.editReply( {embeds: [priceEmbed]})
         }
         catch (err) {

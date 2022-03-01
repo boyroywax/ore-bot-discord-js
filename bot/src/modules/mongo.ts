@@ -5,8 +5,8 @@ import { DiscordUserModel, BotBalanceModel, UserLogModel } from '../models/Disco
 import { PriceDataModel } from '../models/PriceDataModel'
 import { errorHandler } from '../utils/errorHandler'
 import { logHandler } from '../utils/logHandler'
-import { getCmcData, getOrePriceUSD, getOreVolume24h, getOreVolume24hChange } from '../utils/priceCheck'
-import { CmcPriceData } from '../interfaces/PriceData'
+import { CmcPriceData, CmcPrice } from '../interfaces/PriceData'
+
 
 const uri = process.env.MONGO_URI || "mongodb://" 
     + process.env.MONGO_HOST 
@@ -254,37 +254,33 @@ export async function getLatestEntry(): Promise<CmcPriceData> {
     let latestEntry: CmcPriceData = new PriceDataModel
     await connect(uri)
     try {
-        await PriceDataModel.findOne().sort('-dateCreated').exec(async function(err, item) {
+        await PriceDataModel.findOne().sort('-dateCreated').exec().then(function(item) {
             if (item) {
                 latestEntry = item
             }
         })
+        logHandler.info('latestEntry: ' + JSON.stringify(latestEntry))
     }
     catch (err) {
-        errorHandler('latestEntry in mongo.ts', err)
+        errorHandler('getLatestEntry in mongo.ts', err)
     }
     await disconnect()
     return latestEntry
 }
 
-export async function createPriceEntry( currentTime: Date ): Promise<CmcPriceData> {
+export async function createPriceEntry( apiData: CmcPrice ): Promise<CmcPriceData> {
     let priceData: CmcPriceData = new PriceDataModel
     await connect(uri)
     try {
-        const currentPriceData = await getCmcData()
-        const priceUSD: number = getOrePriceUSD(currentPriceData)
-        const volumeUSD: number = getOreVolume24h(currentPriceData)
-        const volumeChange24h: number = getOreVolume24hChange(currentPriceData)
-
         priceData = {
-            dateCreated: currentTime,
-            priceUSD: priceUSD,
+            dateCreated: apiData.dateCreated,
+            priceUSD: apiData.priceUSD,
             priceBTC: 0,
             volumeBTC: 0,
             volumeETH: 0,
             volumeORE: 0,
-            volumeUSD: volumeUSD,
-            volumeChange24h: volumeChange24h
+            volumeUSD: apiData.volumeUSD,
+            volumeChange24h: apiData.volumeChange24h
         }
         await PriceDataModel.create(priceData)
     }

@@ -2,7 +2,7 @@
 // Interface for CoinMarketCap price data
 // 
 export interface CmcPriceData {
-    id?: number
+    // id?: number
     dateCreated: Date
     priceUSD: number
     priceBTC: number
@@ -11,4 +11,12 @@ export interface CmcPriceData {
     volumeORE: number
     volumeUSD: number
     volumeChange24h: number
+}
+
+
+export interface CmcPrice extends CmcPriceData {
+    checkPrice(): Promise<void>
+    // getApiData(): Promise<void>
+    // getLocalData(): Promise<void>
+    // isExpired(): Promise<boolean>
 }
