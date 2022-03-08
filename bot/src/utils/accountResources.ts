@@ -1,6 +1,6 @@
 import { HelpersEos } from '@open-rights-exchange/chainjs'
 import { AccountType } from 'oreid-js'
-import { PrivateKey, PrivateKeyBrand, PublicKey } from '@open-rights-exchange/chainjs/dist/models'
+import { ConfirmType, PrivateKey, PrivateKeyBrand, PublicKey } from '@open-rights-exchange/chainjs/dist/models'
 import { Chain, Transaction } from '@open-rights-exchange/chainjs'
 import { TransactionResult } from '@open-rights-exchange/chainjs/src/models'
 import { EosNewAccountType, EosAccountStruct, EosActionStruct, EosChainActionType } from '@open-rights-exchange/chainjs/dist/chains/eos_2/models'
@@ -88,10 +88,10 @@ export class AccountResources implements OreResourceActions {
                 const good = transaction.isEosActionStructArray([resources])
                 logHandler.info('isEosActionStructArray? ' + good)
                 logHandler.info(JSON.stringify(transaction.toJson()))
-                const txResponse = await transaction.send()
-                logHandler.info('send response:', JSON.stringify(txResponse.response.toJson()))
+                const txResponse = await transaction.send(ConfirmType.Final)
+                logHandler.info('send response:', JSON.stringify(txResponse))
                 buyCompleted = true
-                buyStatus = "Txn Id: " + txResponse.response.txid
+                buyStatus = "Txn Id: " + txResponse.txid
             }
         }
     return [ buyCompleted, buyStatus]

@@ -23,7 +23,7 @@ export interface BotBalance {
 // Interface for the discord user's log.
 // 
 export interface UserLog extends UserLogKWArgs {
-    id?: Number
+    id?: number
     action: string
     date: Date
     discordId: bigint

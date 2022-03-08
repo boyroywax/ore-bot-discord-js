@@ -31,7 +31,7 @@ import { logHandler } from './logHandler'
 export class OreTreasury implements OreKeys, oreIdActions, OreBalanceActions {
     oreId: string = process.env.BOT_TREASURER_OREID || "ore1sqvihyhs"
     oreBalance: number = 0.00
-    pending?: number = 0.00 // Amount of funds pending
+    pending: number = 0.00 // Amount of funds pending
     status: string = 'Initiated'
     message: string = 'Hello'
     activePublicKey: PublicKey = process.env.BOT_TREASURER_ACTIVE_PUB_KEY || ''
