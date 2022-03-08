@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { MessageEmbed } from "discord.js"
 
-import { getLocalPriceData } from "../utils/priceCheck"
+import { getPriceData } from "../utils/priceCheck"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { logHandler } from "../utils/logHandler"
@@ -19,7 +19,7 @@ export const price: CommandInt = {
             // Create a message only the user can see
             await interaction.deferReply({ ephemeral: false})
 
-            const priceData = await getLocalPriceData()
+            const priceData = await getPriceData()
 
             const priceEmbed = new MessageEmbed()
                 .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')

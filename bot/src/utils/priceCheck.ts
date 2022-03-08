@@ -97,7 +97,7 @@ class Cmc implements CmcPriceData {
     }
 }
 
-export async function getLocalPriceData(): Promise<CmcPriceData> {
+export async function getPriceData(): Promise<CmcPriceData> {
     let priceData: CmcPrice = new Cmc
     await priceData.checkPrice()
     return priceData

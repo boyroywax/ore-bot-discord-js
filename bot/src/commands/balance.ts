@@ -12,7 +12,7 @@ import { getBotBalance } from "../modules/tipper";
 export const balance: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("balance")
-        .setDescription("Check your " + process.env.CURRENCY + " balance."),
+        .setDescription("Check your " + process.env.CURRENCY + " balances."),
     run: async (interaction) => {
         // 
         // Displays the bot balance and OreId balance for a user

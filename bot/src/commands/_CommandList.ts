@@ -8,6 +8,10 @@ import { login } from "./login"
 import { logout } from './logout'
 import { price } from './price'
 import { tip } from './tip'
+import { treasurybal } from './treasury-balance'
+import { createacct } from './treasury-createAcct'
+import { addperm } from './treasury-addPerm'
+import { buyRamByte } from "./treasury-buyram"
 
 
 export const CommandList: CommandInt[] = [ 
@@ -19,5 +23,9 @@ export const CommandList: CommandInt[] = [
     login,
     logout,
     price,
-    tip 
+    tip,
+    treasurybal,
+    createacct,
+    addperm,
+    buyRamByte
 ]

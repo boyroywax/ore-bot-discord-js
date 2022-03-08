@@ -7,16 +7,15 @@ import { BotBalance, UserLog } from '../interfaces/DiscordUser'
 import { checkLoggedIn, updateBotBalance, zeroBotBalance } from './mongo'
 import { listActivity } from './userLog'
 
+const dripTimeLimit: number = Number(process.env.BOT_FAUCET_TIME_LIMIT) || Number(3 * 60 * 60 * 1000)
 const faucetUser = BigInt(process.env.BOT_FAUCET_USER || BigInt("000000000000000099"))
-
 const uri = process.env.MONGO_URI || "mongodb://" 
     + process.env.MONGO_HOST 
     + ":" + process.env.MONGO_PORT 
     + "/test?retryWrites=true&w=majority"
 
-const dripTimeLimit: number = Number(process.env.BOT_FAUCET_TIME_LIMIT) || Number(3 * 60 * 60 * 1000)
 
-function precisionRound(number: number, precision: number): number {
+export function precisionRound(number: number, precision: number): number {
     const factor = Math.pow(10, precision)
     const n = precision < 0 ? number : 0.01 / factor + number
     return Math.round( n * factor ) / factor;

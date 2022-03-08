@@ -1,6 +1,7 @@
 import { Client, Intents, Interaction } from 'discord.js'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
+
 import { validateEnv } from './utils/validateEnv'
 import { onReady } from './events/onReady'
 import { onInteraction } from './events/onInteraction'
@@ -16,11 +17,12 @@ import { errorHandler } from './utils/errorHandler'
         dsn: process.env.SENTRY_DSN,
         tracesSampleRate: 1.0,
         integrations: [
-        new RewriteFrames({
-            root: global.__dirname,
-        }),
+            new RewriteFrames({
+                root: global.__dirname,
+            }),
         ],
     })
+    
     try {
 
         const client = new Client({ intents: [Intents.FLAGS.GUILDS] })

@@ -24,7 +24,7 @@ profiles:
     - image: boyroywax/ore-discord-dev
       context: ./bot/
       docker:
-        dockerfile: ./Dockerfile
+        dockerfile: ./Dockerfile-Node16
     - image: boyroywax/ore-discord-callback-dev
       context: ./callback/
       docker:
