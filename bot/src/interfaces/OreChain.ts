@@ -42,7 +42,7 @@ export interface OreResources extends OreKeys {
 export interface OreResourceActions extends OreResources {
     buyRam(amount: number): Promise< [boolean, string] >
     buyRamBytes(ramBytes: number): Promise< [boolean, string] >
-    delegateCpuNet(cpu: number, net: number): Promise< [boolean, string] >
+    delegateCpuNet(cpu: string, net: string): Promise< [boolean, string] >
 }
 
 export interface OreTreasury extends OreKeys {
@@ -78,3 +78,7 @@ export interface OreBlock {
 // 
 // Interface for an ORE Network Transaction
 // 
+
+export interface OreTransaction {
+    foo: number
+}

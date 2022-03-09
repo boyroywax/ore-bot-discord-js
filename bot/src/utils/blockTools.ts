@@ -1,8 +1,10 @@
 import { Chain } from "@open-rights-exchange/chainjs"
+import axios from "axios"
 import { OreBlock } from "../interfaces/OreChain"
 import { createOreConnection } from "../modules/chains"
 import { errorHandler } from "./errorHandler"
 import { logHandler } from "./logHandler"
+
 
 export class BlockExplorer implements OreBlock {
     timestamp: Date = new Date
@@ -21,8 +23,9 @@ export class BlockExplorer implements OreBlock {
     block_num: number = 0
     ref_block_prefix: string = "0000000000"
 
-    private async writeBlock(blockFromApi: any ): Promise<boolean> {
+    private writeBlock(blockFromApi: any ): boolean {
         let completed = false
+
         this.timestamp = blockFromApi.timestamp
         this.producer = blockFromApi.producer
         this.confirmed = blockFromApi.confirmed
@@ -38,36 +41,54 @@ export class BlockExplorer implements OreBlock {
         this.id = blockFromApi.id
         this.block_num = blockFromApi.block_num
         this.ref_block_prefix = blockFromApi.ref_block_prefix
-        logHandler.info(JSON.stringify(this))
+
         return completed = true
+    }
 
-
+    public async getChainInfo(): Promise<boolean> {
+        // const blockFromApi = await axios.get("https://ore.openrights.exchange:443/v1/chain/get_info")
+        return false
     }
 
     public async getBlock(blockNumber: number): Promise<void> {
 
-
+        if (process.env.CURRENCY_STAGE == 'testnet') {
+            const blockFromApi = await axios.post(process.env.CURRENCY_TESTNET + ":443/v1/chain/get_block", {
+                block_num_or_id: blockNumber
+            })
+            // const blockFromApi = await axios.post("https://ore-staging.openrights.exchange:443/v1/chain/get_block", {
+            //         block_num_or_id: blockNumber
+            //     })
+            const success = this.writeBlock(blockFromApi.data)
+            logHandler.info(success)
+        }
+        else if (process.env.CURRENCY_STAGE == 'mainnet') {
+            const blockFromApi = await axios.post(process.env.CURRENCY_MAINNET + ":443/v1/chain/get_block", {
+                block_num_or_id: blockNumber
+            })
+            this.writeBlock(blockFromApi)
+        }
     }
 
     public async getLatestBlock(): Promise<void> {
         let oreConnection = await createOreConnection()
         if (oreConnection) {
-            const block: number = ( oreConnection.chainInfo.headBlockNumber || 0)
-            const blockFromApi = oreConnection.chainInfo
-            const written: boolean = await this.writeBlock(blockFromApi)
-            logHandler.info("latest block: " + block)
+            const block: number = oreConnection.chainInfo.headBlockNumber
+            const blockFromApi = await this.getBlock(block)
+        
+            logHandler.info("latest block: " + block.toString())
+            logHandler.info("latest block info: " + JSON.stringify(this))
         }
     }
-
 }
 
 
-(async () => {
-    try {
-        const blockEx = new BlockExplorer 
-        await blockEx.getLatestBlock()
-    }
-    catch (err) {
-        errorHandler('bad block', err)
-    }
-})()
+// (async () => {
+//     try {
+//         const blockEx = new BlockExplorer 
+//         await blockEx.getLatestBlock()
+//     }
+//     catch (err) {
+//         errorHandler('bad block', err)
+//     }
+// })()

@@ -9,7 +9,7 @@ import { EosAccount } from '@open-rights-exchange/chainjs/dist/chains/eos_2'
 import { ChainEosV2 } from '@open-rights-exchange/chainjs'
 import { toEosAsset, toEosEntityName } from '@open-rights-exchange/chainjs/dist/chains/eos_2/helpers'
 
-import { OreBalanceActions, oreIdActions, OreKeys, OreTreasuryInterface } from "../interfaces/OreChain"
+import { OreBalanceActions, oreIdActions, OreKeys } from "../interfaces/OreChain"
 import { createOreConnection } from "../modules/chains"
 import { errorHandler } from "../utils/errorHandler"
 import { getUser } from "../modules/oreid"
