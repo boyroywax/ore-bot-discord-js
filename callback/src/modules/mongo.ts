@@ -60,7 +60,7 @@ export async function verifyLogin(
                             status: "Failed",
                             comment: "Cannot verify discordID, This may be the users first time logging in."
                         } 
-                        await logEntry('Login', 0, logArgs)
+                        await logEntry('Login', BigInt(0), logArgs)
                     }
                 })
             }
@@ -111,7 +111,7 @@ export async function verifyLogout( stateIn: string ): Promise<boolean> {
                     status: "Failed",
                     comment: "Cannot verify discordID."
                 } 
-                await logEntry('LogOut', 0, logArgs)
+                await logEntry('LogOut', BigInt(0), logArgs)
                 logHandler.error('verifyLogout failed')
             }
         })

@@ -6,14 +6,14 @@ import { addLogEntry } from './mongo'
 
 export async function logEntry (
     action: string,
-    discordId: number,
+    discordId: BigInt,
     entry?: UserLogKWArgs ): Promise<boolean> {
     // 
     // Logs the user's activity into their user log.
     // 
     let savedLogEntry = false
     try  {
-        logHandler.info("logEntry passed to logEntry function: " + entry)
+        // logHandler.info("logEntry passed to logEntry function: " + entry)
         let userLogEntry: UserLog = new UserLogModel({
             action: action,
             amount: entry?.amount || 0,

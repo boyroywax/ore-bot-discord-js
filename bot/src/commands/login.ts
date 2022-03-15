@@ -19,9 +19,10 @@ export const login: CommandInt = {
         // Login prompt for OreId
         // 
         const date: Date = new Date
+        const userDiscordId: bigint = BigInt(interaction.user.id)
         try {
             // Check if user is already logged in
-            let userCheck = await checkLoggedIn(Number(interaction.user.id))
+            let userCheck = await checkLoggedIn(userDiscordId)
                 .then(async function([loggedIn, loginDate]: [boolean, string]) {
                 
                 // Alert the user if they are already logged in
@@ -33,7 +34,7 @@ export const login: CommandInt = {
                     // Create a message only the user can see
                     await interaction.deferReply({ ephemeral: true })
                     const loginEmbed = new MessageEmbed()
-                    .setThumbnail(process.env.OREID_LOGO || 'https://i.imgur.com/A3yS9pl.png')
+                        .setThumbnail(process.env.OREID_LOGO || 'https://i.imgur.com/A3yS9pl.png')
                     
                     // Create State from date
                     const state: string = createState(date)
@@ -100,7 +101,6 @@ export const login: CommandInt = {
                     // Send the embed to discord
                     await interaction.editReply({ components: [row, row2], embeds: [loginEmbed] })
                     
-                    const userDiscordId: number = Number(interaction.user.id)
                     await setDiscordUserState(userDiscordId, state)
                     
                     const logArgs: UserLogKWArgs = { 

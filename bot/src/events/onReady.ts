@@ -1,9 +1,11 @@
-import { errorHandler } from "../utils/errorHandler";
-import { logHandler } from "../utils/logHandler";
 import { REST } from "@discordjs/rest";
 import { APIApplicationCommandOption, Routes } from "discord-api-types/v9";
-import { CommandList } from "../commands/_CommandList";
 import { Client } from "discord.js";
+
+import { CommandList } from "../commands/_CommandList";
+import { errorHandler } from "../utils/errorHandler";
+import { logHandler } from "../utils/logHandler";
+
 
 export const onReady = async (BOT: Client): Promise<void> => {
   try {

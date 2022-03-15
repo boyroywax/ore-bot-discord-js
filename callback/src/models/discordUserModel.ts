@@ -1,12 +1,15 @@
-import { Schema, model } from "mongoose"
+import mongoose, { Schema, model } from "mongoose"
+import mongooseLong from 'mongoose-long'
 import { DiscordUser, UserLog } from "../interfaces/DiscordUser"
+
+mongooseLong(mongoose)
 
 // 
 // Discord User's info
 // 
 export const discordSchema = new Schema<DiscordUser>({
     dateCreated: {type: Date, required: false },
-    discordId: { type: Number, required: true , index: true},
+    discordId: { type: Schema.Types.Long, required: true , index: true},
     lastLogin: {type: Date, required: false },
     loggedIn: {type: Boolean, required: true },
     oreId: { type: String, required: false },
@@ -24,9 +27,9 @@ export const userLogSchema = new Schema<UserLog>({
     status: { type: String, required: false },
     amount: { type: Number, required: false },
     date: {type: Date, required: true },
-    discordId: { type: Number, required: true },
+    discordId: { type: Schema.Types.Long, required: true },
     oreId: { type: String, required: false },
-    recipient: { type: Number, required: false },
+    recipient: { type: Schema.Types.Long, required: false },
     txnId: { type: String, required: false },
     comment: { type: String, required: false }
 })

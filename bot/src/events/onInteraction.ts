@@ -1,7 +1,9 @@
-import { Interaction } from "discord.js";
-import { CommandList } from "../commands/_CommandList";
-import { errorHandler } from "../utils/errorHandler";
-import { logHandler } from "../utils/logHandler";
+import { Interaction } from "discord.js"
+
+import { CommandList } from "../commands/_CommandList"
+import { errorHandler } from "../utils/errorHandler"
+import { logHandler } from "../utils/logHandler"
+
 
 export const onInteraction = async (
   interaction: Interaction

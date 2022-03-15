@@ -93,7 +93,7 @@ export async function getUser(account: AccountName)  {
 
 }
 
-export async function getOreIdBalance(discordId: number): Promise<[string, number]> {
+export async function getOreIdBalance(discordId: bigint): Promise<[string, number]> {
     // 
     // Returns a discord user's ORE-id account name and ORE Netowrk blockchain balance
     // 
