@@ -4,9 +4,9 @@ import { EosTransaction } from '@open-rights-exchange/chainjs/dist/chains/eos_2'
 import { toEosAsset, toEosEntityName, toEosPrivateKey, toEosSymbol } from '@open-rights-exchange/chainjs/dist/chains/eos_2/helpers'
 
 import { OreResourceActions } from '../interfaces/OreChain'
-import { createOreConnection } from "../modules/chains"
 import { errorHandler } from "./errorHandler"
 import { logHandler } from './logHandler'
+import { executeTxn } from './transaction'
 
 export class AccountResources implements OreResourceActions {
     oreId: string = process.env.BOT_TREASURER_OREID || "ore1sqvihyhs"
@@ -19,34 +19,6 @@ export class AccountResources implements OreResourceActions {
 
     appOreIdKey: PrivateKeyBrand = toEosPrivateKey(process.env.ORE_TESTNET_APPOREID_PRIVATE_KEY || '');
 
-    private async executeTxn(action: EosActionStruct, key: EosPrivateKey[]): Promise<[boolean, string]> {
-        let completed: boolean = false
-        let status: string = "ExecuteTxn initiating."
-        const oreConnection = await createOreConnection()
-        logHandler.info('ore status: ' + JSON.stringify(oreConnection))
-
-        if (oreConnection) {
-            const transaction: EosTransaction = (await oreConnection.new.Transaction()) as EosTransaction
-            if (transaction) {
-                transaction.actions = [action]
-                await transaction.prepareToBeSigned()
-                await transaction.validate()
-                await transaction.sign([this.appOreIdKey])
-                if (transaction.missingSignatures) { 
-                    logHandler.info('missing sigs: ' + JSON.stringify(transaction.missingSignatures))
-                }
-        
-                // const good = transaction.isEosActionStructArray([action])
-                // logHandler.info('isEosActionStructArray? ' + good)
-                // logHandler.info("transaction: " + JSON.stringify(transaction.toJson()))
-                const txResponse = await transaction.send()
-                // logHandler.info('send response:', JSON.stringify(transaction.sendReceipt))
-                completed = true
-                status = "Txn Id: " + transaction.transactionId
-            }
-        }
-        return [completed, status]
-    }
 
     public async addSYS(amount: string): Promise<[boolean, string]> {
         let success: boolean = false
@@ -68,7 +40,7 @@ export class AccountResources implements OreResourceActions {
                 memo: "ORE Community Bot Top up"
             }
         };
-        [success, status] = await this.executeTxn(resources, [this.appOreIdKey])
+        [success, status] = await executeTxn([resources], [this.appOreIdKey])
 
         return [success, status]
     }
@@ -93,7 +65,7 @@ export class AccountResources implements OreResourceActions {
                 }
             }
             let key: PrivateKeyBrand = toEosPrivateKey(process.env.ORE_TESTNET_APPOREID_PRIVATE_KEY || '5Jka7TQfp77QzgVYhXGbXuT21fKgdJiUgNHhMxneJNzZqsS4CXi');
-            [ buyCompleted, buyStatus ] = await this.executeTxn(resources,[this.appOreIdKey])
+            [ buyCompleted, buyStatus ] = await executeTxn([resources], [this.appOreIdKey])
         }
         catch (err) {
             errorHandler("buyRam", err)
@@ -123,7 +95,7 @@ export class AccountResources implements OreResourceActions {
                 bytes: ramBytes,
             }
         };
-        [ buyCompleted, buyStatus] = await this.executeTxn(resources, [this.appOreIdKey])
+        [ buyCompleted, buyStatus] = await executeTxn([resources], [this.appOreIdKey])
         return [ buyCompleted, buyStatus]
     }
 
@@ -147,7 +119,7 @@ export class AccountResources implements OreResourceActions {
         }
         const key: [EosPrivateKey] = [this.activePrivateKey] || [];
         
-        [delegationCompleted, delegationStatus] = await this.executeTxn(resources, key);
+        [delegationCompleted, delegationStatus] = await executeTxn([resources], key);
         return [delegationCompleted, delegationStatus]
     }
 }

@@ -28,7 +28,7 @@ export const deposit: CommandInt = {
 
             const depositEmbed = new MessageEmbed()
                 .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
-                .setTitle("ORE Deposit Addres")
+                .setTitle("ORE Deposit Address")
                 .setDescription('Only Send ORE Native tokens to this account.  Do Not send ETH, MATIC, EOS, etc')
                 .addField(
                     "Deposit Address",

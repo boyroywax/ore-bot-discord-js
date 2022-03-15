@@ -56,9 +56,7 @@ export class BlockExplorer implements OreBlock {
             const blockFromApi = await axios.post(process.env.CURRENCY_TESTNET + ":443/v1/chain/get_block", {
                 block_num_or_id: blockNumber
             })
-            // const blockFromApi = await axios.post("https://ore-staging.openrights.exchange:443/v1/chain/get_block", {
-            //         block_num_or_id: blockNumber
-            //     })
+
             const success = this.writeBlock(blockFromApi.data)
             logHandler.info(success)
         }

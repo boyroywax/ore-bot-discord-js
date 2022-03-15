@@ -5,10 +5,10 @@ import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { checkLoggedIn } from '../modules/mongo'
 import { doTip } from "../modules/tipper"
-import { unauthorizedCommand } from "../utils/loginCheck";
-import { logHandler } from "../utils/logHandler";
-import { logEntry } from "../modules/userLog";
-import { UserLogKWArgs } from "../interfaces/DiscordUser";
+import { unauthorizedCommand } from "../utils/loginCheck"
+import { logHandler } from "../utils/logHandler"
+import { logEntry } from "../modules/userLog"
+import { UserLogKWArgs } from "../interfaces/DiscordUser"
 
 
 export const tip: CommandInt = {

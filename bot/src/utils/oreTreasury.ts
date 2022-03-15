@@ -1,32 +1,20 @@
 import { HelpersEos } from '@open-rights-exchange/chainjs'
 import { User } from "discord.js"
-import { AccountType } from 'oreid-js'
+import { AccountType, AddPermissionParams, UserPermission } from 'oreid-js'
 import { PrivateKey, PublicKey } from '@open-rights-exchange/chainjs/dist/models'
-import { Chain, Transaction } from '@open-rights-exchange/chainjs'
+import { Chain } from '@open-rights-exchange/chainjs'
 import { TransactionResult } from '@open-rights-exchange/chainjs/src/models'
-import { EosNewAccountType, EosAccountStruct } from '@open-rights-exchange/chainjs/dist/chains/eos_2/models'
+import { EosNewAccountType, EosActionStruct, EosPrivateKey } from '@open-rights-exchange/chainjs/dist/chains/eos_2/models'
 import { EosAccount } from '@open-rights-exchange/chainjs/dist/chains/eos_2'
-import { ChainEosV2 } from '@open-rights-exchange/chainjs'
-import { toEosAsset, toEosEntityName } from '@open-rights-exchange/chainjs/dist/chains/eos_2/helpers'
+import { toEosAsset, toEosEntityName, toEosPrivateKey, toEosSymbol } from '@open-rights-exchange/chainjs/dist/chains/eos_2/helpers'
 
 import { OreBalanceActions, oreIdActions, OreKeys } from "../interfaces/OreChain"
 import { createOreConnection } from "../modules/chains"
 import { errorHandler } from "../utils/errorHandler"
-import { getUser } from "../modules/oreid"
+import { DiscordUser } from '../interfaces/DiscordUser'
 import { logHandler } from './logHandler'
+import { executeTxn } from './transaction'
 
-
-// export async function prepTransaction (chain: Chain | undefined, transaction: Transaction, key: string): Promise<Transaction> {
-//     logHandler.info('actions: ' + transaction.actions)
-//     await transaction.prepareToBeSigned()
-//     await transaction.validate()
-//     await transaction.sign([key])
-//     if (transaction.missingSignatures) { 
-//         logHandler.info('missing sigs: ' + transaction.missingSignatures)
-//     }
-//     logHandler.info(JSON.stringify(transaction.toJson()))
-//     return transaction
-//   }
 
 export class OreTreasury implements OreKeys, oreIdActions, OreBalanceActions {
     oreId: string = process.env.BOT_TREASURER_OREID || "ore1sqvihyhs"
@@ -60,8 +48,28 @@ export class OreTreasury implements OreKeys, oreIdActions, OreBalanceActions {
         return [ address, qrCode ]
     }
 
-    public async makeWithdrawl(discordUser: User, amount: number): Promise<[ boolean, string ]> {
-        return [ false, '']
+    public async makeWithdrawl(amount: number, toAddress: string): Promise<[ boolean, string ]> {
+        let completed: boolean = false
+        let status: string = "Withdrawl initiated."
+        const resources: EosActionStruct = {
+            account: toEosEntityName('eosio.token'),
+            name: 'transfer',
+            authorization: [
+                {
+                    actor: toEosEntityName(this.oreId),
+                    permission: toEosEntityName('active'),
+                },
+            ],
+            data: { 
+                from: toEosEntityName(this.oreId),
+                to: toEosEntityName(toAddress),
+                quantity:  toEosAsset(String(amount), toEosSymbol('ORE'), 4),
+                memo: "Transfer from ORE Community Bot"
+            }
+        };
+        [completed, status] = await executeTxn([resources], [this.activePrivateKey])
+
+        return [completed, status]
     }
 
     public async createAccount(): Promise<[ boolean, string ]> {
@@ -149,21 +157,8 @@ export class OreTreasury implements OreKeys, oreIdActions, OreBalanceActions {
 
         logHandler.info('actions: ' + JSON.stringify(actions))
 
-        const ownerKey = process.env.BOT_TREASURER_OWNER_PRIV_KEY
-        // const activeKey = process.env.BOT_TREASURER_ACTIVE_PRIV_KEY
-        if (oreConnection) {
-            const transaction = await oreConnection.new.Transaction()
-            transaction.actions = actions
-            await transaction.prepareToBeSigned()
-            await transaction.validate()
-            await transaction.sign([ownerKey])
-            if (transaction.missingSignatures) { 
-                logHandler.info('missing sigs: ' + transaction.missingSignatures)
-            }
-            logHandler.info(JSON.stringify(transaction.toJson()))
-            const txResponse = await transaction.send()
-            logHandler.info('send response:', JSON.stringify(txResponse))
-        }
+        const ownerKey: EosPrivateKey = toEosPrivateKey(process.env.BOT_TREASURER_OWNER_PRIV_KEY || '')
+        await executeTxn(actions, [ownerKey])
         return 'Complete'
     }
 }
