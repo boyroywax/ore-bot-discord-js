@@ -2,12 +2,12 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
-import { loginUser } from "../modules/oreid"
+import { loginUser } from "../utils/oreid"
 import { createState } from "../utils/stateTools"
-import { checkLoggedIn, setDiscordUserState } from "../modules/mongo"
+import { checkLoggedIn, setDiscordUserState } from "../utils/mongo"
 import { logHandler } from "../utils/logHandler"
 import { alreadyLoggedIn } from "../utils/loginCheck"
-import { logEntry } from "../modules/userLog"
+import { logEntry } from "../utils/userLog"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
 
 export const login: CommandInt = {
@@ -65,7 +65,7 @@ export const login: CommandInt = {
                         false
                     )
 
-                    // Login Button row 1/2
+                    // Login Button row (1/2)
                     const row = new MessageActionRow()
                     .addComponents(
                         new MessageButton()
@@ -79,7 +79,7 @@ export const login: CommandInt = {
                         .setURL(facebookLoginParse.loginUrl)
                         .setStyle('LINK')
                     )
-                    // Login Button Row 2/2
+                    // Login Button Row (2/2)
                     const row2 = new MessageActionRow()
                     .addComponents(
                         new MessageButton()

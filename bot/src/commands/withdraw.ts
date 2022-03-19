@@ -4,14 +4,14 @@ import { MessageEmbed, User } from "discord.js"
 
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
-import { checkLoggedIn } from '../modules/mongo'
+import { checkLoggedIn } from '../utils/mongo'
 import { unauthorizedCommand } from "../utils/loginCheck"
 import { logHandler } from "../utils/logHandler"
-import { logEntry } from "../modules/userLog"
+import { logEntry } from "../utils/userLog"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
 import { OreBalance } from "../interfaces/OreChain"
-import { OreTreasury } from "../utils/oreTreasury"
-import { validateAddress} from "../utils/transaction"
+import { OreTreasury } from "../modules/oreTreasury"
+import { validateAddress, verifyBotBalance, verifyOreIdBalance} from "../utils/transaction"
 
 
 export const withdraw: CommandInt = {
@@ -32,6 +32,9 @@ export const withdraw: CommandInt = {
             const userDiscordId: bigint = BigInt(interaction.user.id)
             const toAddress: string = interaction.options.getString('address') || 'No Address'
             const withdrawAmount: number = interaction.options.getNumber('amount') || 0.00
+            const oreTreasurer: string = process.env.BOT_TREASURER_OREID || ''
+            
+            let  withdrawError: string = "None"
 
              // Check if user is already logged in and retrive the lastLogin date as a string
              const [ loggedIn, loginDate ] = await checkLoggedIn(userDiscordId)
@@ -46,38 +49,90 @@ export const withdraw: CommandInt = {
                 await interaction.deferReply({ ephemeral: true})
 
                 // check that the address is valid
-                const [ addressCompleted, addressStatus ] = await validateAddress(toAddress)
+                const [ addressVerified, addressStatus ] = await validateAddress(toAddress)
+
 
                 // check that the user has the proper funds
-
-
-
-                // create treasury instance
-                const treasury = new OreTreasury
-
-                const [ depositaddress, depositQrCode ] = await treasury.makeWithdrawl(withdrawAmount, toAddress)
-
+                if (!addressVerified) {
+                    withdrawError = "That address is not valid!"
+                }
+                else {
+                    const [ userBalanceVerify, userBalanceStatus ] = await verifyBotBalance(userDiscordId, withdrawAmount)
+                    if (!userBalanceVerify) {
+                        withdrawError = userBalanceStatus
+                    }
+                    else {
+                        // check that the treasury has required funds
+                        const [ oreTreasuryVerify, oreTreasuryStatus ] = await verifyOreIdBalance(oreTreasurer, withdrawAmount)
+                        if (!oreTreasuryVerify) {
+                            withdrawError = oreTreasuryStatus
+                        }
+                        else {
+                            // create treasury instance
+                            const treasury = new OreTreasury
+                            // make withdrawal
+                            const [ withdrawCompleted, withdrawStatus ] = await treasury.makeWithdrawl(withdrawAmount, toAddress)
+                            
+                            
+                            if (withdrawCompleted) {
+                                // embed a success message
+                                const withdrawEmbed = new MessageEmbed()
+                                    .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
+                                    .setTitle("✅ ORE Withdrawl Success")
+                                    .setDescription('Your funds have been trnsfered.')
+                                    .addField(
+                                        "Withdraw Address",
+                                        String(toAddress),
+                                        false
+                                    )
+                                    .addField(
+                                        "Amount",
+                                        String(withdrawAmount),
+                                        false
+                                    )
+                                    .addField(
+                                        "Transaction Id",
+                                        String(oreTreasuryStatus),
+                                        false
+                                    )
+                    
+                                await interaction.editReply( {embeds: [withdrawEmbed]})
+                                return
+                            }
+                            else {
+                                withdrawError = withdrawStatus
+                            }
+                        }
+                    }
+                                
+                }
+                // add a failure message
                 const withdrawEmbed = new MessageEmbed()
                     .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
-                    .setTitle("ORE Deposit Address")
-                    .setDescription('Only Send ORE Native tokens to this account.  Do Not send ETH, MATIC, EOS, etc')
+                    .setTitle("❌ ORE Withdrawl Failed")
+                    .setDescription('Your funds have not been trnsfered.')
                     .addField(
-                        "Deposit Address",
-                        String(depositaddress),
+                        "Withdraw Address",
+                        String(toAddress),
                         false
                     )
                     .addField(
-                        "QR COde",
-                        String(depositQrCode),
+                        "Amount",
+                        String(withdrawAmount),
                         false
                     )
-        
+                    .addField(
+                        "Error Message",
+                        String(withdrawError),
+                        false
+                    )
+    
                 await interaction.editReply( {embeds: [withdrawEmbed]})
             }
         }
         catch (err) {
             errorHandler("/withdrawl command", err)
         }
-        return
+    return
     }
 }

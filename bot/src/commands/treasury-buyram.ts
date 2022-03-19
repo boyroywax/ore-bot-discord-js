@@ -4,8 +4,8 @@ import { MessageEmbed, User } from "discord.js"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { logHandler } from "../utils/logHandler"
-import { OreTreasury } from "../utils/oreTreasury"
-import { AccountResources } from "../utils/accountResources"
+import { OreTreasury } from "../modules/oreTreasury"
+import { AccountResources } from "../modules/accountResources"
 
 
 export const buyRamByte: CommandInt = {

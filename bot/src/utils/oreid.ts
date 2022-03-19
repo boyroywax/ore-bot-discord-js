@@ -1,25 +1,31 @@
 import { HelpersEos } from '@open-rights-exchange/chainjs'
 import { AccountName, AuthProvider, ChainNetwork,
+        JSONObject,
         LoginOptions, OreId, OreIdOptions,
-        SignOptions, SignWithOreIdResult, User} from 'oreid-js'
+        SignWithOreIdResult, Transaction, UserSourceData } from 'oreid-js'
+import User from 'oreid-js/dist/user/user'
+import Auth from 'oreid-js/dist/auth/auth'
+import { ApiGetUserParams, callApiGetUser } from 'oreid-js/dist/api'
+import { TransactionSignOptions } from 'oreid-js'
+import * as dotenv from 'dotenv'
 
 import { createOreConnection } from "./chains"
 import { errorHandler } from '../utils/errorHandler'
 import { logHandler } from '../utils/logHandler'
 import { getOreIdUser } from "./mongo"
+import { oreIdActions } from 'interfaces/OreChain'
+
+dotenv.config()
 
 
-const oreIdOptions: OreIdOptions = {
+export const oreIdOptions: OreIdOptions = {
     appName: process.env.OREID_APP_NAME || "Discord Bot",
     appId: process.env.OREID_APP_ID || '',
     apiKey: process.env.OREID_API_KEY || '',
     oreIdUrl: process.env.OREID_URL || "https://service.oreid.io",
     authCallbackUrl: process.env.OREID_AUTH_CALLBACK_URL,
-    signCallbackUrl: process.env.OREID_SIGN_CALLBACK_URL
+    signCallbackUrl: process.env.OREID_SIGN_CALLBACK_URL,
 }
-
-const oreId = new OreId(oreIdOptions)
-logHandler.info("oreId: " + JSON.stringify(oreId))
 
 export async function loginUser(authProvider: string, newState: string) {
     // 
@@ -46,6 +52,8 @@ export async function loginUser(authProvider: string, newState: string) {
     }
     try {
         logHandler.info("authProvider: " + authProviderSet)
+
+        let oreId: OreId = new OreId(oreIdOptions)
     
         // Set the login options for the ORE-Test Network
         let loginOptions: LoginOptions = {
@@ -53,7 +61,7 @@ export async function loginUser(authProvider: string, newState: string) {
             chainNetwork: ChainNetwork.OreTest,
             state: newState
         }
-        let loginResponse = await oreId.login(loginOptions)
+        let loginResponse = await oreId.auth.getLoginUrl(loginOptions)
         logHandler.info(
             "LoginResponse: " + 
             JSON.stringify(loginResponse, null, 4)
@@ -65,33 +73,42 @@ export async function loginUser(authProvider: string, newState: string) {
     }
 }
 
-async function loginWithIdToken(idToken: string) {
-    try {
-        let userInfo = await oreId.login({idToken})
-        console.log(userInfo)
-    }
-    catch (error) {
-        console.error(error)
-    }
-}
+// async function loginWithIdToken(idToken: string) {
+//     try {
+//         let userInfo = await oreId.login({idToken})
+//         console.log(userInfo)
+//     }
+//     catch (error) {
+//         console.error(error)
+//     }
+// }
 
-export async function getUser(account: AccountName)  {
-    // 
-    // Accepts a user's ore-id ORE account name
-    // Returns a User obj from ORE-ID APi
-    // 
-    let user: User
-    try {
-        logHandler.info("Fetching user: " + account + "...")
-        user = await oreId.getUserInfoFromApi(account)
+// export async function getUser(accountName: AccountName): Promise<UserSourceData | undefined>  {
+//     // 
+//     // Accepts a user's ore-id ORE account name
+//     // Returns a User obj from ORE-ID APi
+//     // 
 
-        return user
-    }
-    catch (err) {
-        errorHandler("getUser failed: ", err)
-    }
+//     // const appAccessToken: string = await oreId.getAppAccessToken()
+//     let userApiInfo: UserSourceData | undefined = undefined
+//     try {
+//         logHandler.info("Fetching user: " + accountName + "...")
+//         const oreId2 = await createOreConnection()
+//         oreId2?.
+//         logHandler.info("oreId: " + oreId)
+//         const params: ApiGetUserParams = { "account": accountName }
+//         // await oreId2.auth.user.callApi()
+//         // const oreId3: OreId = new OreId(oreIdOptions)
+//         userApiInfo = await callApiGetUser(oreId2., params)
+//         logHandler.info("userApiInfo: " + userApiInfo)
 
-}
+//     }
+//     catch (err) {
+//         errorHandler("getUser", err)
+//     }
+
+//     return userApiInfo
+// }
 
 export async function getOreIdBalance(discordId: bigint): Promise<[string, number]> {
     // 
@@ -104,17 +121,19 @@ export async function getOreIdBalance(discordId: bigint): Promise<[string, numbe
         oreIdUserName = await getOreIdUser(discordId)
 
         // Retrieve the user's object from OreID API
-        const oreIdUserObj: any = await getUser(oreIdUserName)
-        logHandler.info("oreIdUserObj: " + JSON.stringify(oreIdUserObj))
+        // const oreIdUserObj: any = await getUser(oreIdUserName)
+        // logHandler.info("oreIdUserObj: " + JSON.stringify(oreIdUserObj))
 
         // Coreate an Ore Network connection
         const oreConnection = await createOreConnection()
         const chainSymbol: string = "ORE"
 
         // Fetch the ORE-ID user's balance from the chain
-        const balance = await oreConnection?.fetchBalance(oreIdUserObj.accountName, HelpersEos.toEosSymbol(chainSymbol))
-        logHandler.info("user OREID balance: " + balance?.balance)
-        oreIdBalance = Number(balance?.balance)
+        if (oreConnection) {
+            const balance = await oreConnection.fetchBalance(HelpersEos.toEosEntityName(oreIdUserName), HelpersEos.toEosSymbol(chainSymbol))
+            logHandler.info("user OREID balance: " + balance.balance)
+            oreIdBalance = Number(balance.balance)
+        }
         
     } catch (err) {
         errorHandler('getOreIdBalance failed: ', err)
@@ -150,13 +169,14 @@ export async function initiateSign(
     accountName: AccountName,
     chainNetwork: ChainNetwork,
     provider: AuthProvider,
-    transaction: string ): Promise<string> {
+    transaction: JSONObject ): Promise< string > {
     // 
     // Returns a string with the url which signs the transaction in ORE-ID
     // 
+    let oreId: OreId = new OreId(oreIdOptions)
     let signUrl: string = ""
 
-    let signOptions: SignOptions = {
+    let signOptions = {
         account: accountName,
         chainNetwork: chainNetwork,
         provider: provider,
@@ -164,8 +184,9 @@ export async function initiateSign(
     }
 
     try {
-        let signResponse: SignWithOreIdResult = await oreId.sign(signOptions)
-        logHandler.info("signResponse: ", signResponse)
+        let transaction: Transaction = await oreId.createTransaction(signOptions)
+        logHandler.info("Transaction Object: ", transaction)
+        const signResponse: SignWithOreIdResult = await transaction.getSignUrl() || "Failure"
         signUrl = signResponse.signUrl || "Failure"
     }
     catch (err) {

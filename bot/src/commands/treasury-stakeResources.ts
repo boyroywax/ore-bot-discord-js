@@ -4,7 +4,7 @@ import { MessageEmbed, User } from "discord.js"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { logHandler } from "../utils/logHandler"
-import { OreTreasury } from "../utils/oreTreasury"
+import { OreTreasury } from "../modules/oreTreasury"
 
 export const delegateBW: CommandInt = {
     data: new SlashCommandBuilder()

@@ -1,5 +1,5 @@
-import { logHandler } from '../utils/logHandler'
-import { errorHandler } from '../utils/errorHandler'
+import { logHandler } from './logHandler'
+import { errorHandler } from './errorHandler'
 import { UserLog, UserLogKWArgs } from '../interfaces/DiscordUser'
 import { UserLogModel } from '../models/DiscordUserModel'
 import { addLogEntry } from './mongo'

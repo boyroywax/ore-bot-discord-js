@@ -3,7 +3,7 @@ import { connect, disconnect } from 'mongoose'
 import { logHandler } from '../utils/logHandler'
 import { errorHandler } from '../utils/errorHandler'
 import { BotBalanceModel, UserLogModel } from '../models/DiscordUserModel'
-import { BotBalance, UserLog } from '../interfaces/DiscordUser'
+import { BotBalance, DiscordUser, UserLog } from '../interfaces/DiscordUser'
 import { checkLoggedIn, updateBotBalance, zeroBotBalance } from './mongo'
 import { listActivity } from './userLog'
 

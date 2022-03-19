@@ -1,7 +1,7 @@
 import axios from "axios"
 
-import { logHandler } from "./logHandler"
-import { createPriceEntry, getLatestEntry } from "../modules/mongo"
+import { logHandler } from "../utils/logHandler"
+import { createPriceEntry, getLatestEntry } from "../utils/mongo"
 import { CmcPriceData, CmcPrice } from "../interfaces/PriceData"
 import { errorHandler } from "../utils/errorHandler"
 

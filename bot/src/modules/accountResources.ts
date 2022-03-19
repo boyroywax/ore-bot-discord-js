@@ -4,9 +4,9 @@ import { EosTransaction } from '@open-rights-exchange/chainjs/dist/chains/eos_2'
 import { toEosAsset, toEosEntityName, toEosPrivateKey, toEosSymbol } from '@open-rights-exchange/chainjs/dist/chains/eos_2/helpers'
 
 import { OreResourceActions } from '../interfaces/OreChain'
-import { errorHandler } from "./errorHandler"
-import { logHandler } from './logHandler'
-import { executeTxn } from './transaction'
+import { errorHandler } from "../utils/errorHandler"
+import { logHandler } from '../utils/logHandler'
+import { executeTxn } from '../utils/transaction'
 
 export class AccountResources implements OreResourceActions {
     oreId: string = process.env.BOT_TREASURER_OREID || "ore1sqvihyhs"

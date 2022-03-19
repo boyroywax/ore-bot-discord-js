@@ -14,7 +14,8 @@ export const discordSchema = new Schema<DiscordUser>({
     lastLogin: {type: Date, required: false },
     loggedIn: {type: Boolean, required: true },
     oreId: { type: String, required: false },
-    state: { type: String, required: false, ref: 'state'}
+    state: { type: String, required: false, ref: 'state'},
+    pendingTransaction: { type: Number, required: false} 
 })
 
 export const DiscordUserModel = model<DiscordUser>('DiscordUser', discordSchema)
@@ -34,7 +35,7 @@ export const BotBalanceModel = model<BotBalance>('BotBalance', botBalanceSchema)
 // Logging a user's actions
 // 
 export const userLogSchema = new Schema<UserLog>({
-    id: { type: Number, required: false, index: true, default: 0, unique: true, ref: "id" },
+    // id: { type: Number, required: false, index: true, unique: true, ref: "id" },
     action: { type: String, required: true },
     status: { type: String, required: false },
     amount: { type: Number, required: false },

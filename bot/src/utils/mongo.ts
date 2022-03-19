@@ -19,7 +19,8 @@ function setDiscordUser(
     doc?: DiscordUser,
     oreId?: string,
     state?: string,
-    userLoggedIn?: boolean
+    userLoggedIn?: boolean,
+    pendingTransaction?: number
     ): DiscordUser {
     // 
     // Returns a DiscordUser object
@@ -37,6 +38,7 @@ function setDiscordUser(
         doc.discordId = userDiscordId || doc.discordId
         doc.state = state || doc.state
         doc.oreId = oreId || doc.oreId
+        doc.pendingTransaction = pendingTransaction || doc.pendingTransaction
     }
     else {
         doc = new DiscordUserModel({
@@ -51,7 +53,8 @@ function setDiscordUser(
 export async function setDiscordUserState(
     userDiscordId: bigint,
     state: string,
-    loggedIn?: boolean): Promise<boolean> {
+    loggedIn?: boolean,
+    pendingTransaction?: number): Promise<boolean> {
     // 
     // Returns true if successfully set user state in mongodb
     // Creates a new user record if the discordId does not exist
@@ -71,6 +74,12 @@ export async function setDiscordUserState(
                 }
                 else {
                     doc.lastLogin = doc.lastLogin || undefined
+                }
+                if ( pendingTransaction ) {
+                    doc.pendingTransaction = pendingTransaction
+                }
+                else {
+                    doc.pendingTransaction = 0.00
                 }
                 doc.dateCreated = doc.dateCreated || date
                 doc.loggedIn = loggedIn || false
@@ -116,8 +125,9 @@ export async function checkLoggedIn( userDiscordId: bigint ): Promise<[ boolean,
         // Get the users last login date as a string
         if (doc) {
             loggedIn = doc.loggedIn
-            if (doc.lastLogin?.toString()) {
-                lastLogin = doc.lastLogin?.toString() || "Never"
+
+            if (doc.lastLogin) {
+                lastLogin = doc.lastLogin.toString() || "Never"
             }
         }
         // Create the user if they do not exist

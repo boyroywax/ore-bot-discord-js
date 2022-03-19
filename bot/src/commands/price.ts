@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { MessageEmbed } from "discord.js"
 
-import { getPriceData } from "../utils/priceCheck"
+import { getPriceData } from "../modules/priceCheck"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { logHandler } from "../utils/logHandler"
