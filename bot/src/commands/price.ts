@@ -26,29 +26,29 @@ export const price: CommandInt = {
                 .setTitle("ORE Price Info")
                 .setDescription('')
                 .addField(
-                    "Price USD",
+                    "Price (USD)",
                     "$" + String(priceData.priceUSD),
-                    false
-                )
-                .addField(
-                    "Volume 24 Hour (USD)",
-                    "$" + String(priceData.volumeUSD),
                     false
                 )
                 if (priceData.volumeChange24h >= 0.00) {
                     priceEmbed.addField(
                         "Price Change 24 Hour",
-                        "⬆ " + String(priceData.volumeChange24h),
+                        "⬆ %" + String(priceData.volumeChange24h * 10),
                         false
                     )
                 }
                 else if (priceData.volumeChange24h < 0.00) {
                     priceEmbed.addField(
                         "Price Change 24 Hour",
-                        "⬇ " + String(priceData.volumeChange24h),
+                        "⬇ %" + String(priceData.volumeChange24h * 10),
                         false
                     )
                 }
+                priceEmbed.addField(
+                    "Volume 24 Hour (USD)",
+                    "$" + String(priceData.volumeUSD),
+                    false
+                )
             priceEmbed.setFooter(`Price data by CoinGecko`, process.env.COINGECKO_LOGO)
 
             await interaction.editReply( {embeds: [priceEmbed]})
