@@ -3,10 +3,10 @@ import { MessageEmbed } from "discord.js"
 
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
-import { checkLoggedIn } from "../modules/mongo"
+import { checkLoggedIn } from "../utils/mongo"
 import { unauthorizedCommand } from "../utils/loginCheck"
-import { faucetDonate } from "../modules/tipper"
-import { logEntry } from "../modules/userLog";
+import { faucetDonate } from "../utils/tipper"
+import { logEntry } from "../utils/userLog";
 import { UserLogKWArgs } from "../interfaces/DiscordUser";
 
 

@@ -5,7 +5,7 @@ import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { logHandler } from "../utils/logHandler"
 import { OreBalance } from "../interfaces/OreChain"
-import { OreTreasury } from "../utils/oreTreasury"
+import { OreTreasury } from "../modules/oreTreasury"
 
 
 export const deposit: CommandInt = {

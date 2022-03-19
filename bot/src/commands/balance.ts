@@ -3,11 +3,11 @@ import { MessageEmbed } from "discord.js"
 
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
-import { checkLoggedIn } from "../modules/mongo"
+import { checkLoggedIn } from "../utils/mongo"
 import { logHandler } from "../utils/logHandler"
-import { getOreIdBalance } from "../modules/oreid";
+import { getOreIdBalance } from "../utils/oreid";
 import { unauthorizedCommand } from "../utils/loginCheck";
-import { getBotBalance } from "../modules/tipper";
+import { getBotBalance } from "../utils/tipper";
 
 export const balance: CommandInt = {
     data: new SlashCommandBuilder()

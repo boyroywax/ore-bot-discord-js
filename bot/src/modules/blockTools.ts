@@ -1,9 +1,9 @@
-import { Chain } from "@open-rights-exchange/chainjs"
 import axios from "axios"
+
 import { OreBlock } from "../interfaces/OreChain"
-import { createOreConnection } from "../modules/chains"
-import { errorHandler } from "./errorHandler"
-import { logHandler } from "./logHandler"
+import { createOreConnection } from "../utils/chains"
+import { errorHandler } from "../utils/errorHandler"
+import { logHandler } from "../utils/logHandler"
 
 
 export class BlockExplorer implements OreBlock {
@@ -64,7 +64,7 @@ export class BlockExplorer implements OreBlock {
             const blockFromApi = await axios.post(process.env.CURRENCY_MAINNET + ":443/v1/chain/get_block", {
                 block_num_or_id: blockNumber
             })
-            this.writeBlock(blockFromApi)
+            this.writeBlock(blockFromApi.data)
         }
     }
 
@@ -79,14 +79,3 @@ export class BlockExplorer implements OreBlock {
         }
     }
 }
-
-
-// (async () => {
-//     try {
-//         const blockEx = new BlockExplorer 
-//         await blockEx.getLatestBlock()
-//     }
-//     catch (err) {
-//         errorHandler('bad block', err)
-//     }
-// })()

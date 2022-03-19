@@ -8,6 +8,7 @@ export interface DiscordUser {
     dateCreated?: Date
     oreId?: string
     state?: string
+    pendingTransaction?: number
 }
 
 // 

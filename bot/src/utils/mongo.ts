@@ -5,7 +5,7 @@ import { DiscordUserModel, BotBalanceModel, UserLogModel } from '../models/Disco
 import { PriceDataModel } from '../models/PriceDataModel'
 import { errorHandler } from '../utils/errorHandler'
 import { logHandler } from '../utils/logHandler'
-import { CmcPriceData, CmcPrice } from '../interfaces/PriceData'
+import { PriceData, Price } from '../interfaces/PriceData'
 
 
 const uri = process.env.MONGO_URI || "mongodb://" 
@@ -19,7 +19,8 @@ function setDiscordUser(
     doc?: DiscordUser,
     oreId?: string,
     state?: string,
-    userLoggedIn?: boolean
+    userLoggedIn?: boolean,
+    pendingTransaction?: number
     ): DiscordUser {
     // 
     // Returns a DiscordUser object
@@ -37,6 +38,7 @@ function setDiscordUser(
         doc.discordId = userDiscordId || doc.discordId
         doc.state = state || doc.state
         doc.oreId = oreId || doc.oreId
+        doc.pendingTransaction = pendingTransaction || doc.pendingTransaction
     }
     else {
         doc = new DiscordUserModel({
@@ -51,7 +53,8 @@ function setDiscordUser(
 export async function setDiscordUserState(
     userDiscordId: bigint,
     state: string,
-    loggedIn?: boolean): Promise<boolean> {
+    loggedIn?: boolean,
+    pendingTransaction?: number): Promise<boolean> {
     // 
     // Returns true if successfully set user state in mongodb
     // Creates a new user record if the discordId does not exist
@@ -71,6 +74,12 @@ export async function setDiscordUserState(
                 }
                 else {
                     doc.lastLogin = doc.lastLogin || undefined
+                }
+                if ( pendingTransaction ) {
+                    doc.pendingTransaction = pendingTransaction
+                }
+                else {
+                    doc.pendingTransaction = 0.00
                 }
                 doc.dateCreated = doc.dateCreated || date
                 doc.loggedIn = loggedIn || false
@@ -116,8 +125,9 @@ export async function checkLoggedIn( userDiscordId: bigint ): Promise<[ boolean,
         // Get the users last login date as a string
         if (doc) {
             loggedIn = doc.loggedIn
-            if (doc.lastLogin?.toString()) {
-                lastLogin = doc.lastLogin?.toString() || "Never"
+
+            if (doc.lastLogin) {
+                lastLogin = doc.lastLogin.toString() || "Never"
             }
         }
         // Create the user if they do not exist
@@ -250,8 +260,8 @@ export async function getLogEntries( discordId: bigint ): Promise<UserLog[]> {
     return logEntries
 }
  
-export async function getLatestEntry(): Promise<CmcPriceData> {
-    let latestEntry: CmcPriceData = new PriceDataModel
+export async function getLatestEntry(): Promise<PriceData> {
+    let latestEntry: PriceData = new PriceDataModel
     await connect(uri)
     try {
         await PriceDataModel.findOne().sort('-dateCreated').exec().then(function(item) {
@@ -268,8 +278,8 @@ export async function getLatestEntry(): Promise<CmcPriceData> {
     return latestEntry
 }
 
-export async function createPriceEntry( apiData: CmcPrice ): Promise<CmcPriceData> {
-    let priceData: CmcPriceData = new PriceDataModel
+export async function createPriceEntry( apiData: Price ): Promise<PriceData> {
+    let priceData: PriceData = new PriceDataModel
     await connect(uri)
     try {
         priceData = {

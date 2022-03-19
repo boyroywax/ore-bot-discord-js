@@ -3,10 +3,10 @@ import { MessageEmbed } from "discord.js"
 
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
-import { checkLoggedIn } from "../modules/mongo"
+import { checkLoggedIn } from "../utils/mongo"
 import { logHandler } from "../utils/logHandler"
 import { UserLog } from "../interfaces/DiscordUser"
-import { listActivity } from "../modules/userLog"
+import { listActivity } from "../utils/userLog"
 import { UserLogModel } from "../models/DiscordUserModel"
 import { unauthorizedCommand } from "../utils/loginCheck"
 
@@ -68,7 +68,7 @@ export const activity: CommandInt = {
                         if (parseEntry?.recipient != BigInt(0)) {
                             userActivity.addField(
                                 index + ". " + String(parseEntry.action) + " | " + String(parseEntry.status),
-                                String(parseEntry.date.toDateString()) + " " + String(parseEntry.date.getTime()),
+                                String(parseEntry.date.toDateString()) + " " + String(parseEntry.date.toLocaleTimeString()),
                                 true
                             )
                             userActivity.addField(
@@ -85,7 +85,7 @@ export const activity: CommandInt = {
                         else {
                             userActivity.addField(
                                 index + ". " + String(parseEntry.action) + " | " + String(parseEntry.status),
-                                String(parseEntry.date.toDateString()) + " " + String(parseEntry.date.getTime()),
+                                String(parseEntry.date.toDateString()) + " " + String(parseEntry.date.toLocaleTimeString()),
                                 false
                             )
                         }
@@ -99,7 +99,7 @@ export const activity: CommandInt = {
                         if (parseEntry?.recipient != BigInt(0)) {
                             userActivity.addField(
                                 index + ". " + String(parseEntry.action) + " | " + String(parseEntry.status),
-                                String(parseEntry.date.toDateString()) + " " + String(parseEntry.date.getTime()),
+                                String(parseEntry.date.toDateString()) + " " + String(parseEntry.date.toLocaleTimeString()),
                                 true
                             )
                             userActivity.addField(
@@ -116,21 +116,21 @@ export const activity: CommandInt = {
                         else {
                             userActivity.addField(
                                 index + ". " + String(parseEntry.action) + " | " + String(parseEntry.status),
-                                String(parseEntry.date.toDateString()) + " " + String(parseEntry.date.getTime()),
+                                String(parseEntry.date.toDateString()) + " " + String(parseEntry.date.toLocaleTimeString()),
                                 false
                             )
                         }
                     }
                 }
                 const now = new Date
-                userActivity.setFooter(now.toDateString(), process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
+                userActivity.setFooter(String(now.toDateString()) + " " + String(now.toLocaleTimeString()), process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
 
                 await interaction.editReply({ embeds: [userActivity] })
                 return
             }
         }
         catch (err) {
-            errorHandler('/activity command failed', err)
+            errorHandler('/activity command', err)
         }
     return
     }

@@ -1,6 +1,5 @@
 import { HelpersEos } from '@open-rights-exchange/chainjs'
 import { User } from "discord.js"
-import { AccountType, AddPermissionParams, UserPermission } from 'oreid-js'
 import { PrivateKey, PublicKey } from '@open-rights-exchange/chainjs/dist/models'
 import { Chain } from '@open-rights-exchange/chainjs'
 import { TransactionResult } from '@open-rights-exchange/chainjs/src/models'
@@ -9,11 +8,10 @@ import { EosAccount } from '@open-rights-exchange/chainjs/dist/chains/eos_2'
 import { toEosAsset, toEosEntityName, toEosPrivateKey, toEosSymbol } from '@open-rights-exchange/chainjs/dist/chains/eos_2/helpers'
 
 import { OreBalanceActions, oreIdActions, OreKeys } from "../interfaces/OreChain"
-import { createOreConnection } from "../modules/chains"
+import { createOreConnection } from "../utils/chains"
 import { errorHandler } from "../utils/errorHandler"
-import { DiscordUser } from '../interfaces/DiscordUser'
-import { logHandler } from './logHandler'
-import { executeTxn } from './transaction'
+import { logHandler } from '../utils/logHandler'
+import { executeTxn } from '../utils/transaction'
 
 
 export class OreTreasury implements OreKeys, oreIdActions, OreBalanceActions {

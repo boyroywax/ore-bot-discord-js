@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders"
-import { MessageEmbed, User } from "discord.js"
+import { MessageEmbed } from "discord.js"
 
-import { BlockExplorer } from "../utils/blockTools"
+import { BlockExplorer } from "../modules/blockTools"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { logHandler } from "../utils/logHandler"

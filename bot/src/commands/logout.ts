@@ -3,11 +3,11 @@ import { MessageActionRow, MessageButton, MessageEmbed } from "discord.js"
 
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
-import { checkLoggedIn, setDiscordUserState } from "../modules/mongo"
-import { logEntry } from "../modules/userLog"
+import { checkLoggedIn, setDiscordUserState } from "../utils/mongo"
+import { logEntry } from "../utils/userLog"
 import { logHandler } from "../utils/logHandler"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
-import { logoutUserAddress } from "../modules/oreid"
+import { logoutUserAddress } from "../utils/oreid"
 import { createState } from "../utils/stateTools"
 
 

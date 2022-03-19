@@ -1,4 +1,5 @@
-import { User } from "discord.js"
+import { EosActionStruct } from "@open-rights-exchange/chainjs/dist/chains/eos_2/models";
+import { StringMappedInteractionTypes, User } from "discord.js"
 
 // 
 // Interfaces for ORE NEtwork Accounts
@@ -80,5 +81,19 @@ export interface OreBlock {
 // 
 
 export interface OreTransaction {
-    foo: number
+    action?: EosActionStruct
+    txId: string
+    precision: number
+    fromUser: string
+    chain: string
+}
+
+export interface OreSendTransaction extends OreTransaction {
+    toUser: string
+    amount: number
+
+    createSigningLink(): Promise<[boolean, string, string]>
+    createTransactionAction(): Promise<[boolean, string]>
+    sendToBlockchain(): Promise<[boolean, string, string]>
+
 }

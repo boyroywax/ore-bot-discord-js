@@ -4,14 +4,15 @@ import { MessageEmbed, User } from "discord.js"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { logHandler } from "../utils/logHandler"
-import { OreTreasury } from "../utils/oreTreasury"
-import { AccountResources } from "../utils/accountResources"
+import { OreTreasury } from "../modules/oreTreasury"
+import { AccountResources } from "../modules/accountResources"
 
 
 export const buyRamByte: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("buyrambytes")
-        .setDescription("Setup the bot's treasurer account by buying more ram"),
+        .setDescription("Setup the bot's treasurer account by buying more ram")
+        .setDefaultPermission(false),
     run: async (interaction) => {
         // 
         // Add ram to an this on the ORE Blockchain

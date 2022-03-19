@@ -1,14 +1,14 @@
 import axios from "axios"
 
-import { logHandler } from "./logHandler"
-import { createPriceEntry, getLatestEntry } from "../modules/mongo"
-import { CmcPriceData, CmcPrice } from "../interfaces/PriceData"
+import { logHandler } from "../utils/logHandler"
+import { createPriceEntry, getLatestEntry } from "../utils/mongo"
+import { PriceData } from "../interfaces/PriceData"
 import { errorHandler } from "../utils/errorHandler"
 
 
 const CMC_API_RESET_TIME: number = Number(process.env.CMC_API_RESET_TIME) || 260  // seconds
 
-class Cmc implements CmcPriceData {
+class Price implements PriceData {
     id?: number
     dateCreated: Date = new Date
     priceUSD: number = 0.0
@@ -23,7 +23,37 @@ class Cmc implements CmcPriceData {
        //
     }
 
-    private async getApiData(): Promise<void> {
+    private async getApiDataCG(): Promise<void> {
+        try {
+            const instance = axios.create({
+                baseURL: process.env.COINGECKO_API_ENDPOINT || 'https://api.coingecko.com',
+                timeout: 1000,
+                headers: {'accept': 'application/json'}
+            })
+        
+            const apiData = await instance.get('/api/v3/coins/' + process.env.COINGECKO_API_ID, {
+                params: {
+                    tickers: true,
+                    market_data: true,
+                    community_data: false,
+                    developer_data: false,
+                    sparkline: false
+                }
+            })
+            logHandler.info('Data retrieved from CoinGecko: ' + JSON.stringify(apiData.data))
+        
+            this.dateCreated = apiData.data['market_data']['timestamp']
+            this.priceUSD = apiData.data['market_data']['current_price']['usd']
+            this.volumeUSD = apiData.data['market_data']['total_volume']['usd']
+            this.volumeChange24h = apiData.data['market_data']['price_change_percentage_24h']
+            await createPriceEntry(this)
+        }
+        catch (err) {
+            errorHandler("CoinGecko.getApiData()", err)           
+        }
+    }
+
+    private async getApiDataCMC(): Promise<void> {
         try {
             const instance = axios.create({
                 baseURL: process.env.CMC_API_ENDPOINT || 'https://pro-api.coinmarketcap.com',
@@ -51,7 +81,7 @@ class Cmc implements CmcPriceData {
 
     private async getLocalData(): Promise<void> {
         try {
-            const localData: CmcPriceData = await getLatestEntry()
+            const localData: PriceData = await getLatestEntry()
 
             this.dateCreated = localData.dateCreated
             this.priceUSD = localData.priceUSD
@@ -59,7 +89,7 @@ class Cmc implements CmcPriceData {
             this.volumeChange24h = localData.volumeChange24h
         }
         catch (err) {
-            errorHandler("Cmc.getLocalData()", err)
+            errorHandler("CoinGecko.getLocalData()", err)
         }
     }
 
@@ -83,22 +113,27 @@ class Cmc implements CmcPriceData {
         }
     }
 
-    public async checkPrice(): Promise<void> {
+    public async checkPrice(source: string): Promise<void> {
         try {
             const isExpired = await this.isExpired()
 
             if (isExpired) {
-                await this.getApiData()
+                if (source == 'coingecko') {
+                    await this.getApiDataCG()
+                }
+                else if (source == 'cmc') {
+                    await this.getApiDataCMC()
+                }
             }
         }
         catch (err) {
-            errorHandler("Cmc.checkPrice()", err)
+            errorHandler("CoinGhecko.checkPrice()", err)
         }
     }
 }
 
-export async function getPriceData(): Promise<CmcPriceData> {
-    let priceData: CmcPrice = new Cmc
-    await priceData.checkPrice()
+export async function getPriceData(source: string): Promise<PriceData> {
+    let priceData: Price = new Price
+    await priceData.checkPrice(source)
     return priceData
 }

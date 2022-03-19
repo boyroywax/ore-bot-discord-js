@@ -4,12 +4,13 @@ import { MessageEmbed, User } from "discord.js"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { logHandler } from "../utils/logHandler"
-import { OreTreasury } from "../utils/oreTreasury"
+import { OreTreasury } from "../modules/oreTreasury"
 
 export const createacct: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("createacct")
-        .setDescription("create Account on the ORE blockchain"),
+        .setDescription("create Account on the ORE blockchain")
+        .setDefaultPermission(false),
     run: async (interaction) => {
         // 
         // Create an Accountn on the ORE Blockchain

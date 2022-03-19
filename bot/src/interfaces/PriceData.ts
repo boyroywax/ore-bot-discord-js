@@ -1,7 +1,7 @@
 // 
 // Interface for CoinMarketCap price data
 // 
-export interface CmcPriceData {
+export interface PriceData {
     // id?: number
     dateCreated: Date
     priceUSD: number
@@ -14,8 +14,8 @@ export interface CmcPriceData {
 }
 
 
-export interface CmcPrice extends CmcPriceData {
-    checkPrice(): Promise<void>
+export interface Price extends PriceData {
+    checkPrice(source: string): Promise<void>
     // getApiData(): Promise<void>
     // getLocalData(): Promise<void>
     // isExpired(): Promise<boolean>

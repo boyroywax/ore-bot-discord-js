@@ -10,6 +10,7 @@ import { login } from "./login"
 import { logout } from './logout'
 import { price } from './price'
 import { tip } from './tip'
+import { transfer } from "./transfer"
 import { withdraw } from "./withdraw"
 import { treasurybal } from './treasury-balance'
 import { createacct } from './treasury-createAcct'
@@ -29,6 +30,7 @@ export const CommandList: CommandInt[] = [
     logout,
     price,
     tip,
+    transfer,
     withdraw,
     treasurybal,
     createacct,
