@@ -9,7 +9,8 @@ import { OreTreasury } from "../modules/oreTreasury"
 export const createacct: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("createacct")
-        .setDescription("create Account on the ORE blockchain"),
+        .setDescription("create Account on the ORE blockchain")
+        .setDefaultPermission(false),
     run: async (interaction) => {
         // 
         // Create an Accountn on the ORE Blockchain

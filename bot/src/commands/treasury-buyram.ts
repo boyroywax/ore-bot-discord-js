@@ -11,7 +11,8 @@ import { AccountResources } from "../modules/accountResources"
 export const buyRamByte: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("buyrambytes")
-        .setDescription("Setup the bot's treasurer account by buying more ram"),
+        .setDescription("Setup the bot's treasurer account by buying more ram")
+        .setDefaultPermission(false),
     run: async (interaction) => {
         // 
         // Add ram to an this on the ORE Blockchain

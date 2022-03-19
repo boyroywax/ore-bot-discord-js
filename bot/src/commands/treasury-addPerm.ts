@@ -10,7 +10,8 @@ import { OreTreasury } from "../modules/oreTreasury"
 export const addperm: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("addperm")
-        .setDescription("Setup the bot's treasurer account by add Permission"),
+        .setDescription("Setup the bot's treasurer account by add Permission")
+        .setDefaultPermission(false),
     run: async (interaction) => {
         // 
         // Add permissions to an this on the ORE Blockchain

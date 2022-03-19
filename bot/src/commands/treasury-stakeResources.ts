@@ -9,7 +9,8 @@ import { OreTreasury } from "../modules/oreTreasury"
 export const delegateBW: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("delegatecpunet")
-        .setDescription("delegate resorces on the ORE blockchain"),
+        .setDescription("delegate resorces on the ORE blockchain")
+        .setDefaultPermission(false),
     run: async (interaction) => {
         // 
         // Create an Accountn on the ORE Blockchain

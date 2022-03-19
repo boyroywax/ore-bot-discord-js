@@ -1,4 +1,3 @@
-import { Chain } from "@open-rights-exchange/chainjs"
 import axios from "axios"
 
 import { OreBlock } from "../interfaces/OreChain"
@@ -80,14 +79,3 @@ export class BlockExplorer implements OreBlock {
         }
     }
 }
-
-
-// (async () => {
-//     try {
-//         const blockEx = new BlockExplorer 
-//         await blockEx.getLatestBlock()
-//     }
-//     catch (err) {
-//         errorHandler('bad block', err)
-//     }
-// })()

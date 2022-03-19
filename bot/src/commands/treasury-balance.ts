@@ -10,7 +10,8 @@ import { OreTreasury } from "../modules/oreTreasury"
 export const treasurybal: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("treasurybal")
-        .setDescription("View the Treasury's balance"),
+        .setDescription("View the Treasury's balance")
+        .setDefaultPermission(false),
     run: async (interaction) => {
         // 
         // Return the current teasury balance

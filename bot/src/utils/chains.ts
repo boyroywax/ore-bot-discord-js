@@ -1,25 +1,23 @@
 import { ChainFactory, ChainType, Chain } from '@open-rights-exchange/chainjs'
 import { ChainEndpoint } from '@open-rights-exchange/chainjs/src/models/'
-import { ApiEndpoint, AppAccessTokenMetadata, ChainNetwork, OreId, RequestType, Transaction, UserSourceData } from 'oreid-js'
-import User from 'oreid-js/dist/user/user'
+import { ApiEndpoint, AppAccessTokenMetadata, ChainNetwork, OreId, RequestType, Transaction } from 'oreid-js'
+import { TransactionOptions } from '@open-rights-exchange/chainjs/dist/models'
+import { EosActionStruct } from '@open-rights-exchange/chainjs/dist/chains/eos_2/models'
+import { callApiGetUser, callApiGetAppToken, ApiGetAppTokenParams } from 'oreid-js/dist/api'
+import OreIdContext from 'oreid-js/dist/core/IOreidContext'
+import { toEosEntityName, toEosAsset, toEosSymbol } from '@open-rights-exchange/chainjs/dist/chains/eos_2/helpers'
+
 
 import { logHandler } from "./logHandler"
 import { errorHandler } from "./errorHandler"
-import { toEosEntityName, toEosAsset, toEosSymbol } from '@open-rights-exchange/chainjs/dist/chains/eos_2/helpers'
 import { oreIdOptions } from './oreid'
-import { TransactionOptions } from '@open-rights-exchange/chainjs/dist/models'
-import { EosActionStruct } from '@open-rights-exchange/chainjs/dist/chains/eos_2/models'
-import { callApiGetUser } from 'oreid-js/dist/api'
-import { ApiGetUserParams } from 'oreid-js/dist/api'
-import { callApiGetAppToken } from 'oreid-js/dist/api'
-import { ApiGetAppTokenParams } from 'oreid-js/dist/api'
-import OreIdContext from 'oreid-js/dist/core/IOreidContext'
-import * as dotenv from 'dotenv'
 
-// 
-// Create Chain Object
-// 
+
+
 export async function newChain(network: string, stage: string): Promise<Chain | undefined> {
+    // 
+    // Create Chain Object
+    // 
     let chain: Chain | undefined = undefined
     let endpoints: ChainEndpoint[]
     const chainSettings = {
@@ -59,10 +57,11 @@ export async function newChain(network: string, stage: string): Promise<Chain | 
     return chain
 }
 
-// 
-// Create ORE Network Connection
-// 
+ 
 export async function createOreConnection(): Promise<Chain | undefined> {
+    // 
+    // Create ORE Network Connection
+    //
     const network: string = "ORE"
     const stage: string = process.env.CURRENCY_STAGE || 'testnet'
     
