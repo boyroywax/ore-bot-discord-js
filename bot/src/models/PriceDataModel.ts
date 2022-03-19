@@ -1,11 +1,11 @@
 import { Schema, model } from "mongoose"
 
-import { CmcPriceData } from "../interfaces/PriceData"
+import { PriceData } from "../interfaces/PriceData"
 
 // 
 // CMC price info
 // 
-export const priceSchema = new Schema<CmcPriceData>({
+export const priceSchema = new Schema<PriceData>({
     // id: { type: Number, required: false, index: true, default: 0, unique: true, ref: "id" },
     dateCreated: { type: Date, required: true },
     priceUSD: { type: Number, required: true },
@@ -18,4 +18,4 @@ export const priceSchema = new Schema<CmcPriceData>({
 
 })
 
-export const PriceDataModel = model<CmcPriceData>('PriceData', priceSchema)
+export const PriceDataModel = model<PriceData>('PriceData', priceSchema)

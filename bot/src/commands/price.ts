@@ -19,7 +19,7 @@ export const price: CommandInt = {
             // Create a message only the user can see
             await interaction.deferReply({ ephemeral: false})
 
-            const priceData = await getPriceData()
+            const priceData = await getPriceData('coingecko')
 
             const priceEmbed = new MessageEmbed()
                 .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')

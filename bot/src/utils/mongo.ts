@@ -5,7 +5,7 @@ import { DiscordUserModel, BotBalanceModel, UserLogModel } from '../models/Disco
 import { PriceDataModel } from '../models/PriceDataModel'
 import { errorHandler } from '../utils/errorHandler'
 import { logHandler } from '../utils/logHandler'
-import { CmcPriceData, CmcPrice } from '../interfaces/PriceData'
+import { PriceData, Price } from '../interfaces/PriceData'
 
 
 const uri = process.env.MONGO_URI || "mongodb://" 
@@ -260,8 +260,8 @@ export async function getLogEntries( discordId: bigint ): Promise<UserLog[]> {
     return logEntries
 }
  
-export async function getLatestEntry(): Promise<CmcPriceData> {
-    let latestEntry: CmcPriceData = new PriceDataModel
+export async function getLatestEntry(): Promise<PriceData> {
+    let latestEntry: PriceData = new PriceDataModel
     await connect(uri)
     try {
         await PriceDataModel.findOne().sort('-dateCreated').exec().then(function(item) {
@@ -278,8 +278,8 @@ export async function getLatestEntry(): Promise<CmcPriceData> {
     return latestEntry
 }
 
-export async function createPriceEntry( apiData: CmcPrice ): Promise<CmcPriceData> {
-    let priceData: CmcPriceData = new PriceDataModel
+export async function createPriceEntry( apiData: Price ): Promise<PriceData> {
+    let priceData: PriceData = new PriceDataModel
     await connect(uri)
     try {
         priceData = {
