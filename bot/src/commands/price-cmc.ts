@@ -7,9 +7,9 @@ import { errorHandler } from "../utils/errorHandler"
 import { logHandler } from "../utils/logHandler"
 
 
-export const price: CommandInt = {
+export const priceCmc: CommandInt = {
     data: new SlashCommandBuilder()
-        .setName("price")
+        .setName("pricecmc")
         .setDescription("Returns the current  " + process.env.CURRENCY + " price and volume info." ),
     run: async (interaction) => {
         // 
@@ -49,8 +49,6 @@ export const price: CommandInt = {
                         false
                     )
                 }
-            priceEmbed.setFooter(`Price data by CoinGecko`, process.env.COINGECKO_LOGO)
-
             await interaction.editReply( {embeds: [priceEmbed]})
         }
         catch (err) {

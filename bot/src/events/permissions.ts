@@ -6,27 +6,25 @@ const permissionDev: ApplicationCommandPermissionData[] = [{
     permission: true,
 }]
 
-const buyRamBytes: ApplicationCommandResolvable = '950848169019850824'
-const createAcct: ApplicationCommandResolvable = "949100831792320612"
-const addPerm: ApplicationCommandResolvable = "949100831792320613"
-const treasuryBal: ApplicationCommandResolvable = "949099670515376139"
+const buyRamBytesDev: ApplicationCommandResolvable = '950848169019850824'
+const createAcctDev: ApplicationCommandResolvable = "949100831792320612"
+const addPermDev: ApplicationCommandResolvable = "949100831792320613"
+const treasuryBalDev: ApplicationCommandResolvable = "949099670515376139"
 
-export const BuyRamBytes: { command: ApplicationCommandResolvable; } & { permissions: ApplicationCommandPermissionData[]; } =  {
-        // buyrambytes
-		command: buyRamBytes,
+export const BuyRamBytesDev: { command: ApplicationCommandResolvable; } & { permissions: ApplicationCommandPermissionData[]; } =  {
+		command: buyRamBytesDev,
 		permissions: permissionDev,
     }
-export const CreateAcct: { command: ApplicationCommandResolvable; } & { permissions: ApplicationCommandPermissionData[]; } =  {
-		command: createAcct,
+export const CreateAcctDev: { command: ApplicationCommandResolvable; } & { permissions: ApplicationCommandPermissionData[]; } =  {
+		command: createAcctDev,
 		permissions: permissionDev,
 	}
-export const AddPerm: { command: ApplicationCommandResolvable; } & { permissions: ApplicationCommandPermissionData[]; } =  {
-        // buyrambytes
-		command: addPerm,
+export const AddPermDev: { command: ApplicationCommandResolvable; } & { permissions: ApplicationCommandPermissionData[]; } =  {
+		command: addPermDev,
 		permissions: permissionDev,
     }
-export const TreasuryBal: { command: ApplicationCommandResolvable; } & { permissions: ApplicationCommandPermissionData[]; } =  {
-		command: treasuryBal,
+export const TreasuryBalDev: { command: ApplicationCommandResolvable; } & { permissions: ApplicationCommandPermissionData[]; } =  {
+		command: treasuryBalDev,
 		permissions: permissionDev,
 	}
 

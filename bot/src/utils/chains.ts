@@ -1,6 +1,6 @@
 import { ChainFactory, ChainType, Chain } from '@open-rights-exchange/chainjs'
 import { ChainEndpoint } from '@open-rights-exchange/chainjs/src/models/'
-import { ApiEndpoint, AppAccessTokenMetadata, ChainNetwork, OreId, RequestType, Transaction } from 'oreid-js'
+import { ApiEndpoint, AppAccessTokenMetadata, AuthProvider, ChainNetwork, OreId, RequestType, Transaction, TransactionSignOptions } from 'oreid-js'
 import { TransactionOptions } from '@open-rights-exchange/chainjs/dist/models'
 import { EosActionStruct } from '@open-rights-exchange/chainjs/dist/chains/eos_2/models'
 import { callApiGetUser, callApiGetAppToken, ApiGetAppTokenParams } from 'oreid-js/dist/api'
@@ -90,51 +90,55 @@ export async function createSendTransaction(fromUser: string, toUser: string, am
     const botUser = await callApiGetUser(oreId2, params )
     logHandler.info('botUser: ' + botUser.accountName)
 
-    let appAccessTokenMetadata: AppAccessTokenMetadata = {}
+    let appAccessTokenMetadata: AppAccessTokenMetadata = {
+        paramsNewAccount: undefined,
+        newAccountPassword: "",
+        currentAccountPassword: "",
+        secrets: undefined
+    }
     let accessTokenParams: ApiGetAppTokenParams = { appAccessTokenMetadata } 
     let appAccessToken = await callApiGetAppToken(oreId2, accessTokenParams)
     logHandler.info('appAccessToken: ' + appAccessToken)
-    // await oreId2.auth.user.getData()
 
-    // let newChain = await createOreConnection()
-    // let transaction2 = await newChain?.new.Transaction()
-    // transaction2?.sign()
-    // let user: UserSourceData | undefined = await getUser(toEosEntityName(fromUser))
-    // const oreAccount = oreId2.auth.user.data.chainAccounts.find(ca => ca.chainNetwork === "ore_main")
-    // let userInfo = await oreId2.callOreIdApi(RequestType.Get, ApiEndpoint.GetUser, {"account": fromUser} )
-    // logHandler.info(JSON.stringify(userInfo))
-    // await userInfo.getData()
-    // if (oreAccount) {
-        const transferTransaction: EosActionStruct = {
-            account: toEosEntityName('eosio.token'),
-            name: 'transfer',
-            authorization: [
-                {
-                    actor: toEosEntityName(fromUser),
-                    permission: toEosEntityName('active'),
-                },
-            ],
-            data: { 
-                from: toEosEntityName(fromUser),
-                to: toEosEntityName(toUser),
-                quantity:  toEosAsset(String(amount), toEosSymbol('ORE'), 4),
-                memo: "Transfer from ORE Community Bot"
-            }
+    const transferTransaction: EosActionStruct = {
+        account: toEosEntityName('eosio.token'),
+        name: 'transfer',
+        authorization: [
+            {
+                actor: toEosEntityName(fromUser),
+                permission: toEosEntityName('active'),
+            },
+        ],
+        data: { 
+            from: toEosEntityName(fromUser),
+            to: toEosEntityName(toUser),
+            quantity:  toEosAsset(String(amount), toEosSymbol('ORE'), 4),
+            memo: "Transfer from ORE Community Bot"
         }
+    }
 
-        const transactionData: TransactionOptions =  {
-            chainAccount: toEosEntityName(fromUser),
-            chainNetwork: ChainNetwork.OreTest,
-            transaction: transferTransaction,
-            signOptions: { "broadcast": true, "returnSignedTransaction": false },
-        }
-        let oreId3 = new OreId(oreIdOptions)
-        // transaction = await oreId2.(transactionData)
-        transaction = await oreId3.callOreIdApi(RequestType.Post, ApiEndpoint.TransactionSign, transactionData)
-        if (transaction) {
-            logHandler.info(await transaction.getSignUrl())
-        }
-    // }
+    const signOptions: TransactionSignOptions = {
+        provider: AuthProvider.OreId, // wallet type (e.g. 'algosigner' or 'oreid')
+        broadcast: true, // if broadcast=true, ore id will broadcast the transaction to the chain network for you
+        state: 'abc', // anything you'd like to remember after the callback
+        returnSignedTransaction: false,
+        preventAutosign: false, // prevent auto sign even if transaction is auto signable
+    }
+
+    const transactionData: TransactionOptions =  {
+        chainAccount: toEosEntityName(fromUser),
+        chainNetwork: ChainNetwork.OreTest,
+        transaction: transferTransaction,
+        signOptions: signOptions,
+    }
+
+    let oreId3 = new OreId(oreIdOptions)
+    transaction = await oreId3.callOreIdApi(RequestType.Post, ApiEndpoint.TransactionSign, transactionData)
+    // transaction: Transaction = await oreId3.createTransaction(transactionData) 
+    if (transaction) {
+        logHandler.info(await transaction.getSignUrl())
+    }
+
     return transaction
 }
 

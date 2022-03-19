@@ -6,19 +6,19 @@ import { logHandler } from "../utils/logHandler"
 
 
 export const onInteraction = async (
-  interaction: Interaction
+    interaction: Interaction
 ): Promise<void> => {
-  try {
-    if (interaction.isCommand()) {
-      for (const Command of CommandList) {
-        if (interaction.commandName === Command.data.name) {
-          await Command.run(interaction)
-          logHandler.info("Running a Command: " + interaction.commandName + " by " + interaction.user.id)
-          break
+    try {
+        if (interaction.isCommand()) {
+            for (const Command of CommandList) {
+                if (interaction.commandName === Command.data.name) {
+                    await Command.run(interaction)
+                    logHandler.info("Running a Command: " + interaction.commandName + " by " + interaction.user.id)
+                    break
+                }
+            }
         }
-      }
+    } catch (err) {
+        errorHandler("onInteraction event", err);
     }
-  } catch (err) {
-    errorHandler("onInteraction event", err);
-  }
-};
+}

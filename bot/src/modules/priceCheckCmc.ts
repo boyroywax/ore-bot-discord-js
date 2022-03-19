@@ -8,7 +8,7 @@ import { errorHandler } from "../utils/errorHandler"
 
 const CMC_API_RESET_TIME: number = Number(process.env.CMC_API_RESET_TIME) || 260  // seconds
 
-class CoinGecko implements CmcPriceData {
+class Cmc implements CmcPriceData {
     id?: number
     dateCreated: Date = new Date
     priceUSD: number = 0.0
@@ -26,30 +26,26 @@ class CoinGecko implements CmcPriceData {
     private async getApiData(): Promise<void> {
         try {
             const instance = axios.create({
-                baseURL: process.env.COINGECKO_API_ENDPOINT || 'https://api.coingecko.com',
+                baseURL: process.env.CMC_API_ENDPOINT || 'https://pro-api.coinmarketcap.com',
                 timeout: 1000,
-                headers: {'accept': 'application/json'}
+                headers: {'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY || 'NoKey'}
             })
         
-            const apiData = await instance.get('/api/v3/coins/' + process.env.COINGECKO_API_ID, {
+            const apiData = await instance.get('/v1/cryptocurrency/quotes/latest', {
                 params: {
-                    tickers: true,
-                    market_data: true,
-                    community_data: false,
-                    developer_data: false,
-                    sparkline: false
+                    slug: 'ore-network'
                 }
             })
-            logHandler.info('Data retrieved from CoinGecko: ' + JSON.stringify(apiData.data))
+            logHandler.info('Data retrieved from CMC: ' + JSON.stringify(apiData.data))
         
-            this.dateCreated = apiData.data['market_data']['timestamp']
-            this.priceUSD = apiData.data['market_data']['current_price']['usd']
-            this.volumeUSD = apiData.data['market_data']['total_volume']['usd']
-            this.volumeChange24h = apiData.data['market_data']['price_change_percentage_24h']
+            this.dateCreated = apiData.data['status']['timestamp']
+            this.priceUSD = apiData.data['data']['12743']['quote']['USD']['price']
+            this.volumeUSD = apiData.data['data']['12743']['quote']['USD']['volume_24h']
+            this.volumeChange24h = apiData.data['data']['12743']['quote']['USD']['percent_change_24h']
             await createPriceEntry(this)
         }
         catch (err) {
-            errorHandler("CoinGecko.getApiData()", err)           
+            errorHandler("Cmc.getApiData()", err)           
         }
     }
 
@@ -63,7 +59,7 @@ class CoinGecko implements CmcPriceData {
             this.volumeChange24h = localData.volumeChange24h
         }
         catch (err) {
-            errorHandler("CoinGecko.getLocalData()", err)
+            errorHandler("Cmc.getLocalData()", err)
         }
     }
 
@@ -96,13 +92,13 @@ class CoinGecko implements CmcPriceData {
             }
         }
         catch (err) {
-            errorHandler("CoinGhecko.checkPrice()", err)
+            errorHandler("Cmc.checkPrice()", err)
         }
     }
 }
 
 export async function getPriceData(): Promise<CmcPriceData> {
-    let priceData: CmcPrice = new CoinGecko
+    let priceData: CmcPrice = new Cmc
     await priceData.checkPrice()
     return priceData
 }
