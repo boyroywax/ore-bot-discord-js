@@ -6,6 +6,8 @@ import { errorHandler } from "../utils/errorHandler"
 import { checkLoggedIn } from '../utils/mongo'
 import { unauthorizedCommand } from "../utils/loginCheck"
 import { transferFunds } from "../utils/transaction"
+import { logEntry } from "../utils/userLog"
+import { UserLogKWArgs } from "../interfaces/DiscordUser"
 
 
 function createEmbed(
@@ -91,6 +93,22 @@ export const transfer: CommandInt = {
                         transferStatus
                     )  
                 }
+                // Compose User's log entry for a transfer
+                if ( transferCompleted ) {
+                    status = "Completed"
+                }
+                else (
+                    status = "Failed"
+                )
+
+                const logArgs: UserLogKWArgs = { 
+                    recipient: BigInt(userDiscordId),
+                    amount: transferAmount,
+                    status: status,
+                    comment: direction + " " + transferStatus
+                } 
+                await logEntry( "Transfer", userDiscordId, logArgs )
+
                 await interaction.editReply( {embeds: [transferMessage]})
             }   
         }

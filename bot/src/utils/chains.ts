@@ -133,8 +133,8 @@ export async function createSendTransaction(fromUser: string, toUser: string, am
     }
 
     let oreId3 = new OreId(oreIdOptions)
-    transaction = await oreId3.callOreIdApi(RequestType.Post, ApiEndpoint.TransactionSign, transactionData)
-    // transaction: Transaction = await oreId3.createTransaction(transactionData) 
+    // transaction = await oreId3.callOreIdApi(RequestType.Post, ApiEndpoint.TransactionSign, transactionData)
+    transaction = await oreId3.createTransaction(transactionData) 
     if (transaction) {
         logHandler.info(await transaction.getSignUrl())
     }
