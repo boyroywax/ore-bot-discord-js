@@ -6,11 +6,11 @@ const permissionDev: ApplicationCommandPermissionData[] = [{
     permission: true,
 }]
 
-const buyRamBytesDev: ApplicationCommandResolvable = '950848169019850824'
-const createAcctDev: ApplicationCommandResolvable = "949100831792320612"
+const buyRamBytesDev: ApplicationCommandResolvable = '955633204658864171'
+const createAcctDev: ApplicationCommandResolvable = "955633204658864169"
 const addPermDev: ApplicationCommandResolvable = "949100831792320613"
-const treasuryBalDev: ApplicationCommandResolvable = "949099670515376139"
-const stakeResourcesDev: ApplicationCommandResolvable = '949099670515376139'
+const treasuryBalDev: ApplicationCommandResolvable = "955633204658864168"
+const stakeResourcesDev: ApplicationCommandResolvable = '955633204658864172'
 
 export const BuyRamBytesDev: { command: ApplicationCommandResolvable; } & { permissions: ApplicationCommandPermissionData[]; } =  {
 	command: buyRamBytesDev,

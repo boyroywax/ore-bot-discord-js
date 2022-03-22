@@ -74,16 +74,18 @@ async function createSendTransaction(fromUser: string, toUser: string, amount: s
             broadcast: true, // if broadcast=true, ore id will broadcast the transaction to the chain network for you
             state: 'abc', // anything you'd like to remember after the callback
             returnSignedTransaction: false,
-            preventAutosign: false, // prevent auto sign even if transaction is auto signable
+            callbackUrl: process.env.OREID_SIGN_CALLBACK_URL
+            // preventAutosign: false, // prevent auto sign even if transaction is auto signable
         }
 
 
 
         const transactionData: TransactionData =  {
-            account: toEosEntityName(fromUser),
+            account: 'eosio.token',
             chainAccount: toEosEntityName(fromUser),
             chainNetwork: ChainNetwork.OreTest,
             transaction: transferTransaction,
+            expireSeconds: 1000,
             signOptions: signOptions,
         }
 
@@ -103,11 +105,11 @@ async function createSendTransaction(fromUser: string, toUser: string, amount: s
         // //     transaction = transactionfromChain
         // // }
         
-        // await oreId3.auth.user.getData()
+        await oreId3.auth.user.getData()
         // // logHandler.info(JSON.stringify(oreId3.accessTokenHelper))
         // // logHandler.info(oreId3.auth.accessToken)
-        let newAppToken = await callApiGetAppToken(oreId3, accessTokenParams)
-        logHandler.info("newAppToken: " + newAppToken)
+        // let newAppToken = await callApiGetAppToken(oreId3, accessTokenParams)
+        // logHandler.info("newAppToken: " + newAppToken)
         // oreId3.accessTokenHelper.setAccessToken(newAppToken)
         // await oreId3.auth.user.getData()
         // logHandler.info(oreId3.auth.user.data.accountName)
@@ -115,10 +117,14 @@ async function createSendTransaction(fromUser: string, toUser: string, amount: s
         // oreId3.accessTokenHelper.setAccessToken(newAppToken)
 
         // logHandler.info("")
-        let transaction: Transaction = await oreId3.createTransaction(transactionData)
-        logHandler.info('Transaction Url: ' + transaction.getSignUrl)
+        // let transaction: Transaction = await oreId3.createTransaction(transactionData)
+        // logHandler.info('Transaction Url: '  + transaction.getSignUrl)
 
-    // let transactin = await callApiSignTransaction(oreId2, apiSignOptions)
+    // const transaction1 = await callApiSignTransaction(oreId2, apiSignOptions)
+    // logHandler.info('transaction1: ' + transaction1)
+    // let transaction = await oreId3.callOreIdApi(RequestType.Get, ApiEndpoint.TransactionSign, transactionData)
+    let transaction = oreId3.createTransaction({...transactionData})
+    // 
     //     logHandler.info(JSON.stringify(transactin.))
     // }
     return transaction

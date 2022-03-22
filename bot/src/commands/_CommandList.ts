@@ -12,14 +12,21 @@ import { price } from './price'
 import { tip } from './tip'
 import { transfer } from "./transfer"
 import { withdraw } from "./withdraw"
-// import { treasurybal } from './treasury-balance'
-// import { createacct } from './treasury-createAcct'
-// import { addperm } from './treasury-addPerm'
-// import { buyRamByte } from "./treasury-buyram"
-// import { delegateBW } from "./treasury-stakeResources"
+import { treasurybal } from './treasury-balance'
+import { createacct } from './treasury-createAcct'
+import { addperm } from './treasury-addPerm'
+import { buyRamByte } from "./treasury-buyram"
+import { delegateBW } from "./treasury-stakeResources"
 
+const AdminCommandList: CommandInt[] = [
+    treasurybal,
+    createacct,
+    addperm,
+    buyRamByte,
+    delegateBW
+]
 
-export const CommandList: CommandInt[] = [ 
+const UserCommandList: CommandInt[] = [ 
     activity,
     balance,
     block,
@@ -33,9 +40,14 @@ export const CommandList: CommandInt[] = [
     tip,
     transfer,
     withdraw,
-    // treasurybal,
-    // createacct,
-    // addperm,
-    // buyRamByte,
-    // delegateBW
 ]
+
+
+let WorkingCommandList: CommandInt[] = []
+WorkingCommandList.push( ...UserCommandList )
+
+if ( process.env.BOT_ADMIN_MODE == "true" ) {
+    WorkingCommandList.push( ...AdminCommandList )
+}
+
+export const CommandList = WorkingCommandList

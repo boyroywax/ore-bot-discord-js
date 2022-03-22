@@ -52,18 +52,18 @@ export const onReady = async (BOT: Client): Promise<void> => {
 
         const commands = await BOT.guilds.cache.get(serverId)?.commands.fetch() || new Map
         logHandler.info("Commands: " + JSON.stringify(commands))
-        for ( let [ command, commandInfo ] of commands  ) {
-            logHandler.info('command: ' + command + " " + commandInfo)
-        }
+        // for ( let [ command, commandInfo ] of commands  ) {
+        //     logHandler.info('command: ' + command + " " + commandInfo)
+        // }
 
-        if (process.env.STAGE == "Development") { 
+        if ((process.env.STAGE == "Development") && (process.env.BOT_ADMIN_MODE == "true")) { 
             await BOT.guilds.cache.get(serverId)?.commands.permissions.set(BuyRamBytesDev)
             await BOT.guilds.cache.get(serverId)?.commands.permissions.set(TreasuryBalDev)
             await BOT.guilds.cache.get(serverId)?.commands.permissions.set(AddPermDev)
             await BOT.guilds.cache.get(serverId)?.commands.permissions.set(CreateAcctDev)
             await BOT.guilds.cache.get(serverId)?.commands.permissions.set(StakeResourcesDev)
         }
-        else if (process.env.STAGE == "Production") {
+        else if ((process.env.STAGE == "Production") && (process.env.BOT_ADMIN_MODE == "true")) {
             await BOT.guilds.cache.get(serverId)?.commands.permissions.set(BuyRamBytes)
             await BOT.guilds.cache.get(serverId)?.commands.permissions.set(TreasuryBal)
             await BOT.guilds.cache.get(serverId)?.commands.permissions.set(AddPerm)
