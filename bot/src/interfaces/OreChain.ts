@@ -13,7 +13,7 @@ export interface oreIdData {
 
 export interface oreIdActions extends oreIdData {
     createAccount(): Promise<[ boolean, string ]>
-    addPermission(): Promise<string>
+    addPermission( name: string, parent: string ): Promise<string>
 }
 export interface OreBalance extends oreIdData {
     oreBalance: number

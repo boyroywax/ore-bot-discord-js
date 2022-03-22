@@ -37,7 +37,6 @@ export async function executeTxn(action: EosActionStruct[], key: EosPrivateKey[]
             status = "Txn Id: " + transaction.transactionId
         }
     }
-    status = "executeTxn Failed"
     return [completed, status]
 }
 

@@ -12,10 +12,11 @@ import { price } from './price'
 import { tip } from './tip'
 import { transfer } from "./transfer"
 import { withdraw } from "./withdraw"
-import { treasurybal } from './treasury-balance'
-import { createacct } from './treasury-createAcct'
-import { addperm } from './treasury-addPerm'
-import { buyRamByte } from "./treasury-buyram"
+// import { treasurybal } from './treasury-balance'
+// import { createacct } from './treasury-createAcct'
+// import { addperm } from './treasury-addPerm'
+// import { buyRamByte } from "./treasury-buyram"
+// import { delegateBW } from "./treasury-stakeResources"
 
 
 export const CommandList: CommandInt[] = [ 
@@ -32,8 +33,9 @@ export const CommandList: CommandInt[] = [
     tip,
     transfer,
     withdraw,
-    treasurybal,
-    createacct,
-    addperm,
-    buyRamByte
+    // treasurybal,
+    // createacct,
+    // addperm,
+    // buyRamByte,
+    // delegateBW
 ]

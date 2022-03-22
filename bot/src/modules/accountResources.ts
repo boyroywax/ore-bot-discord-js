@@ -1,7 +1,7 @@
 import { PrivateKey, PrivateKeyBrand, PublicKey } from '@open-rights-exchange/chainjs/dist/models'
 import { EosActionStruct, EosPrivateKey } from '@open-rights-exchange/chainjs/dist/chains/eos_2/models'
 import { EosTransaction } from '@open-rights-exchange/chainjs/dist/chains/eos_2'
-import { toEosAsset, toEosEntityName, toEosPrivateKey, toEosSymbol } from '@open-rights-exchange/chainjs/dist/chains/eos_2/helpers'
+import { toEosAsset, toEosEntityName, toEosPrivateKey, toEosPublicKey, toEosSymbol } from '@open-rights-exchange/chainjs/dist/chains/eos_2/helpers'
 
 import { OreResourceActions } from '../interfaces/OreChain'
 import { errorHandler } from "../utils/errorHandler"
@@ -12,12 +12,20 @@ export class AccountResources implements OreResourceActions {
     oreId: string = process.env.BOT_TREASURER_OREID || "ore1sqvihyhs"
     status: string = "Creating OreResourceActions Object"
     message: string = "Loading keys"
-    activePublicKey: PublicKey = toEosPrivateKey(process.env.BOT_TREASURER_ACTIVE_PUB_KEY || '')
+    activePublicKey: PublicKey = toEosPublicKey(process.env.BOT_TREASURER_ACTIVE_PUB_KEY || '')
     activePrivateKey: PrivateKey = toEosPrivateKey(process.env.BOT_TREASURER_ACTIVE_PRIV_KEY || '')
-    ownerPublicKey: PublicKey = toEosPrivateKey(process.env.BOT_TREASURER_OWNER_PUB_KEY || '')
+    ownerPublicKey: PublicKey = toEosPublicKey(process.env.BOT_TREASURER_OWNER_PUB_KEY || '')
     ownerPrivateKey: PrivateKey = toEosPrivateKey(process.env.BOT_TREASURER_OWNER_PRIV_KEY || '')
 
-    appOreIdKey: PrivateKeyBrand = toEosPrivateKey(process.env.ORE_TESTNET_APPOREID_PRIVATE_KEY || '');
+    private getAppOreIdKey(): PrivateKeyBrand {
+        let appOreIdKey: PrivateKeyBrand = toEosPrivateKey(process.env.ORE_MAINNET_APPOREID_PRIVATE_KEY || '')
+        if ( process.env.CURRENCY_STAGE == "testnet" ) {
+            appOreIdKey = toEosPrivateKey(process.env.ORE_TESTNET_APPOREID_PRIVATE_KEY || '');
+        }
+        return appOreIdKey
+    }
+
+    appOreIdKey: PrivateKey = this.getAppOreIdKey()
 
 
     public async addSYS(amount: string): Promise<[boolean, string]> {
@@ -63,8 +71,7 @@ export class AccountResources implements OreResourceActions {
                     receiver: toEosEntityName(this.oreId),
                     quant: amount,
                 }
-            }
-            let key: PrivateKeyBrand = toEosPrivateKey(process.env.ORE_TESTNET_APPOREID_PRIVATE_KEY || '5Jka7TQfp77QzgVYhXGbXuT21fKgdJiUgNHhMxneJNzZqsS4CXi');
+            };
             [ buyCompleted, buyStatus ] = await executeTxn([resources], [this.appOreIdKey])
         }
         catch (err) {
@@ -163,7 +170,7 @@ export async function buyRamByBytes(ramAmountBytes: number = 9182): Promise<bool
 // (async () => {
 //     try {
 //         let resourceStake = new AccountResources
-//         const success = await resourceStake.addSYS("1.0000")
+//         const success = await resourceStake.addSYS("100.0000")
 //         logHandler.info('resourcesStaked: ' + success)
 //        }
 //     catch (err) {

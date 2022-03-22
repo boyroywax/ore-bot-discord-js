@@ -11,7 +11,13 @@ export const addperm: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("addperm")
         .setDescription("Setup the bot's treasurer account by add Permission")
-        .setDefaultPermission(false),
+        .setDefaultPermission(false)
+        .addStringOption(option => option.setName('name')
+            .setDescription('The permission name.')
+            .setRequired(true))
+        .addStringOption(option => option.setName('parent')
+            .setDescription('The permissions parent.')
+            .setRequired(true)),
     run: async (interaction) => {
         // 
         // Add permissions to an this on the ORE Blockchain
@@ -20,10 +26,13 @@ export const addperm: CommandInt = {
             // Create a message only the user can see
             await interaction.deferReply({ ephemeral: true })
 
+            const name: string = interaction.options.getString('name') || ''
+            const parent: string = interaction.options.getString('parent') || ''
+
             const treasury = new OreTreasury
 
             // const [ depositaddress, depositQrCode ] = await treasury.getDepositAddress(discordUser)
-            const [txid] = await treasury.addPermission()
+            const [txid] = await treasury.addPermission(name, parent)
 
             const addPermEmbed = new MessageEmbed()
                 .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
