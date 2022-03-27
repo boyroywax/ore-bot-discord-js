@@ -10,6 +10,7 @@ import { OreTreasury } from '../modules/oreTreasury'
 import { getOreIdUser, setDiscordUserState, updateBotBalance } from './mongo'
 import { OreTx } from '../modules/oreTransaction'
 import { createState } from './stateTools'
+import { sign } from 'crypto'
 
 export async function executeTxn(action: EosActionStruct[], key: EosPrivateKey[]): Promise<[boolean, string]> {
     let completed: boolean = false
@@ -37,7 +38,6 @@ export async function executeTxn(action: EosActionStruct[], key: EosPrivateKey[]
             status = "Txn Id: " + transaction.transactionId
         }
     }
-    status = "executeTxn Failed"
     return [completed, status]
 }
 
@@ -197,11 +197,12 @@ export async function transferFunds(discordUser: bigint, amount: number, destina
                     else {
                         const treasuryAddress: string = process.env.BOT_TREASURER_OREID || ""
                         let transaction: OreTx = new OreTx( treasuryAddress, oreIdAccount, amount )
-                        const[ signUrlCreated, signUrlStatus, signUrl ] = await transaction.createSigningLink()
+                        let[ signUrlCreated, signUrlStatus, signUrl ] = await transaction.createSigningLink()
                         if (!signUrlCreated) {
                             status = signUrlStatus
                         } 
                         else {
+                            signUrl = signUrl + "&state=" + state
                             completed = true
                             status = signUrl
                         }

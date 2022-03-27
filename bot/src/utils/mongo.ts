@@ -6,6 +6,7 @@ import { PriceDataModel } from '../models/PriceDataModel'
 import { errorHandler } from '../utils/errorHandler'
 import { logHandler } from '../utils/logHandler'
 import { PriceData, Price } from '../interfaces/PriceData'
+import { User } from '@sentry/node'
 
 
 const uri = process.env.MONGO_URI || "mongodb://" 
@@ -235,9 +236,26 @@ export async function addLogEntry( entry: UserLog ): Promise<boolean> {
     return saveStatus
 }
 
+// export function compareLogEntries( userLog: UserLog[]): UserLog[] {
+//     // 
+//     // Remove duplicate entries from the userLog.
+//     // 
+//     const uniqueLogEntries = userLog.filter( function(elem, index, self ) {
+//         index === self.indexOf(elem);
+//         logHandler.info("index: " + index)
+//         for (let element of index) {
+
+//         }
+//         return self
+//     })
+//     return uniqueLogEntries
+// }
+
 export async function getLogEntries( discordId: bigint ): Promise<UserLog[]> {
     // 
     // Fetches a UserLog list, including activity as a receiver
+    // Filters for unique entries (as to not have entries duplicated
+    // when the user is both a sender and receiver/a tranfser)
     // 
     let logEntries: UserLog[] = []
     await connect(uri)
@@ -252,6 +270,7 @@ export async function getLogEntries( discordId: bigint ): Promise<UserLog[]> {
                 logEntries.push(docs[doc])
             }
         })
+        // logEntries = compareLogEntries( logEntries )
     }
     catch (err) {
         errorHandler("addLog Entry Failed: ", err)

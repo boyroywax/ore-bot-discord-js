@@ -1,16 +1,19 @@
 import { SlashCommandBuilder } from "@discordjs/builders"
-import { MessageEmbed, User } from "discord.js"
+import { MessageEmbed } from "discord.js"
 
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { logHandler } from "../utils/logHandler"
-import { OreTreasury } from "../modules/oreTreasury"
+import { AccountResources } from "../modules/accountResources"
 
 export const delegateBW: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("delegatecpunet")
         .setDescription("delegate resorces on the ORE blockchain")
-        .setDefaultPermission(false),
+        .setDefaultPermission(false)
+        .addNumberOption(option => option.setName("cpu").setDescription("Amount to stake to CPU").setRequired(true))
+        .addNumberOption(option => option.setName("net").setDescription("Amount to stake to NET").setRequired(true)),
+
     run: async (interaction) => {
         // 
         // Create an Accountn on the ORE Blockchain
@@ -19,16 +22,18 @@ export const delegateBW: CommandInt = {
             // Create a message only the user can see
             await interaction.deferReply({ ephemeral: true })
 
-            const treasury = new OreTreasury
-            await treasury.getBalance()
+            const cpu: number = interaction.options.getNumber('cpu') || 0.00
+            const net: number = interaction.options.getNumber('net') || 0.00
+
+            const treasury = new AccountResources
 
             // const [ depositaddress, depositQrCode ] = await treasury.getDepositAddress(discordUser)
-            const [ isCompleted, status ] = await treasury.createAccount()
+            const [ isCompleted, status ] = await treasury.delegateCpuNet(String(cpu), String(net))
 
             const accountCreateEmbed = new MessageEmbed()
                 .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
-                .setTitle("ORE Treasury createAccount")
-                .setDescription('Creating a new account on the ORE Blockchain')
+                .setTitle("ORE Treasury Delegate CPU and NET")
+                .setDescription('Staking resources on blockchain.')
                 .addField(
                     "Transaction Status | " + isCompleted,
                     String(status),

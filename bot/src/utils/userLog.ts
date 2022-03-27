@@ -39,14 +39,25 @@ export async function listActivity ( discordId: bigint ): Promise<UserLog[]> {
     // 
     // Returns a list of logEntries for a user
     // Sorted in descending date order
+    // Leaves only uniqe values
     // 
     let userLogEntries: UserLog[] = []
     try {
         userLogEntries = await getLogEntries(discordId)
-        userLogEntries.sort((a: UserLog ,b: UserLog) => +new Date(b.date) - +new Date(a.date))
+        let sortedEntries = userLogEntries.sort((a: UserLog ,b: UserLog) => +new Date(b.date) - +new Date(a.date))
+        
+        // create a new list with only unique entries
+        let uniqueEntries = [sortedEntries[0]];
+        for (let i = 1; i < sortedEntries.length; i++) { //Start loop at 1: arr[0] can never be a duplicate
+            if (sortedEntries[i-1].date.toString() != sortedEntries[i].date.toString()) {
+                logHandler.info(sortedEntries[i])
+                uniqueEntries.push(sortedEntries[i]);
+            }
+        }
+        userLogEntries = uniqueEntries
     }
     catch (err) {
-        errorHandler("listActivity failed: ", err)
+        errorHandler("listActivity in userLog.ts", err)
     }
     return userLogEntries
 }

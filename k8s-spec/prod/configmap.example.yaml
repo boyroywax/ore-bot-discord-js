@@ -6,10 +6,29 @@ metadata:
   namespace: ore
 data:
   # General
-  STAGE: production
+  STAGE: Production
+  VERSION: Beta v0.0.9
 
   # Bot Options
+  BOT_ADMIN_MODE: "false"
   BOT_ACTIVITY_LOG_MAX: "10"
+  BOT_FAUCET_USER: "000000000000000099"
+  BOT_FAUCET_TIME_lIMIT: "18000000" # (3hrs x 60min x 60sec x 1000msec)
+  BOT_FAUCET_MIN: "0.001"
+  BOT_FAUCET_MAX: "0.05"
+  BOT_TREASURER_OWNER_PUB_KEY: EOS5biA4cfhFPXnubvr7Z9LBf3DBUu6r9HnZKnXoAinWZMYB4VPjk
+  BOT_TREASURER_ACTIVE_PUB_KEY: EOS5m3ccqb3zxJMPuC7mCRr8CNwMhyG8v3s8mQiWT1MGTT17wWGUp
+  BOT_TREASURER_OREID: ore1sro4o32p
+
+# CoinGecko API
+  COINGECKO_API_ENDPOINT: https://api.coingecko.com
+  COINGECKO_API_ID: ptokens-ore
+  COINGECKO_LOGO: https://static.coingecko.com/s/thumbnail-007177f3eca19695592f0b8b0eabbdae282b54154e1be912285c9034ea6cbaf2.png
+
+  # CoinMarketCap API
+  CMC_EMAIL: james@aikon.com
+  CMC_API_ENDPOINT: https://pro-api.coinmarketcap.com
+  CMC_API_RESET_TIME: "260000" # (260sec x 1000msec)
 
   # Currency Info
   CURRENCY: ORE
@@ -19,8 +38,8 @@ data:
   CURRENCY_BLOCK_EXPLORER: https://explorer.ore.network/
   CURRENCY_LOGO: https://imgur.com/5M8hB6N.png
   CURRENCY_STAGE: mainnet
-  CURRENCY_MAINNET: https://ore.openrights.exchange
-  CURRENCY_TESTNET: https://ore-staging.openrights.exchange
+  CURRENCY_MAINNET: https://ore.openrights.exchange/
+  CURRENCY_TESTNET: https://ore-staging.openrights.exchange/
 
   # Discord
   DISCORD_CLIENT_ID: "936064780081434737"
@@ -31,15 +50,17 @@ data:
   # MongoDB
   MONGO_HOST: ore-mongo
   MONGO_PORT: "27017"
-  MONGO_URI: mongodb://...
+  MONGO_URI: mongodb://ore-mongo:27017/test?retryWrites=true&w=majority
 
   # ORE-ID
-  OREID_APP_ID: t_fb2...
+  OREID_APP_ID: p_0f0dbeeb425b4c0da4309c01c2a6ec2a
   OREID_APP_NAME: ORE Network Bot
   OREID_URL: https://service.oreid.io
-  OREID_AUTH_CALLBACK_URL: http://cb.ore.network/auth
-  OREID_LOGOUT_CALLBACK_URL: http://cb.ore.network/logout
-  OREID_SIGN_CALLBACK_URL: http://cb.ore.network/sign
+  OREID_AUTH_CALLBACK_URL: https://cb.ore.network/auth
+  OREID_LOGOUT_CALLBACK_URL: https://cb.ore.network/logout
+  OREID_SIGN_CALLBACK_URL: https://cb.ore.network/sign
   OREID_CALLBACK_PORT: "53134"
   OREID_LOGO: https://i.imgur.com/A3yS9pl.png
   OREID_HOME: https://oreid.io
+  ORE_MAINNET_APPOREID_PUB_KEY: EOS5aYG86TMML4FKaQDwCrehykivpga7V9fPNRCzU2oHsQNkbTiNG
+  ORE_TESTNET_APPORID_PUB_KEY: EOS7rNR9AhgcqkmMAoUSHrjTXgxM4PnpGYDXhS3B4UW3jjZgBATXL

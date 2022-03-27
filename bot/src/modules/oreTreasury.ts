@@ -25,6 +25,16 @@ export class OreTreasury implements OreKeys, oreIdActions, OreBalanceActions {
     ownerPublicKey: PublicKey = process.env.BOT_TREASURER_OWNER_PUB_KEY || ''
     ownerPrivateKey: PrivateKey = process.env.BOT_TREASURER_OWNER_PRIV_KEY || ''
 
+    private getOreNetworkSalt(): string {
+        let saltKey = process.env.ORE_MAINNET_ENCRYPTION_SALT || ""
+        if (process.env.CURRENCY_STAGE == "testnet") {
+            saltKey = process.env.ORE_TESTNET_ENCRYPTION_SALT || ""
+        }
+        return saltKey
+    }
+
+    saltKey: string = this.getOreNetworkSalt()
+
     public async getBalance(): Promise<number> {
         this.oreBalance = 0.00
         const oreUser: any = this.oreId
@@ -76,7 +86,6 @@ export class OreTreasury implements OreKeys, oreIdActions, OreBalanceActions {
         //
         let isSetUp: boolean = false
         let oreId: string = 'None'
-        // get a chain object (for an EOS chain using Kylin testnet)
 
         const oreConnection: Chain | undefined = await createOreConnection()
         const chainSymbol: string = 'ore'
@@ -92,7 +101,7 @@ export class OreTreasury implements OreKeys, oreIdActions, OreBalanceActions {
             // },
             newKeysOptions: {
                 password: '2233',
-                salt: process.env.ORE_TESTNET_ENCRYPTION_SALT
+                salt: this.saltKey
             }
         }
 
@@ -107,41 +116,41 @@ export class OreTreasury implements OreKeys, oreIdActions, OreBalanceActions {
         logHandler.info("supportsCreatAccountTxn: " + supportsCreatAccountTxn)
         if (supportsCreatAccountTxn) {
             await accountCreator?.composeTransaction(EosNewAccountType.NativeOre)
-            // sign and send the transaction to the chain
-            // const privateKeyOwner: PrivateKey = this.ownerPrivateKey
-            // const privateKeyActive: PrivateKey = this.activePrivateKey
-            // await prepTransaction(oreConnection, accountCreator.transaction, process.env.ORE_TESTNET_APPOREID_PRIVATE_KEY || '' )
-            logHandler.info(accountCreator.transaction)
             logHandler.info('actions: ' + accountCreator.transaction.actions)
-            const key = process.env.ORE_TESTNET_APPOREID_PRIVATE_KEY
+
+            let key: EosPrivateKey = toEosPrivateKey(process.env.ORE_MAINNET_APPOREID_PRIVATE_KEY || '')
+            if (process.env.CURRENCY_STAGE == 'testnet') {
+                key = toEosPrivateKey( process.env.ORE_TESTNET_APPOREID_PRIVATE_KEY || '' )
+            }
+
             await accountCreator.transaction.prepareToBeSigned()
             await accountCreator.transaction.validate()
             await accountCreator.transaction.sign([key])
             if (accountCreator.transaction.missingSignatures) { 
                 logHandler.info('missing sigs: ' + accountCreator.transaction.missingSignatures)
             }
-            logHandler.info(JSON.stringify(accountCreator.transaction.toJson()))
-            // await accountCreator?.transaction.sign([privateKeyOwner, privateKeyActive])
+            // logHandler.info(JSON.stringify(accountCreator.transaction.toJson()))
+
             const sendStatus: TransactionResult = await accountCreator.transaction.send()
             logHandler.info('sendStatus: ' + JSON.stringify(sendStatus))
+
+            isSetUp = true
+            oreId = sendStatus.chainResponse
+
         }        
         return [ isSetUp, oreId ]
     }
 
-    public async addPermission(): Promise<string> {
+    public async addPermission(name: string, parent: string): Promise<string> {
         const permissionNewKeysOptions = {
             password: '2233',
-            salt: process.env.ORE_TESTNET_ENCRYPTION_SALT
+            salt: this.saltKey
           }
         const accountNewPermissions = [
             {
-              name: HelpersEos.toEosEntityName('buyrambytes'),
-              parent: HelpersEos.toEosEntityName('active'),
+              name: HelpersEos.toEosEntityName(String(name)),
+              parent: HelpersEos.toEosEntityName(String(parent)),
             },
-            {
-              name: HelpersEos.toEosEntityName('n2permission'),
-              parent: HelpersEos.toEosEntityName('active'),
-            }
         ]
         const oreConnection = await createOreConnection()
         const account = (await oreConnection?.new.Account(this.oreId)) as EosAccount

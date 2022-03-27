@@ -2,7 +2,7 @@
 #  BASE   #
 ###########
 
-FROM node:16-alpine3.15 as base
+FROM node:17.4-alpine3.15 as base
 
 WORKDIR /home/app
 
@@ -22,7 +22,7 @@ RUN npm run build
 #  TS-REMOVER   #
 #################
 
-FROM node:16-alpine3.15 as ts-remover
+FROM node:17.4-alpine3.15 as ts-remover
 
 WORKDIR /usr/app
 
@@ -36,7 +36,7 @@ COPY --from=base /home/app/build ./
 #  FINAL  #
 ###########
 
-FROM node:16-alpine3.15
+FROM node:17.4-alpine3.15
 
 WORKDIR /usr/app
 

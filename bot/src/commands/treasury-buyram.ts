@@ -12,7 +12,8 @@ export const buyRamByte: CommandInt = {
     data: new SlashCommandBuilder()
         .setName("buyrambytes")
         .setDescription("Setup the bot's treasurer account by buying more ram")
-        .setDefaultPermission(false),
+        .setDefaultPermission(false)
+        .addNumberOption(option => option.setName("amount").setDescription("Enter the amount of RAM you wish to purchase, in bytes.").setRequired(true)),
     run: async (interaction) => {
         // 
         // Add ram to an this on the ORE Blockchain
@@ -21,20 +22,31 @@ export const buyRamByte: CommandInt = {
             // Create a message only the user can see
             await interaction.deferReply({ ephemeral: true })
 
+            const amount: number = interaction.options.getNumber('amount') || 0.00
             const treasury = new AccountResources
 
             // const [ depositaddress, depositQrCode ] = await treasury.getDepositAddress(discordUser)
-            await treasury.buyRamBytes(9182)
+            const [ success, status ]= await treasury.buyRamBytes(amount)
 
             const addRamEmbed = new MessageEmbed()
                 .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
                 .setTitle("ORE Treasury buyRAM")
-                .setDescription('Add ram to an account on the ORE Blockchain')
-                // .addField(
-                //     "Transaction ID",
-                //     String(txid),
-                //     false
-                // )
+                .setDescription('Adding RAM resources to the Treasury Account.')
+                .addField(
+                    "Amount Purchased (Bytes)",
+                    String(amount),
+                    false
+                )
+                .addField(
+                    "Successful",
+                    String(success),
+                    false
+                )
+                .addField(
+                    "Transaction Status",
+                    String(status),
+                    false
+                )
     
             await interaction.editReply( {embeds: [addRamEmbed]} )
         }

@@ -26,11 +26,11 @@ spec:
         image: boyroywax/ore-discord-dev
         resources:
           requests:
-            memory: "256Mi"
-            cpu: "150m"
+            memory: "128Mi"
+            cpu: "100m"
           limits:
-            memory: "512Mi"
-            cpu: "300m"
+            memory: "256Mi"
+            cpu: "200m"
         envFrom:
           - configMapRef:
               name: config-dev

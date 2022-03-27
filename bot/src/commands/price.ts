@@ -17,7 +17,7 @@ export const price: CommandInt = {
         // 
         try {       
             // Create a message only the user can see
-            await interaction.deferReply({ ephemeral: false})
+            await interaction.deferReply({ ephemeral: false })
 
             const priceData = await getPriceData('coingecko')
 
@@ -33,14 +33,14 @@ export const price: CommandInt = {
                 if (priceData.volumeChange24h >= 0.00) {
                     priceEmbed.addField(
                         "Price Change 24 Hour",
-                        "⬆ %" + String(priceData.volumeChange24h * 10),
+                        "⬆ %" + String(priceData.volumeChange24h),
                         false
                     )
                 }
                 else if (priceData.volumeChange24h < 0.00) {
                     priceEmbed.addField(
                         "Price Change 24 Hour",
-                        "⬇ %" + String(priceData.volumeChange24h * 10),
+                        "⬇ %" + String(priceData.volumeChange24h),
                         false
                     )
                 }

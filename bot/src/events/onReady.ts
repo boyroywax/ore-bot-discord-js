@@ -5,10 +5,11 @@ import { Client } from "discord.js";
 import { CommandList } from "../commands/_CommandList";
 import { errorHandler } from "../utils/errorHandler";
 import { logHandler } from "../utils/logHandler";
-import { AddPermDev, BuyRamBytesDev, CreateAcctDev, TreasuryBalDev } from "./permissions";
+import { AddPermDev, BuyRamBytesDev, CreateAcctDev, StakeResourcesDev, TreasuryBalDev } from "./permissions";
+import { AddPerm, BuyRamBytes, CreateAcct, StakeResources, TreasuryBal } from "./permissions";
 
 const serverId: string = process.env.DISCORD_GUILD_ID || "945764140520189952"
-const bootUser: string = process.env.DISCORD_CLIENT_ID || "945759694411157544"
+const botUser: string = process.env.DISCORD_CLIENT_ID || "945759694411157544"
 
 
 export const onReady = async (BOT: Client): Promise<void> => {
@@ -49,14 +50,25 @@ export const onReady = async (BOT: Client): Promise<void> => {
         // Set command permissions
         if (!BOT.application?.owner) await BOT.application?.fetch()
 
-        if (process.env.STAGE == "Development") { 
+        const commands = await BOT.guilds.cache.get(serverId)?.commands.fetch() || new Map
+        logHandler.info("Commands: " + JSON.stringify(commands))
+        // for ( let [ command, commandInfo ] of commands  ) {
+        //     logHandler.info('command: ' + command + " " + commandInfo)
+        // }
+
+        if ((process.env.STAGE == "Development") && (process.env.BOT_ADMIN_MODE == "true")) { 
             await BOT.guilds.cache.get(serverId)?.commands.permissions.set(BuyRamBytesDev)
             await BOT.guilds.cache.get(serverId)?.commands.permissions.set(TreasuryBalDev)
             await BOT.guilds.cache.get(serverId)?.commands.permissions.set(AddPermDev)
             await BOT.guilds.cache.get(serverId)?.commands.permissions.set(CreateAcctDev)
+            await BOT.guilds.cache.get(serverId)?.commands.permissions.set(StakeResourcesDev)
         }
-        else if (process.env.STAGE == "Production") {
-
+        else if ((process.env.STAGE == "Production") && (process.env.BOT_ADMIN_MODE == "true")) {
+            await BOT.guilds.cache.get(serverId)?.commands.permissions.set(BuyRamBytes)
+            await BOT.guilds.cache.get(serverId)?.commands.permissions.set(TreasuryBal)
+            await BOT.guilds.cache.get(serverId)?.commands.permissions.set(AddPerm)
+            await BOT.guilds.cache.get(serverId)?.commands.permissions.set(CreateAcct)
+            await BOT.guilds.cache.get(serverId)?.commands.permissions.set(StakeResources)
         }
 
         logHandler.info("Bot has connected to Discord!")      
