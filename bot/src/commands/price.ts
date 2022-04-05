@@ -30,17 +30,17 @@ export const price: CommandInt = {
                     "$" + String(priceData.priceUSD),
                     false
                 )
-                if (priceData.volumeChange24h >= 0.00) {
+                if (priceData.priceChange24h >= 0.00) {
                     priceEmbed.addField(
                         "Price Change 24 Hour",
-                        "⬆ %" + String(priceData.volumeChange24h),
+                        "⬆ %" + String(priceData.priceChange24h),
                         false
                     )
                 }
-                else if (priceData.volumeChange24h < 0.00) {
+                else if (priceData.priceChange24h < 0.00) {
                     priceEmbed.addField(
                         "Price Change 24 Hour",
-                        "⬇ %" + String(priceData.volumeChange24h),
+                        "⬇ %" + String(priceData.priceChange24h),
                         false
                     )
                 }

@@ -42,6 +42,7 @@
     "mongoose-long": "^0.5.1",
     "oreid-js": "^3.0.7",
     "oreid-webwidget": "^1.0.3",
+    "url-parse": "^1.5.10",
     "winston": "^3.5.0"
   }
 }

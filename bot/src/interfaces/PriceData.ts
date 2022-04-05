@@ -10,7 +10,7 @@ export interface PriceData {
     volumeETH: number
     volumeORE: number
     volumeUSD: number
-    volumeChange24h: number
+    priceChange24h: number
 }
 
 

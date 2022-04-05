@@ -25,7 +25,6 @@ export const deposit: CommandInt = {
             // parse the incoming user's command
             const userDiscordId: bigint = BigInt(interaction.user.id)
 
-
             // Check if user is already logged in and retrive the lastLogin date as a string
             const [ loggedIn, loginDate ] = await checkLoggedIn(userDiscordId)
 
@@ -40,20 +39,20 @@ export const deposit: CommandInt = {
 
                 const treasury = new OreTreasury
 
-                const [ depositaddress, depositQrCode ] = await treasury.getDepositAddress(discordUser)
+                const [ depositaddress, depositMemo ] = await treasury.getDepositAddress(discordUser)
 
                 const depositEmbed = new MessageEmbed()
                     .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
                     .setTitle("ORE Deposit Address")
-                    .setDescription('Only Send ORE Native tokens to this account.  Do Not send ETH, MATIC, EOS, etc')
+                    .setDescription('Only Send ORE Native tokens to this account.  You must include the memo in your transfer.  Do Not send ETH, MATIC, EOS, etc')
                     .addField(
                         "Deposit Address",
                         String(depositaddress),
                         false
                     )
                     .addField(
-                        "QR COde",
-                        String(depositQrCode),
+                        "Memo",
+                        String(depositMemo),
                         false
                     )
     

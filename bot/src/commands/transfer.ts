@@ -31,7 +31,7 @@ function createEmbed(
             false
         )
         .addField(
-            "Error Message",
+            "Transfer status",
             String(transferStatus),
             false
         )

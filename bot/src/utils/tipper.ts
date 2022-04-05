@@ -7,6 +7,8 @@ import { BotBalance, DiscordUser, UserLog } from '../interfaces/DiscordUser'
 import { checkLoggedIn, updateBotBalance, zeroBotBalance } from './mongo'
 import { listActivity } from './userLog'
 
+
+
 const dripTimeLimit: number = Number(process.env.BOT_FAUCET_TIME_LIMIT) || Number(3 * 60 * 60 * 1000)
 const faucetUser = BigInt(process.env.BOT_FAUCET_USER || BigInt("000000000000000099"))
 const uri = process.env.MONGO_URI || "mongodb://" 
@@ -14,6 +16,9 @@ const uri = process.env.MONGO_URI || "mongodb://"
     + ":" + process.env.MONGO_PORT 
     + "/test?retryWrites=true&w=majority"
 
+// 
+// Bot balances can only have a precision of 8
+// 
 export function precisionRound(number: number, precision: number): number {
     const factor = Math.pow(10, precision)
     const n = precision < 0 ? number : 0.01 / factor + number
@@ -87,8 +92,8 @@ export async function doTip( fromUser: bigint, recipient: bigint, amount: number
         // CHeck that the fromUser has adequate funds
         else if (amount <= fromUserBalance) {
             // Adjust the balances
-            fromUserBalance = precisionRound( fromUserBalance - amount, Number(process.env.CURRENCY_PRECISION) || 8 )
-            recipientBalance = precisionRound( recipientBalance + amount, Number(process.env.CURRENCY_PRECISION) || 8 )
+            fromUserBalance = precisionRound( fromUserBalance - amount, 8 )
+            recipientBalance = precisionRound( recipientBalance + amount, 8 )
             logHandler.info("new balances: " + fromUserBalance + " " + recipientBalance)
 
             // Write the changed balances to mongo
@@ -164,7 +169,7 @@ export async function faucetDrip( recipient: bigint ): Promise<[ boolean, number
             dripAmount = precisionRound(getRandomArbitrary(
                 Number(process.env.BOT_FAUCET_MIN) || 0.01,
                 Number(process.env.BOT_FAUCET_MAX) || 0.10
-                ), Number(process.env.CURRENCY_PRECISION) || 8
+                ), 8
             )
 
             // Check that the faucet has enough balance
