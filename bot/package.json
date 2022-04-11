@@ -36,7 +36,6 @@
     "chalk": "^5.0.0",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.6.0",
-    "dotenv": "^14.3.2",
     "mongodb": "^4.3.1",
     "mongoose": "^6.2.0",
     "mongoose-long": "^0.5.1",
