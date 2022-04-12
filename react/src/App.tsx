@@ -19,8 +19,6 @@ const App = () => {
       <div>Transaction Type: {state?.txtype}</div>
 	  <div>To Address: {state?.toaddress}</div>
       <div>Amount: {state?.amount}</div>
-
-
 	  <div>
 		<header className="App-header">
 					{isLoggedIn ? <LoggedIn /> : <LoggedOut />}
@@ -36,7 +34,7 @@ export default () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />} />
+        <Route path="/*" element={<App />} />
       </Routes>
     </BrowserRouter>
   );
