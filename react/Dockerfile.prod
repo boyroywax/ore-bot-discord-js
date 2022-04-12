@@ -8,6 +8,7 @@ WORKDIR /home/app
 
 COPY package*.json ./
 COPY tsconfig.json ./
+COPY yarn.lock ./
 
 RUN yarn install
 

@@ -9,7 +9,7 @@ import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 
 const oreId = new OreId({
-	appName: "ORE ID Sample App",
+	appName: process.env.REACT_APP_OREID_APP_NAME || "ORE ID Sample App",
 	appId: process.env.REACT_APP_OREID_APP_ID || "",
 	apiKey: process.env.REACT_APP_OREID_API_KEY || ""
 });

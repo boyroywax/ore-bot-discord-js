@@ -107,6 +107,7 @@ dist
 # node.js
 package-lock.json
 .env
+react/.env
 
 # Apple garbage
 .DS_Store

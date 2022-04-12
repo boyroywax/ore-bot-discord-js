@@ -14,7 +14,7 @@ const signOptions: TransactionSignOptions = {
 	preventAutosign: false, // prevent auto sign even if transaction is auto signable
 }
 
-export async function createTransferTransaction(oreId: OreId, fromUser: string, toUser: string, amount: string): Promise<EosActionStruct> {
+export async function createTransferTransaction(oreId: OreId, fromUser: string, toUser: string, amount: string): Promise<Transaction> {
     const transferTransaction: EosActionStruct = {
         account: toEosEntityName('eosio.token'),
         name: 'transfer',
@@ -27,7 +27,7 @@ export async function createTransferTransaction(oreId: OreId, fromUser: string, 
         data: { 
             from: toEosEntityName(fromUser),
             to: toEosEntityName(toUser),
-            quantity:  toEosAsset(amount, toEosSymbol('ORE'), 4),
+            quantity:  toEosAsset(String(amount), toEosSymbol('ORE'), 4),
             memo: "Transfer from ORE Community Bot"
         }
     }
@@ -48,9 +48,9 @@ export async function createTransferTransaction(oreId: OreId, fromUser: string, 
 	}
 
     const transaction = await oreId.createTransaction(transactionData) 
-    // if (transaction) {
-    //     console.log(await transaction.getSignUrl())
-    // }
+    if (transaction) {
+        console.log(await transaction.getSignUrl())
+    }
 
-    return transferTransaction
+    return transaction
 }

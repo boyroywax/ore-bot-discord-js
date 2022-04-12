@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, createContext} from "react";
+import { useState, createContext } from "react";
 
 export const AppContext = createContext<{
 	errors: string | undefined;
@@ -29,9 +29,9 @@ interface Props {}
 export const AppProvider: React.FC<Props> = ({ children }) => {
 	const [errors, setErrors] = useState<string | undefined>(undefined);
 	const [oreIdResult, setOreIdResult] = useState<string | undefined>(undefined);
-	const [toAddress, setToAddress] = useState<string | undefined>(undefined);
-	const [amount, setAmount] = useState<string | undefined>(undefined);
-	const [txType, setTxType] = useState<string | undefined>(undefined);
+	const [toAddress, setToAddress] = useState<string | undefined>(undefined)
+	const [amount, setAmount] = useState<string | undefined>(undefined)
+	const [txType, setTxType] = useState<string| undefined>(undefined)
 
 	return (
 		<AppContext.Provider
