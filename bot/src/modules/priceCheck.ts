@@ -17,7 +17,7 @@ class Price implements PriceData {
     volumeETH: number = 0.0
     volumeORE: number = 0.0
     volumeUSD: number = 0.0
-    volumeChange24h: number = 0.0
+    priceChange24h: number = 0.0
 
     constructor() {
        //
@@ -42,10 +42,10 @@ class Price implements PriceData {
             })
             logHandler.info('Data retrieved from CoinGecko: ' + JSON.stringify(apiData.data))
         
-            this.dateCreated = apiData.data['market_data']['timestamp']
+            this.dateCreated = apiData.data['market_data']['timestamp'] || new Date
             this.priceUSD = apiData.data['market_data']['current_price']['usd']
             this.volumeUSD = apiData.data['market_data']['total_volume']['usd']
-            this.volumeChange24h = apiData.data['market_data']['price_change_percentage_24h']
+            this.priceChange24h = apiData.data['market_data']['price_change_percentage_24h']
             await createPriceEntry(this)
         }
         catch (err) {
@@ -71,7 +71,7 @@ class Price implements PriceData {
             this.dateCreated = apiData.data['status']['timestamp']
             this.priceUSD = apiData.data['data']['12743']['quote']['USD']['price']
             this.volumeUSD = apiData.data['data']['12743']['quote']['USD']['volume_24h']
-            this.volumeChange24h = apiData.data['data']['12743']['quote']['USD']['percent_change_24h']
+            this.priceChange24h = apiData.data['data']['12743']['quote']['USD']['percent_change_24h']
             await createPriceEntry(this)
         }
         catch (err) {
@@ -86,7 +86,7 @@ class Price implements PriceData {
             this.dateCreated = localData.dateCreated
             this.priceUSD = localData.priceUSD
             this.volumeUSD = localData.volumeUSD
-            this.volumeChange24h = localData.volumeChange24h
+            this.priceChange24h = localData.priceChange24h
         }
         catch (err) {
             errorHandler("CoinGecko.getLocalData()", err)

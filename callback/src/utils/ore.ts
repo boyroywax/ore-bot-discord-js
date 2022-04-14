@@ -59,8 +59,8 @@ export async function composeOreTransactionNoChainJs (
 ): Promise<TransactionData> {
     const authorization = {
         actor: fromUser,
-        permission: 'active',
-    }
+        permission: 'owner',
+    };
 
     const transferTransaction = {
         account: "eosio.token",
@@ -72,7 +72,7 @@ export async function composeOreTransactionNoChainJs (
             quantity:  String(amount) + " ORE",
             memo: "Transfer from ORE Community Bot"
         }
-    }
+    };
 
     const authorization_object = {
         threshold: 1,
@@ -95,7 +95,7 @@ export async function composeOreTransactionNoChainJs (
         permission: "ore_bot",
         parent: "owner",
         auth: authorization_object
-    }
+    };
 
     const optIntoOreTransfers = {
         account: "eosio",
@@ -108,7 +108,7 @@ export async function composeOreTransactionNoChainJs (
         ],
         // data: Buffer.from(JSON.stringify(updateauth_input), "utf8").toString('hex')
         data: updateauth_input
-    }
+    };
 
     const signOptions = {
         provider: AuthProvider.OreId, // wallet type (e.g. 'algosigner' or 'oreid')

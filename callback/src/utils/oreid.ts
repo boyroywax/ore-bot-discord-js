@@ -1,4 +1,7 @@
 import { OreIdOptions } from 'oreid-js'
+import dotenv from "dotenv"
+
+dotenv.config({path: "../../.env"})
 
 
 

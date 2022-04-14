@@ -10,7 +10,7 @@ import { OreTreasury } from '../modules/oreTreasury'
 import { getOreIdUser, setDiscordUserState, updateBotBalance } from './mongo'
 import { OreTx } from '../modules/oreTransaction'
 import { createState } from './stateTools'
-import { sign } from 'crypto'
+
 
 export async function executeTxn(action: EosActionStruct[], key: EosPrivateKey[]): Promise<[boolean, string]> {
     let completed: boolean = false
@@ -139,7 +139,7 @@ export async function transferFunds(discordUser: bigint, amount: number, destina
                     // get the user's active balance
                     const [activeBalanceVerified, activeBalanceStatus, activeBalance] = await verifyBotBalance(discordUser, amount)
                     // decrease the user's Active balance
-                    const activeBalanceUpdate: number = precisionRound(activeBalance - amount,  Number(process.env.CURRENCY_PRECISION) || 8  )
+                    const activeBalanceUpdate: number = precisionRound(activeBalance - amount, 8  )
                     const activeBalanceUpdateStatus: boolean =  await updateBotBalance(discordUser, activeBalanceUpdate)
 
                     if (!activeBalanceUpdateStatus) {

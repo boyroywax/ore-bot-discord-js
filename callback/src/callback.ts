@@ -72,7 +72,7 @@ app.get('/logout', async (request: Request, response: Response) => {
 
 app.get('/sign', async (request: Request, response: Response) => {
 	// 
-	// Transaction signing callback using the web0widget
+	// Transaction signing callback using the web-widget
 	// 
 	const user: string = request.query.user?.toString() || ''
 	const recipient: string = request.query.recipient?.toString() || ''

@@ -309,7 +309,7 @@ export async function createPriceEntry( apiData: Price ): Promise<PriceData> {
             volumeETH: 0,
             volumeORE: 0,
             volumeUSD: apiData.volumeUSD,
-            volumeChange24h: apiData.volumeChange24h
+            priceChange24h: apiData.priceChange24h
         }
         await PriceDataModel.create(priceData)
     }

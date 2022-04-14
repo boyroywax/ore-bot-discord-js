@@ -51,9 +51,9 @@ export class OreTreasury implements OreKeys, oreIdActions, OreBalanceActions {
     }
 
     public async getDepositAddress(discordUser: User): Promise<[ string, string ] > {
-        const address = this.oreId + "-" + discordUser.id
-        const qrCode = address
-        return [ address, qrCode ]
+        const address = this.oreId
+        const memo = discordUser.id
+        return [ address, memo ]
     }
 
     public async makeWithdrawl(amount: number, toAddress: string): Promise<[ boolean, string ]> {

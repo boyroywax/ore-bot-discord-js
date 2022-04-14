@@ -23,23 +23,23 @@ const AdminCommandList: CommandInt[] = [
     createacct,
     addperm,
     buyRamByte,
-    delegateBW
+    delegateBW,
+    transfer,
+    withdraw,
+    deposit
 ]
 
 const UserCommandList: CommandInt[] = [ 
     activity,
     balance,
     block,
-    deposit,
     donate,
     drip,
     help,
     login,
     logout,
     price,
-    tip,
-    transfer,
-    withdraw,
+    tip
 ]
 
 

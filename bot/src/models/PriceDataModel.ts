@@ -14,7 +14,7 @@ export const priceSchema = new Schema<PriceData>({
     volumeETH: { type: Number, required: true },
     volumeORE: { type: Number, required: true },
     volumeUSD: { type: Number, required: true },
-    volumeChange24h: { type: Number, required: true }
+    priceChange24h: { type: Number, required: true }
 
 })
 

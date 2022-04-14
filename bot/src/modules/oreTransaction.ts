@@ -20,7 +20,7 @@ export class OreTx implements OreSendTransaction {
     txId: string = "None"
     account: string = process.env.CURRENCY_ACCOUNT || 'eosio.token'
     chain: string = process.env.CURRENCY_TOKEN || 'ORE'
-    precision: number = Number(process.env.CURRENCY_PRECISION) || 8
+    precision: number = Number(process.env.CURRENCY_PRECISION) || 4
 
     constructor(toUser: string, fromUser: string, amount: number) {
         this.toUser = toUser
