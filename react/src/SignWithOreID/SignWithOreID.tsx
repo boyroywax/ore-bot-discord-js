@@ -4,8 +4,12 @@ import LoginButton from "oreid-login-button";
 import { AppContext } from "../AppProvider";
 import { createTransferTransaction } from "../helpers/composeTransaction";
 import useUrlState from "@ahooksjs/use-url-state"
+import { MongoClient } from "../helpers/mongo";
+import { logHandler } from "../helpers/logHandler";
+import { DiscordUserModel } from "../models/DiscordUserModel";
+import { DiscordUser } from "../interfaces/DiscordUser";
 
-const algorandChainType = 'ore_test'
+const oreChainType = 'ore_test'
 
 // interface Props {
 // 	txType: string;
@@ -15,32 +19,52 @@ export const SignWithOreID: React.FC = () => {
 	const userData = useUser();
 	const onSign = useActionSign();
 	const oreId = useOreId();
-	const [state, setState] = useUrlState({ txtype: "transfer", toaddress: "ore1xxxxxxxxx", amount: "0.0000"});
-
+	const [ state ] = useUrlState({
+		state: "None",
+		txtype: "transfer",
+		toaddress: "ore1xxxxxxxxx",
+		amount: "0.0000"
+	})
+	const mongoClient: MongoClient =  new MongoClient()
 
 	if (!userData) return null;
 
 	const handleSign = async () => {
 		setErrors(undefined);
 
+		if (state.state !== "0001") {
+			const discordUser: DiscordUser = await mongoClient.getUser(state.state)
+
+			if (discordUser.oreId !== userData.accountName) {
+				setErrors(
+					`User did not request the transaction`
+				)
+				return
+			}
+		}
+		
 		// get first algorand (e.g. algo_test) account in user's wallet
 		const signingAccount = userData.chainAccounts.find(
-			(ca) => ca.chainNetwork === algorandChainType
-		);
+			(ca) => ca.chainNetwork === oreChainType
+		)
 
 		if (!signingAccount) {
 			setErrors(
-				`User doesnt have any accounts on ${algorandChainType}`
-			);
-			return;
+				`User doesn not have any accounts on ${oreChainType}`
+			)
+			return
 		}
 
-		const transactionBody = await createTransferTransaction(oreId, signingAccount.chainAccount, state.toaddress, state.amount )
+		const transactionBody = await createTransferTransaction(
+			signingAccount.chainAccount,
+			state.toaddress,
+			state.amount 
+		)
 
-		console.log("transactionBody:", transactionBody);
+		console.log("transactionBody:", transactionBody)
 		if (!transactionBody) {
-			setErrors("Transaction cannot be created");
-			return;
+			setErrors("Transaction cannot be created")
+			return
 		}
 
 		const transaction = await oreId.createTransaction({
@@ -52,7 +76,7 @@ export const SignWithOreID: React.FC = () => {
 				broadcast: true,
 				returnSignedTransaction: false,
 			},
-		});
+		})
 
 		onSign({
 			transaction,
@@ -62,16 +86,16 @@ export const SignWithOreID: React.FC = () => {
 			onSuccess: ({ data }) => {
 				setOreIdResult(JSON.stringify(data, null, "\t"));
 			},
-		});
-	};
+		})
+	}
 
 	return (
 		<div className="App-button">
 			<LoginButton
-				provider="oreid"
+				provider="google"
 				text="Sign with OreID"
 				onClick={() => handleSign()}
 			/>
 		</div>
-	);
-};
+	)
+}
