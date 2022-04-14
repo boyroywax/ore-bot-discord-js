@@ -28,7 +28,6 @@ FROM node:16.14-alpine3.15 as ts-remover
 WORKDIR /usr/app
 
 COPY --from=base /home/app/package*.json ./
-COPY yarn.lock ./
 
 RUN yarn install --only=production
 

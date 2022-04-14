@@ -55,11 +55,19 @@ export const SignWithOreID: React.FC = () => {
 			return
 		}
 
-		const transactionBody = await createTransferTransaction(
-			signingAccount.chainAccount,
-			state.toaddress,
-			state.amount 
-		)
+
+		// const transactionBody = await createTransferTransaction(
+		// 	signingAccount.chainAccount,
+		// 	state.toaddress,
+		// 	state.amount 
+		// Compose transaction contents
+		// const transactionBody = await composeSampleTransactionAlgorand({
+		// 	chainAccount: signingAccount.chainAccount,
+		// 	txType,
+		// 	toAddress,
+		// });
+
+		const transactionBody = await createTransferTransaction(signingAccount.chainAccount, state.toaddress, state.amount )
 
 		console.log("transactionBody:", transactionBody)
 		if (!transactionBody) {
@@ -67,6 +75,32 @@ export const SignWithOreID: React.FC = () => {
 			return
 		}
 
+		// * To sign a transaction we have two options!!!
+		// const createTransaction = false;
+		// if (createTransaction) {
+			//  * We can let the onSign function to create a transaction (without using oreId directly)
+		// 	onSign({
+		// 		createTransaction: {
+		// 			transactionData: {
+		// 				chainAccount: signingAccount.chainAccount,
+		// 				chainNetwork: signingAccount.chainNetwork,
+		// 				//@ts-ignore
+		// 				transaction: transactionBody,
+		// 			},
+		// 			signOptions: {
+		// 				broadcast: true,
+		// 				returnSignedTransaction: false,
+		// 			},
+		// 		},
+		// 		onError: ({ errors }) => {
+		// 			setErrors(errors);
+		// 		},
+		// 		onSuccess: ({ data }) => {
+		// 			setOreIdResult(JSON.stringify(data, null, "\t"));
+		// 		},
+		// 	});
+		// } else {
+		// * Or we can create the transaction manually (using oreId directly)
 		const transaction = await oreId.createTransaction({
 			chainAccount: signingAccount.chainAccount,
 			chainNetwork: signingAccount.chainNetwork,
