@@ -4,7 +4,6 @@ import dotenv from "dotenv"
 dotenv.config({path: "../../.env"})
 
 
-
 export const oreIdOptions: OreIdOptions = {
     appName: process.env.OREID_APP_NAME || "Discord Bot",
     appId: process.env.OREID_APP_ID || '',

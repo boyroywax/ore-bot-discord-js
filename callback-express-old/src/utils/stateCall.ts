@@ -9,7 +9,7 @@ function fromHex(hex: string){
     }
     catch(e){
       let str = hex
-      console.log('invalid hex input: ' + hex)
+      logHandler.info('invalid hex input: ' + hex + "\nerror: " + e)
     }
     return str
   }

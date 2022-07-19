@@ -6,9 +6,6 @@ import express from 'express'
 import { logHandler } from "./utils/logHandler"
 import { verifyLogin, verifyLogout, verifySign } from "./utils/mongo"
 import { errorHandler } from "./utils/errorHandler"
-import { SignWithOreID } from "./sign"
-import { OreId } from "oreid-js"
-import { oreIdOptions } from "./utils/oreid"
 
 
 const app = express()
@@ -74,36 +71,26 @@ app.get('/sign', async (request: Request, response: Response) => {
 	// 
 	// Transaction signing callback using the web-widget
 	// 
-	const user: string = request.query.user?.toString() || ''
-	const recipient: string = request.query.recipient?.toString() || ''
-	const amount: string = request.query.amount?.toString() || '0.00'
+
+
+
+	const user: string = request.query.account?.toString() || ''
 	const state: string = request.query.state?.toString() || ''
-	logHandler.info(user + " " + recipient + " " +  amount + " " + state)
-	// const error_message: string = request.query.error_message?.toString() || ''
 
 	try {
-		const signed: boolean = await verifySign(user, state)
-		logHandler.info("signed:" + signed)
+		const signed = await verifySign(user, state)
 		if (signed) {
-			const oreId2 = new OreId(oreIdOptions)
-			const userOreId = oreId2.auth.user
-			await userOreId.getData()
-			console.log(userOreId.accountName)
-			const transaction = await SignWithOreID(userOreId.accountName, recipient, Number(amount))
-			if (!transaction) {
-				return response.sendFile('./sign-failure.html', { root: '.' })
-			}
-			else if (transaction) {
-				return response.redirect(String(await transaction.getSignUrl()))
-			}
+			return response.sendFile('./sign-success.html', { root: '.' })
 		}
-		
+		else {
+			return response.sendFile('./sign-success.html', { root: '.' })
+		}
 	}
 	catch (err) {
 		errorHandler('/sign', err)
 	}
 
 	return response.redirect(redirectUrl)
-})
+	})
 
 app.listen(port, '0.0.0.0', () => logHandler.info(`App listening at http://0.0.0.0:${port}`));

@@ -8,7 +8,7 @@ metadata:
     tier: backend
     env: development
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: discord-callback
@@ -26,10 +26,10 @@ spec:
         image: boyroywax/ore-discord-callback-dev
         resources:
           requests:
-            memory: "32Mi"
+            memory: "128Mi"
             cpu: "50m"
           limits:
-            memory: "64Mi"
+            memory: "256Mi"
             cpu: "100m"
         envFrom:
           - configMapRef:

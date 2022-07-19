@@ -7,7 +7,7 @@ import User from 'oreid-js/dist/user/user'
 import Auth from 'oreid-js/dist/auth/auth'
 import { ApiGetUserParams, callApiGetUser } from 'oreid-js/dist/api'
 import { TransactionSignOptions } from 'oreid-js'
-import * as dotenv from 'dotenv'
+// import * as dotenv from 'dotenv'
 
 import { createOreConnection } from "./chains"
 import { errorHandler } from '../utils/errorHandler'
@@ -15,7 +15,7 @@ import { logHandler } from '../utils/logHandler'
 import { getOreIdUser } from "./mongo"
 import { oreIdActions } from 'interfaces/OreChain'
 
-dotenv.config()
+// dotenv.config()
 
 
 export const oreIdOptions: OreIdOptions = {

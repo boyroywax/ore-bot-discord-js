@@ -1,54 +1,23 @@
 ###########
-#  BASE   #
+#  DEV    #
 ###########
 
-FROM node:17.4-alpine3.15 as base
+FROM node:16.14-alpine3.15 as base
 
 WORKDIR /home/app
 
 COPY package*.json ./
 COPY tsconfig.json ./
+COPY yarn.lock ./
 
-RUN npm i
+RUN yarn install
 
-RUN npm i -g typescript --save-dev
+RUN yarn global add typescript --save-dev
 
 COPY src/ src/
+COPY ./public/ ./public/
+COPY ./.env.development ./
 
-RUN npm run build
+EXPOSE 3000
 
-#################
-#  TS-REMOVER   #
-#################
-
-FROM node:17.4-alpine3.15 as ts-remover
-
-WORKDIR /usr/app
-
-COPY --from=base /home/app/package*.json ./
-
-RUN npm install --only=production
-
-COPY --from=base /home/app/build ./
-
-###########
-#  FINAL  #
-###########
-
-FROM node:17.4-alpine3.15
-
-WORKDIR /usr/app
-
-COPY --from=ts-remover /usr/app ./
-COPY .env ./
-COPY ./static ./
-
-USER 1000
-
-EXPOSE 53134
-
-CMD ["node", "--trace-deprecation", "callback.js"]
-
-
-
-
+CMD ["yarn",  "start"]

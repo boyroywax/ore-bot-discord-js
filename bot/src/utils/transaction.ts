@@ -197,12 +197,11 @@ export async function transferFunds(discordUser: bigint, amount: number, destina
                     else {
                         const treasuryAddress: string = process.env.BOT_TREASURER_OREID || ""
                         let transaction: OreTx = new OreTx( treasuryAddress, oreIdAccount, amount )
-                        let[ signUrlCreated, signUrlStatus, signUrl ] = await transaction.createSigningLink()
+                        const[ signUrlCreated, signUrlStatus, signUrl ] = await transaction.createSigningLink()
                         if (!signUrlCreated) {
                             status = signUrlStatus
                         } 
                         else {
-                            signUrl = signUrl + "&state=" + state
                             completed = true
                             status = signUrl
                         }

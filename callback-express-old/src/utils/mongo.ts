@@ -88,7 +88,7 @@ export async function verifyLogout( stateIn: string ): Promise<boolean> {
         // a state that matches the callback value
         logHandler.info("Finding: " + stateIn)
         // const OreIdUser = model('OreIdUser', discordSchema)
-        await DiscordUserModel.findOne({ "state": String(stateIn) })
+        const findUser = await DiscordUserModel.findOne({ "state": String(stateIn) })
         .exec().then(async function(doc) {
             logHandler.info('document fetched: ' + doc)
             // If the doc exists, set the loggedIn value to false
@@ -156,12 +156,10 @@ export async function verifySign(
     let signed = false
     await connect(uri)
     try {
-        logHandler.info(userOreId + stateIn)
         // Declare the DiscordUser model and search mongodb for
         // a state that matches the callback value
         const findUser = await DiscordUserModel.findOne({ "state": String(stateIn) })
         .exec().then(async function(doc) {
-            logHandler.info("doc: " + JSON.stringify(doc))
             // If the doc exists, set the loggedIn value to true
             // Reset the state to "None"
             if (doc) {
@@ -174,7 +172,6 @@ export async function verifySign(
 
                 // increment the users bot balance
                 await BotBalanceModel.findOne({"discordId": doc.discordId}).exec().then( async function(balanceDoc){
-                    logHandler.info('balanceDoc: ' + JSON.stringify(balanceDoc))
                     if (balanceDoc) {
                         balanceDoc.botBalance = balanceDoc.botBalance + (doc.pendingTransaction  || 0.00)
                         await balanceDoc.save()
@@ -183,7 +180,7 @@ export async function verifySign(
 
                 const logArgs: UserLogKWArgs = { 
                     oreId: userOreId,
-                    status: "Completed"
+                    status: "Complete"
                 } 
                 await logEntry('Transfer', doc.discordId, logArgs)
             }
@@ -196,7 +193,7 @@ export async function verifySign(
                             status: "Failed",
                             comment: "User needs to request new /transfer"
                         } 
-                        await logEntry('Transfer', doc?.discordId, logArgs)
+                        await logEntry('Login', doc?.discordId, logArgs)
                     }
                     else {
                         const logArgs: UserLogKWArgs = {
@@ -204,7 +201,7 @@ export async function verifySign(
                             status: "Failed",
                             comment: "Cannot verify discordID, This may be the users first time logging in."
                         } 
-                        await logEntry('Transfer', BigInt(0), logArgs)
+                        await logEntry('Login', BigInt(0), logArgs)
                     }
                 })
             }

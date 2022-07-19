@@ -2,7 +2,7 @@
 // Interface for a discord user.
 // 
 export interface DiscordUser {
-    discordId: bigint
+    discordId: string
     loggedIn: boolean
     lastLogin?: Date
     dateCreated?: Date
@@ -15,7 +15,7 @@ export interface DiscordUser {
 // Interface for the discord user's bot balance.
 // 
 export interface BotBalance {
-    discordId: bigint
+    discordId: string
     botToken: string
     botBalance: number
 }
@@ -27,7 +27,7 @@ export interface UserLog extends UserLogKWArgs {
     id?: number
     action: string
     date: Date
-    discordId: bigint
+    discordId: string
 }
 
 // 
@@ -36,7 +36,7 @@ export interface UserLog extends UserLogKWArgs {
 export interface UserLogKWArgs {
     status?: string
     oreId?: string
-    recipient?: bigint
+    recipient?: string
     amount?: number
     txnId?: string
     comment?: string
