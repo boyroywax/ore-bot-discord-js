@@ -120,3 +120,4 @@ k8s-spec/dev/secrets.yaml
 
 k8s-spec/prod/configmap.yaml
 k8s-spec/prod/secrets.yaml
+callback/.env.development

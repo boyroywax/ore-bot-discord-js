@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import useUrlState from "@ahooksjs/use-url-state"
 import { BrowserRouter } from "react-router-dom"
 import { Routes, Route } from "react-router"
+import dotenv from "dotenv"
 
 
 import { Transfer } from "./Transfer"
@@ -13,24 +14,41 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { LoginPage } from "./LoginPage";
 
+
+// dotenv.config()
 // * Initialize OreId
 const oreId = new OreId({
 	appName: "ORE Tip Bot",
 	appId: process.env.REACT_APP_OREID_APP_ID || "",
-	oreIdUrl: process.env.REACT_OREID_SERVICE_URL || "https://staging.service.oreid.io",
+	oreIdUrl: process.env.REACT_APP_OREID_SERVICE_URL || "https://staging.service.oreid.io",
 	plugins: {
 		popup: WebPopup(),
 	},
 });
 
+const LogOut: React.FC =() => {
+	return (
+		<button
+			onClick={() => {
+				oreId.logout()
+			}}
+		>
+			Logout
+		</button>
+	)
+}
+
 const LoggedInView: React.FC = () => {
 	// const user = useUser();
 	// if (!user) return null;
-	return( 
+	return(
+		<>
 		<Routes>
 			{/* <Route path="/" element={<None />} /> */}
 			<Route path="/sign" element={<Transfer />} />
-		</Routes> 
+		</Routes>
+		<LogOut />
+		</>
 	)
 }
 

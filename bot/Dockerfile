@@ -10,7 +10,7 @@ COPY package*.json ./
 
 RUN yarn install
 
-RUN yarn add global typescript --dev
+RUN yarn global add typescript --dev
 
 COPY tsconfig.json ./
 
