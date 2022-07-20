@@ -7,9 +7,9 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 53134
+    - port: 3000
       protocol: TCP
-      targetPort: 53134
+      targetPort: 3000
       name: http
   selector:
     app: discord-callback

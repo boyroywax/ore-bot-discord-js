@@ -5,20 +5,20 @@ metadata:
   namespace: ore-dev
   labels:
     app: discord-callback
-    tier: backend
+    tier: frontend
     env: development
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: discord-callback
-      tier: backend
+      tier: frontend
       env: development
   template:
     metadata:
       labels:
         app: discord-callback
-        tier: backend
+        tier: frontend
         env: development
     spec:
       containers:
@@ -26,18 +26,24 @@ spec:
         image: boyroywax/ore-discord-callback-dev
         resources:
           requests:
-            memory: "32Mi"
+            memory: "128Mi"
             cpu: "50m"
           limits:
-            memory: "64Mi"
+            memory: "256Mi"
             cpu: "100m"
-        envFrom:
-          - configMapRef:
-              name: config-dev
-          - secretRef:
-              name: bot-secrets-dev
+        # envFrom:
+        #   - configMapRef:
+        #       name: config-dev
+        #   - secretRef:
+        #       name: bot-secrets-dev
+        # env:
+        #   - name: REACT_APP_OREID_APP_ID
+        #     valueFrom:
+        #       configMapKeyRef:
+        #         name: config-dev
+        #         key: OREID_APP_ID 
         ports:
-        - containerPort: 53134
+        - containerPort: 3000
           name: ore-callback-d
       restartPolicy: Always
 ---
@@ -49,12 +55,12 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 53134
+    - port: 3000
       protocol: TCP
-      targetPort: 53134
+      targetPort: 3000
       name: http
   selector:
     app: discord-callback
-    tier: backend
+    tier: frontend
     env: development
 ---

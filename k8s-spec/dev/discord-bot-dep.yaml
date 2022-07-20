@@ -23,14 +23,14 @@ spec:
     spec:
       containers:
       - name: ore-discord-bot-dev
-        image: boyroywax/ore-discord-dev
+        image: boyroywax/ore-discord-bot-dev
         resources:
           requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
             memory: "256Mi"
-            cpu: "200m"
+            cpu: "150m"
+          limits:
+            memory: "512Mi"
+            cpu: "300m"
         envFrom:
           - configMapRef:
               name: config-dev

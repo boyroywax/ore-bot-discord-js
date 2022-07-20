@@ -8,15 +8,15 @@ WORKDIR /home/app
 
 COPY package*.json ./
 
-RUN npm i
+RUN yarn install
 
-RUN npm i -g typescript --save-dev
+RUN yarn global add typescript --dev
 
 COPY tsconfig.json ./
 
 COPY src/ src/
 
-RUN npm run build
+RUN yarn build
 
 #################
 #  TS-REMOVER   #
@@ -28,7 +28,7 @@ WORKDIR /usr/app
 
 COPY --from=base /home/app/package*.json ./
 
-RUN npm install --only=production
+RUN yarn install --only=production
 
 COPY --from=base /home/app/build ./
 

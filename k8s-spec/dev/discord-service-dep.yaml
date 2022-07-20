@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-service
+  namespace: ore-dev
+  labels:
+    app: discord-service
+    tier: backend
+    env: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-service
+      tier: backend
+      env: development
+  template:
+    metadata:
+      labels:
+        app: discord-service
+        tier: backend
+        env: development
+    spec:
+      containers:
+      - name: ore-discord-service-dev
+        image: boyroywax/ore-discord-service-dev
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "100m"
+        envFrom:
+          - configMapRef:
+              name: config-dev
+          - secretRef:
+              name: bot-secrets-dev
+        ports:
+        - containerPort: 53134
+          name: ore-service-d
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ore-service-d
+  namespace: ore-dev
+spec:
+  type: NodePort
+  ports:
+    - port: 53134
+      protocol: TCP
+      targetPort: 53134
+      name: http
+  selector:
+    app: discord-service
+    tier: backend
+    env: development
+---

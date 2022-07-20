@@ -18,11 +18,11 @@ spec:
     http:
       paths:
       - pathType: Prefix
-        path: "/"
+        path: "dev"
         backend:
           service:
             name: ore-callback-d
-            port:
+            port: 3000
               name: http
 # spec:
 #   defaultBackend:

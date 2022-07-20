@@ -56,7 +56,7 @@ export class OreTx implements OreSendTransaction {
                     data: { 
                         from: toEosEntityName(this.fromUser),
                         to: toEosEntityName(this.toUser),
-                        quantity:  toEosAsset(String(this.amount), toEosSymbol(this.chain), Number(process.env.CURRENCY_PRECISION || 8)),
+                        quantity:  toEosAsset(String(this.amount), toEosSymbol(this.chain), ),
                         memo: "Transfer from ORE Community Bot"
                     }
                 }
@@ -77,13 +77,8 @@ export class OreTx implements OreSendTransaction {
         let status: string = "Creating transaction link for signing."
         let signUrl: string = "None"
         try {
-            // let transaction = await createSendTransaction(this.fromUser, this.toUser, String(this.amount))
-            // signUrl = String(await transaction?.getSignUrl()) || "None"
-            const signBaseUrl = new URL( process.env.OREID_SIGN_CALLBACK_URL || '')
-            signBaseUrl.searchParams.append('user', this.fromUser)
-            signBaseUrl.searchParams.append('recipient', this.toUser)
-            signBaseUrl.searchParams.append('amount', String(this.amount))
-            signUrl = signBaseUrl.href
+            let transaction = await createSendTransaction(this.fromUser, this.toUser, String(this.amount))
+            signUrl = String(await transaction?.getSignUrl()) || "None"
             completed = true
             status = "Transaction Link Created"
         }
