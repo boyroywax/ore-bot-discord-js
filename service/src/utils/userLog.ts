@@ -1,7 +1,7 @@
 import { logHandler } from './logHandler'
 import { errorHandler } from './errorHandler'
 import { UserLog, UserLogKWArgs } from '../interfaces/DiscordUser'
-import { UserLogModel } from '../models/DiscordUserModel'
+import { UserLogModel } from '../models/discordUserModel'
 import { addLogEntry } from './mongo'
 
 export async function logEntry (

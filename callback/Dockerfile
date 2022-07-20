@@ -12,15 +12,16 @@ COPY yarn.lock ./
 
 RUN yarn install
 
-RUN yarn global add typescript --save-dev
+RUN yarn add global typescript --dev
+RUN yarn add global serve
 
 COPY src/ src/
 COPY ./public/ ./public/
 COPY ./.env.development ./
 
-RUN ["yarn", "build"]
+# RUN ["yarn", "build"]
 
 EXPOSE 3000
 
-
-CMD ["yarn", "start"]
+CMD ["yarn", "dev"]
+# CMD ["serve", "-s", "build"]

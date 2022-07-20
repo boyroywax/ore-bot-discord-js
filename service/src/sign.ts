@@ -5,7 +5,7 @@ import { logHandler } from "./utils/logHandler";
 
 const oreChainType = 'ore_test'
 
-export async function SignWithOreID(fromUser: string, toUser: string, amount: number ): Promise<Transaction>  {
+export async function SignWithOreID(fromUser: string, toUser: string, amount: number ): Promise<any>  {
 
 	// let oreId = new OreId(oreIdOptions)
 	const userData : UserData = {
@@ -95,12 +95,12 @@ export async function SignWithOreID(fromUser: string, toUser: string, amount: nu
         signOptions: signOptions
     }
 
-	const transactionObject: Transaction = new Transaction({oreIdContext: oreid3, user: oreIdUser, data: transactionData})
+	// const transactionObject: Transaction = new Transaction({oreIdContext: oreid3, user: oreIdUser, data: transactionData})
 
-    // const transactionCreate = await oreId2.createTransaction(transactionData)
-    logHandler.info(JSON.stringify(await transactionObject.getSignUrl()))
-	const signUrlFull = (await transactionObject.getSignUrl()).signUrl || ''
-	logHandler.info("signUrlFull" + signUrlFull)
+    // // const transactionCreate = await oreId2.createTransaction(transactionData)
+    // logHandler.info(JSON.stringify(await transactionObject.getSignUrl()))
+	// const signUrlFull = (await transactionObject.getSignUrl()).signUrl || ''
+	// logHandler.info("signUrlFull" + signUrlFull)
 
     // let parsedSignUrl: URL = new URL(signUrlFull)
 	// let url = parse(parsedSignUrl.href, true)
@@ -137,5 +137,5 @@ export async function SignWithOreID(fromUser: string, toUser: string, amount: nu
 	
 	// const transaction = await oreId2.createTransaction(transactionBody)
 
-	return transactionObject
+	return "None"
 }

@@ -11,7 +11,7 @@ COPY tsconfig.json ./
 
 RUN yarn install
 
-RUN yarn add global typescript --save-dev
+RUN yarn add global typescript --dev
 
 COPY src/ src/
 

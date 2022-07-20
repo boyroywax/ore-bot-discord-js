@@ -2,7 +2,7 @@ import { connect, disconnect, model } from 'mongoose'
 import { logHandler } from './logHandler'
 import { errorHandler } from './errorHandler'
 import { UserLog } from '../interfaces/DiscordUser'
-import { DiscordUserModel, UserLogModel, BotBalanceModel} from '../models/DiscordUserModel'
+import { DiscordUserModel, UserLogModel, BotBalanceModel} from '../models/discordUserModel'
 import { logEntry } from "./userLog"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
 

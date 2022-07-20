@@ -46,13 +46,11 @@
     "react-error-overlay": "6.0.9"
   },
   "scripts": {
-    "build": "npm run build-frontend && npm run build-backend",
-    "build-frontend": "SKIP_PREFLIGHT_CHECK=true react-scripts build",
-    "build-backend": "tsc --project tsconfig.server.json --pretty",
-    "dev": "concurrently --kill-others \"react-scripts start\" \"PORT=3001 ts-node --project tsconfig.server.json server.ts\"",
+    "build": "SKIP_PREFLIGHT_CHECK=true react-scripts build",
+    "dev": "react-scripts start",
     "test": "SKIP_PREFLIGHT_CHECK=true react-scripts test",
     "eject": "react-scripts eject",
-    "start": "node build/server.js"
+    "start": "node index.js"
   },
   "eslintConfig": {
     "extends": [
