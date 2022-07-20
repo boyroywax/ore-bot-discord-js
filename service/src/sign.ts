@@ -1,12 +1,6 @@
 import { AppAccessTokenMetadata, OreId, Transaction, TransactionData, UserSourceData, UserData, JSONObject, TransactionSignOptions, AuthProvider, ChainNetwork } from "oreid-js";
-import { ApiGetAppTokenParams, callApiGetAppToken, callApiGetUser } from "oreid-js/dist/api";
-import OreIdContext from "oreid-js/dist/core/IOreidContext";
 import { logHandler } from "./utils/logHandler";
-import { composeOreTransactionNoChainJs } from "./utils/ore";
-import { oreIdOptions } from "./utils/oreid";
-import LocalState from "oreid-js/dist/utils/localState";
-import User from "oreid-js/dist/user/user";
-import { Url, parse } from "url";
+
 
 
 const oreChainType = 'ore_test'
@@ -40,31 +34,31 @@ export async function SignWithOreID(fromUser: string, toUser: string, amount: nu
 	}
 
 
-	let oreId2: OreId = new OreId(oreIdOptions)
-    const params = { account: fromUser }
-    const botUser: UserSourceData = await callApiGetUser(oreId2, params )
-    logHandler.info('botUser: ' + botUser.accountName)
+	// let oreId2: OreId = new OreId(oreIdOptions)
+    // const params = { account: fromUser }
+    // const botUser: UserSourceData = await callApiGetUser(oreId2, params )
+    // logHandler.info('botUser: ' + botUser.accountName)
 
 	let oreIdTransaction = composeTxTransfer(fromUser, toUser)
 
-    let appAccessTokenMetadata: AppAccessTokenMetadata = {
-        paramsNewAccount: undefined,
-        newAccountPassword: "",
-        currentAccountPassword: "",
-        secrets: undefined
-    }
-    let accessTokenParams: ApiGetAppTokenParams = { appAccessTokenMetadata } 
-    let appAccessToken = await callApiGetAppToken(oreId2, accessTokenParams)
-    logHandler.info('appAccessToken: ' + appAccessToken)
-    oreId2._localState.cachedaccessToken = appAccessToken
-    oreId2._localState.cachedUser = botUser
+    // let appAccessTokenMetadata: AppAccessTokenMetadata = {
+    //     paramsNewAccount: undefined,
+    //     newAccountPassword: "",
+    //     currentAccountPassword: "",
+    //     secrets: undefined
+    // }
+    // let accessTokenParams: ApiGetAppTokenParams = { appAccessTokenMetadata } 
+    // let appAccessToken = await callApiGetAppToken(oreId2, accessTokenParams)
+    // logHandler.info('appAccessToken: ' + appAccessToken)
+    // oreId2._localState.cachedaccessToken = appAccessToken
+    // oreId2._localState.cachedUser = botUser
 
-	const oreIdUser: User = new User({oreIdContext: oreId2, getAccessToken: oreId2._localState.cachedaccessToken, getAccountName: botUser.accountName})
-    console.log(oreIdUser)
-    await oreIdUser.getData()
-    console.log("getData: " + oreIdUser.accountName)
+	// const oreIdUser: User = new User({oreIdContext: oreId2, getAccessToken: oreId2._localState.cachedaccessToken, getAccountName: botUser.accountName})
+    // console.log(oreIdUser)
+    // await oreIdUser.getData()
+    // console.log("getData: " + oreIdUser.accountName)
 
-	let oreid3 = new OreId(oreIdOptions)
+	// let oreid3 = new OreId(oreIdOptions)
 
 	  // const transferTransactionJSON =
 	  const signOptions: TransactionSignOptions = {

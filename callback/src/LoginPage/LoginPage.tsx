@@ -12,11 +12,17 @@ export const LoginPage: React.FC = () => {
 	const [error, setError] = useState<Error | null>()
 
 	const onError = (error: Error) => {
+		//
+		// Call service and register login failure
+		//
 		console.log("Login failed", error)
 		setError(error)
 	}
 
 	const onSuccess = ({ user }: { user: UserData }) => {
+		//
+		// Call Service and register login success
+		//
 		console.log("Login successfull. User Data: ", user);
 	};
 	const loginWithProvider = (provider: AuthProvider) => {
