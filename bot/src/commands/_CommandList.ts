@@ -26,13 +26,14 @@ const AdminCommandList: CommandInt[] = [
     delegateBW,
     transfer,
     withdraw,
-    deposit
+
 ]
 
 const UserCommandList: CommandInt[] = [ 
     activity,
     balance,
     block,
+    deposit,
     donate,
     drip,
     help,
