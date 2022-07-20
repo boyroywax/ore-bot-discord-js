@@ -29,6 +29,10 @@ profiles:
       context: ./callback/
       docker:
         dockerfile: ./Dockerfile
+    - image: boyroywax/ore-service-dev
+      context: ./service/
+      docker:
+        dockerfile: ./Dockerfile
   deploy:
     kubectl:
       manifests:
@@ -36,6 +40,7 @@ profiles:
         - ./k8s-spec/dev/configmap.yaml
         - ./k8s-spec/dev/discord-bot-dep.yaml
         - ./k8s-spec/dev/discord-callback-dep.yaml
+        - ./k8s-spec/dev/discord-service-dep.yaml
 
 - name: mongo-prod
   deploy:

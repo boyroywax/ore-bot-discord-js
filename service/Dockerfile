@@ -2,20 +2,18 @@
 #  BASE   #
 ###########
 
-FROM node:16.14-alpine3.15 as base
+FROM node:17.4-alpine3.15 as base
 
 WORKDIR /home/app
 
 COPY package*.json ./
 COPY tsconfig.json ./
-COPY yarn.lock ./
 
 RUN yarn install
 
-RUN yarn global add typescript --save-dev
+RUN yarn add global typescript --save-dev
 
 COPY src/ src/
-COPY ./public/ ./public/
 
 RUN yarn build
 
@@ -23,12 +21,11 @@ RUN yarn build
 #  TS-REMOVER   #
 #################
 
-FROM node:16.14-alpine3.15 as ts-remover
+FROM node:17.4-alpine3.15 as ts-remover
 
 WORKDIR /usr/app
 
 COPY --from=base /home/app/package*.json ./
-COPY yarn.lock ./
 
 RUN yarn install --only=production
 
@@ -38,22 +35,19 @@ COPY --from=base /home/app/build ./
 #  FINAL  #
 ###########
 
-FROM node:16.14-alpine3.15
+FROM node:17.4-alpine3.15
 
 WORKDIR /usr/app
 
-RUN yarn global add serve
-
-COPY --from=ts-remover /usr/app /usr/app
+COPY --from=ts-remover /usr/app ./
 COPY .env ./
-
-# COPY ./public ./public/
+COPY ./static ./
 
 USER 1000
 
-EXPOSE 3000
+EXPOSE 53134
 
-CMD ["serve", "-s", "build"]
+CMD ["node", "--trace-deprecation", "callback.js"]
 
 
 

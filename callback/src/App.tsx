@@ -4,6 +4,7 @@ import { WebPopup } from "oreid-webpopup";
 import React, { useEffect, useState } from "react";
 import useUrlState from "@ahooksjs/use-url-state"
 import { BrowserRouter } from "react-router-dom"
+import { Routes, Route } from "react-router"
 
 
 import { Transfer } from "./Transfer"
@@ -16,7 +17,7 @@ import { LoginPage } from "./LoginPage";
 const oreId = new OreId({
 	appName: "ORE Tip Bot",
 	appId: process.env.REACT_APP_OREID_APP_ID || "",
-	oreIdUrl: process.env.OREID_SERVICE_URL || "https://staging.service.oreid.io",
+	oreIdUrl: process.env.REACT_OREID_SERVICE_URL || "https://staging.service.oreid.io",
 	plugins: {
 		popup: WebPopup(),
 	},
@@ -25,8 +26,13 @@ const oreId = new OreId({
 const LoggedInView: React.FC = () => {
 	// const user = useUser();
 	// if (!user) return null;
-	return( <Transfer /> );
-};
+	return( 
+		<Routes>
+			{/* <Route path="/" element={<None />} /> */}
+			<Route path="/sign" element={<Transfer />} />
+		</Routes> 
+	)
+}
 
 const AppWithProvider: React.FC = () => {
 	const isLoggedIn = useIsLoggedIn();

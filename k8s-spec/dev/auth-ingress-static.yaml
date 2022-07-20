@@ -18,7 +18,7 @@ spec:
     http:
       paths:
       - pathType: Prefix
-        path: "/dev"
+        path: "dev"
         backend:
           service:
             name: ore-callback-d

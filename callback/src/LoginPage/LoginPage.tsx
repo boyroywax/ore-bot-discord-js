@@ -8,13 +8,14 @@ import LogoGoogle from "./logo-google.svg";
 import { ReactComponent as Logo } from "./logo.svg";
 
 export const LoginPage: React.FC = () => {
-	const oreId = useOreId();
-	const [error, setError] = useState<Error | null>();
+	const oreId = useOreId()
+	const [error, setError] = useState<Error | null>()
 
 	const onError = (error: Error) => {
-		console.log("Login failed", error);
-		setError(error);
-	};
+		console.log("Login failed", error)
+		setError(error)
+	}
+
 	const onSuccess = ({ user }: { user: UserData }) => {
 		console.log("Login successfull. User Data: ", user);
 	};

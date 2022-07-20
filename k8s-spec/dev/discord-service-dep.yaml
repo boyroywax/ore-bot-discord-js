@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: discord-callback
+  name: discord-service
   namespace: ore-dev
   labels:
-    app: discord-callback
-    tier: frontend
+    app: discord-service
+    tier: backend
     env: development
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: discord-callback
-      tier: frontend
+      app: discord-service
+      tier: backend
       env: development
   template:
     metadata:
       labels:
-        app: discord-callback
-        tier: frontend
+        app: discord-service
+        tier: backend
         env: development
     spec:
       containers:
-      - name: ore-discord-callback-dev
-        image: boyroywax/ore-discord-callback-dev
+      - name: ore-discord-service-dev
+        image: boyroywax/ore-discord-service-dev
         resources:
           requests:
             memory: "128Mi"
@@ -37,24 +37,24 @@ spec:
           - secretRef:
               name: bot-secrets-dev
         ports:
-        - containerPort: 3000
-          name: ore-callback-d
+        - containerPort: 53134
+          name: ore-service-d
       restartPolicy: Always
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ore-callback-d
+  name: ore-service-d
   namespace: ore-dev
 spec:
   type: NodePort
   ports:
-    - port: 3000
+    - port: 53134
       protocol: TCP
-      targetPort: 3000
+      targetPort: 53134
       name: http
   selector:
-    app: discord-callback
-    tier: frontend
+    app: discord-service
+    tier: backend
     env: development
 ---
