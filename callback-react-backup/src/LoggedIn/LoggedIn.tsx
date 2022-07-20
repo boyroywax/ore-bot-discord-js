@@ -1,11 +1,14 @@
 import React from "react";
-import { useActionLogout, useUser } from "oreid-react";
+import { useOreId, useUser } from "oreid-react";
 import { SignWithOreID } from "../SignWithOreID";
 import { UserInfo } from "../UserInfo";
 
 export const LoggedIn: React.FC = () => {
-
-	const onLogout = useActionLogout();
+	const oreId = useOreId()
+	const onLogout = () => {
+		oreId.logout()
+	}
+	
 	const user = useUser();
 	if (!user) return null;
 

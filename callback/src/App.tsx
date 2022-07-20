@@ -1,41 +1,64 @@
-import { useIsLoggedIn } from "oreid-react";
-import React, { useContext } from "react";
-import "./App.css";
-import { AppContext } from "./AppProvider";
-import { LoggedIn } from "./LoggedIn";
-import { LoggedOut } from "./LoggedOut";
-import { ShowResultResults } from "./ShowResultResults";
-import useUrlState from "@ahooksjs/use-url-state";
-import { Routes, Route } from "react-router";
-import { BrowserRouter } from "react-router-dom";
+import { OreId } from "oreid-js";
+import { OreidProvider, useIsLoggedIn, useUser } from "oreid-react";
+import { WebPopup } from "oreid-webpopup";
+import React, { useEffect, useState } from "react";
+import useUrlState from "@ahooksjs/use-url-state"
+import { BrowserRouter } from "react-router-dom"
 
-const App = () => {
-    const [state, setState] = useUrlState({ txtype: "transfer", toaddress: "ore1xxxxxxxxx", amount: "0.0000"});
-    const isLoggedIn = useIsLoggedIn();
-    const { errors, oreIdResult } = useContext(AppContext);
 
-    return (
-        <>
-            <div>Transaction Type: {state?.txtype}</div>
-            <div>To Address: {state?.toaddress}</div>
-            <div>Amount: {state?.amount}</div>
-            <div>
-                <header className="App-header">
-                    {isLoggedIn ? <LoggedIn /> : <LoggedOut />}
-                    <ShowResultResults result={oreIdResult} />
-                    <ShowResultResults result={errors} error />
-                </header>
-            </div>
-        </>
-    );
+import { Transfer } from "./Transfer"
+import "./App.scss";
+import { Header } from "./Header";
+import { Footer } from "./Footer";
+import { LoginPage } from "./LoginPage";
+
+// * Initialize OreId
+const oreId = new OreId({
+	appName: "ORE Tip Bot",
+	appId: process.env.REACT_APP_OREID_APP_ID || "",
+	oreIdUrl: process.env.OREID_SERVICE_URL || "https://staging.service.oreid.io",
+	plugins: {
+		popup: WebPopup(),
+	},
+});
+
+const LoggedInView: React.FC = () => {
+	// const user = useUser();
+	// if (!user) return null;
+	return( <Transfer /> );
 };
 
-export default () => {
-    return (
-        <BrowserRouter>
-        <Routes>
-            <Route path="/*" element={<App />} />
-        </Routes>
-        </BrowserRouter>
-    );
+const AppWithProvider: React.FC = () => {
+	const isLoggedIn = useIsLoggedIn();
+	return (
+		<div className="App">
+			<Header />
+			{isLoggedIn ? <LoggedInView /> : <LoginPage />}
+			<Footer />
+		</div>
+	);
+};
+
+export const App: React.FC = () => {
+	const [oreidReady, setOreidReady] = useState(false);
+
+	useEffect(() => {
+		oreId.init().then(() => {
+			setOreidReady(true);
+		});
+	}, []);
+
+	if (!oreidReady) {
+		return <>Loading...</>;
+	}
+
+	return (
+		<>
+		<BrowserRouter>
+			<OreidProvider oreId={ oreId }>
+					<AppWithProvider />
+			</OreidProvider>
+		</BrowserRouter>
+		</>
+	);
 };
