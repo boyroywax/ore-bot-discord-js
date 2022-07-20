@@ -26,18 +26,6 @@ const oreId = new OreId({
 	},
 });
 
-const LogOut: React.FC =() => {
-	return (
-		<button
-			onClick={() => {
-				oreId.logout()
-			}}
-		>
-			Logout
-		</button>
-	)
-}
-
 const LoggedInView: React.FC = () => {
 	// const user = useUser();
 	// if (!user) return null;
@@ -47,7 +35,6 @@ const LoggedInView: React.FC = () => {
 			{/* <Route path="/" element={<None />} /> */}
 			<Route path="/sign" element={<Transfer />} />
 		</Routes>
-		<LogOut />
 		</>
 	)
 }
