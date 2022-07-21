@@ -47,7 +47,7 @@ USER 1000
 
 EXPOSE 53134
 
-CMD ["node", "--trace-deprecation", "callback.js"]
+CMD ["node", "--trace-deprecation", "index.js"]
 
 
 

@@ -5,6 +5,7 @@
   "main": "callback.js",
   "scripts": {
     "build": "tsc",
+    "start": "ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -19,6 +20,7 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
+    "@sentry/integrations": "^7.7.0",
     "@sentry/node": "^6.17.9",
     "crypto-js": "^4.1.1",
     "dotenv": "^15.0.1",

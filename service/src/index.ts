@@ -3,9 +3,8 @@ import express from 'express'
 // import { OreId, UserData } from "oreid-js";
 // import { OreIdWebWidget } from "oreid-webwidget";
 
-import { logHandler } from "./utils/logHandler"
+import { eventLogger, errorLogger, logHandler } from "./utils/logHandler"
 import { verifyLogin, verifyLogout, verifySign } from "./utils/mongo"
-import { errorHandler } from "./utils/errorHandler"
 
 
 const app = express()
@@ -22,7 +21,11 @@ app.get('/', (request: Request, response: Response) => {
 	// 
 	// Default index response
 	// 
-	return response.sendFile('./index.html', { root: '.' })
+	eventLogger({
+		message: "Index hit",
+		request: request
+	})
+	return response.sendFile('./index.html', { root: './static' })
 })
 
 app.get('/auth', async (request: Request, response: Response) => {
@@ -42,7 +45,7 @@ app.get('/auth', async (request: Request, response: Response) => {
 		})
 	}
 	catch (err) {
-		errorHandler("Login authentification failed: ", err)
+		errorLogger("Login authentification failed: ", err)
 	}
 })
 
@@ -63,7 +66,7 @@ app.get('/logout', async (request: Request, response: Response) => {
 		})
 	}
 	catch (err) {
-		errorHandler('Logout callback failed: ', err)
+		errorLogger('Logout callback failed: ', err)
 	}
 })
 
@@ -87,7 +90,7 @@ app.get('/sign', async (request: Request, response: Response) => {
 		}
 	}
 	catch (err) {
-		errorHandler('/sign', err)
+		errorLogger('/sign', err)
 	}
 
 	return response.redirect(redirectUrl)
