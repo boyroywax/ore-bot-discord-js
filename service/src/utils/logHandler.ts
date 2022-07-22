@@ -50,7 +50,7 @@ export const debugLogger = ( message: string ) => {
 
 export const errorLogger = (context: string, err: unknown): void => {
     const error = err as Error
-    logHandler.log("error", `There was an error in the ${context}:`)
+    logHandler.log("error", `There was an error in ${context}:` )
     logHandler.log(
         "error",
         JSON.stringify({ errorMessage: error.message, errorStack: error.stack })
@@ -99,7 +99,7 @@ export const errorLogger = (context: string, err: unknown): void => {
 //     };
 // }
 
-export const eventLogger = ( event: {message: string, request: Request} ) => {
+export const eventLogger = ( event: {message: string, request?: Request} ) => {
     // const dateTime = new Date()
     // let eventEntry = event as Sentry.Event
     logHandler.log( "info", event )

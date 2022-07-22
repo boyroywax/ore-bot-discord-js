@@ -1,0 +1,8 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: managed-cert-2-dev
+  namespace: ore-dev
+spec:
+  domains:
+    - s.dev.cb.ore.network

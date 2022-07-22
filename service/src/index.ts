@@ -1,10 +1,10 @@
-import { Request, Response } from "express"
-import express from 'express'
+import express, { Request, Response } from "express"
 // import { OreId, UserData } from "oreid-js";
 // import { OreIdWebWidget } from "oreid-webwidget";
 
-import { eventLogger, errorLogger, logHandler } from "./utils/logHandler"
-import { verifyLogin, verifyLogout, verifySign } from "./utils/mongo"
+import { eventLogger, errorLogger, debugLogger } from "./utils/logHandler"
+// import { verifyLogin, verifyLogout, verifySign } from "./utils/mongo"
+import { getPriceData } from "./actions/priceCheck"
 
 
 const app = express()
@@ -25,75 +25,86 @@ app.get('/', (request: Request, response: Response) => {
 		message: "Index hit",
 		request: request
 	})
-	return response.sendFile('./index.html', { root: './static' })
+	return response.sendFile('./index.html', { root: './' })
 })
 
-app.get('/auth', async (request: Request, response: Response) => {
-	//
-	// Login authentication callback
-	// 
-	const user: string = request.query.account?.toString() || ''
-	const state: string = request.query.state?.toString() || ''
-	try {
-		const login = await verifyLogin(user, state).then(async function(loginSuccess) {
-			if ((loginSuccess == true) && (user != '')) {
-				return response.sendFile('./login-success.html', { root: '.' })
-			}
-			else {
-				return response.sendFile('./login-failure.html', { root: '.' })
-			}
-		})
+// app.get('/auth', async (request: Request, response: Response) => {
+// 	//
+// 	// Login authentication callback
+// 	// 
+// 	const user: string = request.query.account?.toString() || ''
+// 	const state: string = request.query.state?.toString() || ''
+// 	try {
+// 		await verifyLogin(user, state).then(async function(loginSuccess: boolean) {
+// 			if ((loginSuccess == true) && (user != '')) {
+// 				return response.sendFile('./login-success.html', { root: '.' })
+// 			}
+// 			else {
+// 				return response.sendFile('./login-failure.html', { root: '.' })
+// 			}
+// 		})
+// 	}
+// 	catch (err) {
+// 		errorLogger("Login authentification failed: ", err)
+// 	}
+// })
+
+// app.get('/logout', async (request: Request, response: Response) => {
+// 	// 
+// 	// Logout authentification callback
+// 	// 
+// 	const state: string = request.query.state?.toString() || ''
+// 	try {
+// 		const logout = await verifyLogout(state).then(async function(logoutSuccess) {
+// 			debugLogger("logoutSuccess: " + logoutSuccess)
+// 			if (logoutSuccess == true) {
+// 				return response.sendFile('./logout-success.html', { root: '.' })
+// 			}
+// 			else {
+// 				return response.sendFile('./logout-failure.html', { root: '.' })
+// 			}
+// 		})
+// 	}
+// 	catch (err) {
+// 		errorLogger('Logout callback failed: ', err)
+// 	}
+// })
+
+// app.get('/sign', async (request: Request, response: Response) => {
+// 	// 
+// 	// Transaction signing callback using the web-widget
+// 	// 
+
+
+
+// 	const user: string = request.query.account?.toString() || ''
+// 	const state: string = request.query.state?.toString() || ''
+
+// 	try {
+// 		const signed = await verifySign(user, state)
+// 		if (signed) {
+// 			return response.sendFile('./sign-success.html', { root: '.' })
+// 		}
+// 		else {
+// 			return response.sendFile('./sign-success.html', { root: '.' })
+// 		}
+// 	}
+// 	catch (err) {
+// 		errorLogger('/sign', err)
+// 	}
+
+// 	return response.redirect(redirectUrl)
+// })
+
+app.get('/priceOre', async( request: Request, response: Response ) => {
+	let price = {}
+	try{
+		price = await getPriceData("coingecko")
 	}
 	catch (err) {
-		errorLogger("Login authentification failed: ", err)
+		errorLogger('/priceOre', err)
 	}
+	return response.send(price)
 })
 
-app.get('/logout', async (request: Request, response: Response) => {
-	// 
-	// Logout authentification callback
-	// 
-	const state: string = request.query.state?.toString() || ''
-	try {
-		const logout = await verifyLogout(state).then(async function(logoutSuccess) {
-			logHandler.info("logoutSuccess: " + logoutSuccess)
-			if (logoutSuccess == true) {
-				return response.sendFile('./logout-success.html', { root: '.' })
-			}
-			else {
-				return response.sendFile('./logout-failure.html', { root: '.' })
-			}
-		})
-	}
-	catch (err) {
-		errorLogger('Logout callback failed: ', err)
-	}
-})
-
-app.get('/sign', async (request: Request, response: Response) => {
-	// 
-	// Transaction signing callback using the web-widget
-	// 
-
-
-
-	const user: string = request.query.account?.toString() || ''
-	const state: string = request.query.state?.toString() || ''
-
-	try {
-		const signed = await verifySign(user, state)
-		if (signed) {
-			return response.sendFile('./sign-success.html', { root: '.' })
-		}
-		else {
-			return response.sendFile('./sign-success.html', { root: '.' })
-		}
-	}
-	catch (err) {
-		errorLogger('/sign', err)
-	}
-
-	return response.redirect(redirectUrl)
-	})
-
-app.listen(port, '0.0.0.0', () => logHandler.info(`App listening at http://0.0.0.0:${port}`));
+app.listen(port, '0.0.0.0', () => debugLogger(`App listening at http://0.0.0.0:${port}`));

@@ -4,6 +4,7 @@ import { UserLog, UserLogKWArgs } from '../interfaces/DiscordUser'
 import { UserLogModel } from '../models/DiscordUserModel'
 import { addLogEntry, getLogEntries } from './mongo'
 
+
 export async function logEntry (
     action: string,
     discordId: bigint,
@@ -33,7 +34,6 @@ export async function logEntry (
     }
     return savedLogEntry
 }
-
 
 export async function listActivity ( discordId: bigint ): Promise<UserLog[]> {
     // 
