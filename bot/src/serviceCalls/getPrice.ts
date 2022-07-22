@@ -4,7 +4,7 @@ import { PriceData } from "interfaces/PriceData"
 import {  errorLogger, debugLogger } from "../utils/logHandler"
 
 
-export const price = async (): Promise<PriceData> => {
+export const getPrice = async (): Promise<PriceData> => {
     let response = JSON.parse('{"error": "Price Not Found"}')
     try {
         const port: string = process.env.SERVICE_PORT || "53134"

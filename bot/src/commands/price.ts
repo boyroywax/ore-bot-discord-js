@@ -3,7 +3,7 @@ import { MessageEmbed } from "discord.js"
 
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorLogger } from "../utils/logHandler"
-import { price as getPriceData } from "../utils/apiCall"
+import { getPrice } from "../serviceCalls"
 import { PriceData } from "interfaces/PriceData"
 
 
@@ -19,7 +19,7 @@ export const price: CommandInt = {
             // Create a message only the user can see
             await interaction.deferReply({ ephemeral: false })
 
-            const priceData = (await getPriceData()) as PriceData
+            const priceData: PriceData = await getPrice()
 
             const priceEmbed = new MessageEmbed()
                 .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
