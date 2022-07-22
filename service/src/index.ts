@@ -97,14 +97,14 @@ app.get('/', (request: Request, response: Response) => {
 // })
 
 app.get('/priceOre', async( request: Request, response: Response ) => {
-	let price = {}
+	let price: {} = {}
 	try{
 		price = await getPriceData("coingecko")
 	}
 	catch (err) {
 		errorLogger('/priceOre', err)
 	}
-	return response.send(price)
+	return response.send(JSON.stringify(price))
 })
 
 app.listen(port, '0.0.0.0', () => debugLogger(`App listening at http://0.0.0.0:${port}`));
