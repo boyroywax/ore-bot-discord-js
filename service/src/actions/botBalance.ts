@@ -2,7 +2,7 @@ import { connect, disconnect } from 'mongoose'
 
 import { BotBalanceModel } from '../models/DiscordUserModel'
 import { debugLogger, errorLogger } from '../utils/logHandler'
-import { mongoUri } from 'utils/mongo'
+import { mongoUri } from '../utils/mongo'
 
 
 export async function getBotBalance( userDiscordId: bigint ): Promise<number> {

@@ -5,6 +5,7 @@ import express, { Request, Response } from "express"
 import { eventLogger, errorLogger, debugLogger } from "./utils/logHandler"
 // import { verifyLogin, verifyLogout, verifySign } from "./utils/mongo"
 import { getPriceData } from "./actions/priceCheck"
+import { verifyLogout } from "./actions/verifyLogout"
 
 
 const app = express()
@@ -49,26 +50,27 @@ app.get('/', (request: Request, response: Response) => {
 // 	}
 // })
 
-// app.get('/logout', async (request: Request, response: Response) => {
-// 	// 
-// 	// Logout authentification callback
-// 	// 
-// 	const state: string = request.query.state?.toString() || ''
-// 	try {
-// 		const logout = await verifyLogout(state).then(async function(logoutSuccess) {
-// 			debugLogger("logoutSuccess: " + logoutSuccess)
-// 			if (logoutSuccess == true) {
-// 				return response.sendFile('./logout-success.html', { root: '.' })
-// 			}
-// 			else {
-// 				return response.sendFile('./logout-failure.html', { root: '.' })
-// 			}
-// 		})
-// 	}
-// 	catch (err) {
-// 		errorLogger('Logout callback failed: ', err)
-// 	}
-// })
+app.get('/logout', async (request: Request, response: Response) => {
+	// 
+	// Logout authentification callback
+	// 
+	const state: string = request.query.state?.toString() || ''
+	try {
+		const logout = await verifyLogout(state).then(async function(logoutSuccess) {
+			debugLogger("logoutSuccess: " + logoutSuccess)
+			if (logoutSuccess == true) {
+				return response.status(200).send(true)
+			}
+			else {
+				return response.status(404).send(false)
+			}
+		})
+	}
+	catch (err) {
+		errorLogger("/logout", err)
+		return response.status(404).send(false)
+	}
+})
 
 // app.get('/sign', async (request: Request, response: Response) => {
 // 	// 

@@ -22,7 +22,7 @@ export const login: CommandInt = {
         const userDiscordId: bigint = BigInt(interaction.user.id)
         try {
             // Check if user is already logged in
-            let userCheck = await checkLoggedIn(userDiscordId)
+            await checkLoggedIn(userDiscordId)
                 .then(async function([loggedIn, loginDate]: [boolean, string]) {
                 
                 // Alert the user if they are already logged in
@@ -38,26 +38,12 @@ export const login: CommandInt = {
                     
                     // Create State from date
                     const state: string = createState(date)
+                    const loginUrl: string = process.env.OREID_PORTAL_URL + '/login?state=' + state
         
-                    // Create Google Login Link
-                    let googleLoginInfo: string = await loginUser("google", state) || ""
-                    let googleLoginParse = JSON.parse(googleLoginInfo)
-        
-                    // Create Facebook Login Link
-                    let facebookLoginInfo: string = await loginUser("facebook", state) || ""
-                    let facebookLoginParse = JSON.parse(facebookLoginInfo)
-        
-                    // Create Email Login Link
-                    let emailLoginInfo: string = await loginUser("email", state) || ""
-                    let emailLoginParse = JSON.parse(emailLoginInfo)
-        
-                    // Create SMS Login Link
-                    let phoneLoginInfo: string = await loginUser("sms", state) || ""
-                    let phoneLoginParse = JSON.parse(phoneLoginInfo)
 
                     // Construct login embed and button rows
                     loginEmbed.setTitle("Login to ORE ID")
-                    loginEmbed.setDescription("Login to ORE-ID using a method below.")
+                    loginEmbed.setDescription("Cllick the button below!")
                     loginEmbed.setURL(process.env.OREID_HOME || "https://oreid.io")
                     loginEmbed.addField(
                         "Last login",
@@ -65,41 +51,17 @@ export const login: CommandInt = {
                         false
                     )
 
-                    // Login Button row (1/2)
+                    // Login Button row 
                     const row = new MessageActionRow()
                     .addComponents(
                         new MessageButton()
-                        .setLabel('Google')
-                        .setURL(googleLoginParse.loginUrl)
+                        .setLabel('Login Now')
+                        .setURL(loginUrl)
                         .setStyle('LINK')
                     )
-                    .addComponents(
-                        new MessageButton()
-                        .setLabel('Facebook')
-                        .setURL(facebookLoginParse.loginUrl)
-                        .setStyle('LINK')
-                    )
-                    // Login Button Row (2/2)
-                    const row2 = new MessageActionRow()
-                    .addComponents(
-                        new MessageButton()
-                        .setLabel('Email')
-                        .setURL(emailLoginParse.loginUrl)
-                        .setStyle('LINK')
-                    )
-                    .addComponents(
-                        new MessageButton()
-                        .setLabel('Phone')
-                        .setURL(phoneLoginParse.loginUrl)
-                        .setStyle('LINK')
-                    )
-                    if (loginDate != "None") {
-                        loginEmbed.addField,
-                        "Last login",
-                        loginDate
-                    }
+                    
                     // Send the embed to discord
-                    await interaction.editReply({ components: [row, row2], embeds: [loginEmbed] })
+                    await interaction.editReply({ components: [row ], embeds: [loginEmbed] })
                     
                     await setDiscordUserState(userDiscordId, state)
                     

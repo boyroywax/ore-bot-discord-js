@@ -1,8 +1,8 @@
 import { connect, disconnect, model } from 'mongoose'
 
-import { debugLogger, errorLogger } from 'utils/logHandler'
+import { debugLogger, errorLogger } from '../utils/logHandler'
 import { UserLog } from '../interfaces/DiscordUser'
-import { DiscordUserModel, UserLogModel, BotBalanceModel} from 'models/DiscordUserModel'
+import { DiscordUserModel, UserLogModel, BotBalanceModel} from '../models/DiscordUserModel'
 import { addLogEntry } from "./activityLog"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
 import { mongoUri } from 'utils/mongo'

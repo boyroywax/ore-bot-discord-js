@@ -7,7 +7,7 @@ import { checkLoggedIn, setDiscordUserState } from "../utils/mongo"
 import { logEntry } from "../utils/userLog"
 import { logHandler } from "../utils/logHandler"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
-import { logoutUserAddress } from "../utils/oreid"
+// import { logoutUserAddress } from "../utils/oreid"
 import { createState } from "../utils/stateTools"
 
 
@@ -61,6 +61,8 @@ export const logout: CommandInt = {
                 } 
                 await logEntry( "LogOut", userDiscordId,  logArgs)
 
+                const logoutUrl: string = process.env.OREID_PORTAL_URL + '/login?state=' + state
+
                 logoutEmbed.setTitle("🪵 Logout Started!")
                 logoutEmbed.setDescription(
                     "Click below to be logged out of your ORE-ID account."
@@ -69,7 +71,7 @@ export const logout: CommandInt = {
                     .addComponents(
                         new MessageButton()
                         .setLabel('Log Out')
-                        .setURL(logoutUserAddress(state))
+                        .setURL(logoutUrl)
                         .setStyle('LINK')
                     )
                 await interaction.editReply({ components: [row], embeds: [logoutEmbed] })

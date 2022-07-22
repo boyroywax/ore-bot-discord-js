@@ -1,9 +1,9 @@
 import { connect, disconnect } from 'mongoose'
 
-import { UserLog, UserLogKWArgs } from 'interfaces/DiscordUser'
-import { UserLogModel } from 'models/DiscordUserModel'
-import { errorLogger } from "utils/logHandler"
-import { mongoUri } from 'utils/mongo'
+import { UserLog, UserLogKWArgs } from '../interfaces/DiscordUser'
+import { UserLogModel } from '../models/DiscordUserModel'
+import { errorLogger } from "../utils/logHandler"
+import { mongoUri } from '../utils/mongo'
 
 
 export async function addLogEntry (
