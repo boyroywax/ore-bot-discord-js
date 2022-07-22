@@ -9,8 +9,17 @@ export const LogOut: React.FC = () => {
     const [state] = useUrlState({
         state: "None"
     })
-    const handleLogOut = () => {
-        oreId.logout()
+    const handleLogOut = async () => {
+        let verified: boolean = false
+        try {
+            verified = await verifyLogout(state.state)
+            oreId.logout()
+		    console.log("Logout successfull.")
+        }
+        catch (error) {
+            console.error(error)
+        }
+        return verified
     }
 
 	const onError = (error: Error) => {
@@ -36,17 +45,14 @@ export const LogOut: React.FC = () => {
         return verified
 	};
 
-    useEffect(() => { 
-        try {
-            handleLogOut()
-            onSuccess().then((status) => {console.info(status)})
-        }
-        catch(err) {
-            onError(err as Error)
-        }
-
-
-    })
+    // useEffect(() => { 
+    //     try {
+    //         handleLogOut()
+    //     }
+    //     catch(err) {
+    //         onError(err as Error)
+    //     }
+    // })
 
 	return (
 		<section>

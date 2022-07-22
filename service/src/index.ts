@@ -54,22 +54,28 @@ app.get('/logout', async (request: Request, response: Response) => {
 	// 
 	// Logout authentification callback
 	// 
+	eventLogger({
+		message: "/logout Hit",
+		request: request
+	})
 	const state: string = request.query.state?.toString() || ''
+	console.log('state: ' + state)
 	try {
-		const logout = await verifyLogout(state).then(async function(logoutSuccess) {
+		await verifyLogout(state).then(async function(logoutSuccess) {
 			debugLogger("logoutSuccess: " + logoutSuccess)
 			if (logoutSuccess == true) {
-				return response.status(200).send(true)
+				return response.status(200).send({result: true})
 			}
 			else {
-				return response.status(404).send(false)
+				return response.status(404).send({result: false})
 			}
 		})
 	}
 	catch (err) {
 		errorLogger("/logout", err)
-		return response.status(404).send(false)
+		return response.status(404).send({result: false})
 	}
+
 })
 
 // app.get('/sign', async (request: Request, response: Response) => {

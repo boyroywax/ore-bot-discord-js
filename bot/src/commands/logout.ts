@@ -61,7 +61,7 @@ export const logout: CommandInt = {
                 } 
                 await logEntry( "LogOut", userDiscordId,  logArgs)
 
-                const logoutUrl: string = process.env.OREID_PORTAL_URL + '/login?state=' + state
+                const logoutUrl: string = process.env.OREID_PORTAL_URL + '/logout?state=' + state
 
                 logoutEmbed.setTitle("🪵 Logout Started!")
                 logoutEmbed.setDescription(
