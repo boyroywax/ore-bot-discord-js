@@ -103,8 +103,13 @@ app.get('/priceOre', async( request: Request, response: Response ) => {
 	}
 	catch (err) {
 		errorLogger('/priceOre', err)
+		return response.status(404).send({error: "price not found"})
 	}
-	return response.send(JSON.stringify(price))
+	eventLogger({
+		message: "/priceOre Hit",
+		request: request
+	})
+	return response.status(200).send(JSON.stringify(price))
 })
 
 app.listen(port, '0.0.0.0', () => debugLogger(`App listening at http://0.0.0.0:${port}`));

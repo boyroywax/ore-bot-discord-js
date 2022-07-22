@@ -130,7 +130,7 @@ class Price implements PriceData {
             }
         }
         catch (err) {
-            errorLogger("CoinGecko.checkPrice()", err)
+            errorLogger("Price.checkPrice()", err)
         }
     }
 }
