@@ -20,7 +20,6 @@ const { combine, timestamp, colorize, printf } = format;
 //     ],
 // })
 
-
 // Logging Levels:
 //   error
 //   warn
@@ -102,7 +101,7 @@ export const errorLogger = (context: string, err: unknown): void => {
 export const eventLogger = ( event: {message: string, request?: Request} ) => {
     // const dateTime = new Date()
     // let eventEntry = event as Sentry.Event
-    logHandler.log( "info", event )
+    logHandler.log( "info", event.message )
 
     if (event.request) {
         logHandler.log( "info", event.request.ip )
