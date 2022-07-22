@@ -22,6 +22,7 @@
   "dependencies": {
     "@sentry/integrations": "^7.7.0",
     "@sentry/node": "^6.17.9",
+    "@sentry/tracing": "^7.7.0",
     "crypto-js": "^4.1.1",
     "dotenv": "^15.0.1",
     "express": "^4.17.2",

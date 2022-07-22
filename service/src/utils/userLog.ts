@@ -1,7 +1,6 @@
-import { logHandler } from './logHandler'
-import { errorHandler } from './errorHandler'
+import { errorLogger } from './logHandler'
 import { UserLog, UserLogKWArgs } from '../interfaces/DiscordUser'
-import { UserLogModel } from '../models/discordUserModel'
+import { UserLogModel } from '../models/DiscordUserModel'
 import { addLogEntry } from './mongo'
 
 export async function logEntry (
@@ -18,7 +17,8 @@ export async function logEntry (
             action: action,
             amount: entry?.amount || 0,
             date: new Date,
-            discordId: discordId,
+            discordId: discordId || BigInt(0),
+            ip: entry?.ip || "NA",
             oreId: entry?.oreId || "NA",
             recipient: entry?.recipient || 0,
             txnId: entry?.txnId || "NA",
@@ -29,7 +29,7 @@ export async function logEntry (
         savedLogEntry = true
     }
     catch (err) {
-        errorHandler('logEntry failed: ', err)
+        errorLogger('logEntry failed: ', err)
     }
     return savedLogEntry
 }

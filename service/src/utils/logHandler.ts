@@ -1,20 +1,24 @@
-import { captureException, captureEvent, Event } from "@sentry/node"
+// import { captureException, captureEvent, Event } from "@sentry/node"
 import * as Sentry from "@sentry/node"
-import { RewriteFrames } from '@sentry/integrations'
+import * as Tracing from '@sentry/tracing'
+import { Request } from "express";
 import { createLogger, format, transports, config } from "winston";
 
 
 const { combine, timestamp, colorize, printf } = format;
 
-Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    tracesSampleRate: 1.0,
-    integrations: [
-    //     new RewriteFrames({
-    //         root: global.__dirname,
-    //     }),
-    ],
-})
+// Sentry.init({
+//     dsn: process.env.SENTRY_DSN,
+//     tracesSampleRate: 1.0,
+//     integrations: [
+//         new Sentry.Integrations.Http({
+//             tracing: true,
+//         }),
+//         new Tracing.Integrations.Express({
+
+//         })
+//     ],
+// })
 
 
 // Logging Levels:
@@ -28,7 +32,7 @@ Sentry.init({
 
 export const logHandler = createLogger({
     levels: config.npm.levels,
-    level: process.env.LOG_LEVEL,
+    level: process.env.LOG_LEVEL || "silly",
     transports: [new transports.Console()],
     format: combine(
         timestamp({
@@ -40,6 +44,10 @@ export const logHandler = createLogger({
     exitOnError: false,
 })
 
+export const debugLogger = ( message: string ) => {
+    logHandler.log( "debug", message )
+}
+
 export const errorLogger = (context: string, err: unknown): void => {
     const error = err as Error
     logHandler.log("error", `There was an error in the ${context}:`)
@@ -47,8 +55,8 @@ export const errorLogger = (context: string, err: unknown): void => {
         "error",
         JSON.stringify({ errorMessage: error.message, errorStack: error.stack })
     )
-    const eventId = captureException(error)
-    logHandler.log("error", `Sentry eventId: ${eventId}`)
+    // const eventId = Sentry.captureException(error)
+    // logHandler.log("error", `Sentry eventId: ${eventId}`)
 }
 
 // Event Params:
@@ -91,14 +99,15 @@ export const errorLogger = (context: string, err: unknown): void => {
 //     };
 // }
 
-export const eventLogger = ( event: {} ) => {
-    const dateTime = new Date()
-    let eventEntry = event as Event
-    logHandler.log( "info", eventEntry)
+export const eventLogger = ( event: {message: string, request: Request} ) => {
+    // const dateTime = new Date()
+    // let eventEntry = event as Sentry.Event
+    logHandler.log( "info", event )
 
-    eventEntry.environment = process.env.STAGE
-    eventEntry.timestamp = dateTime.valueOf()
+    if (event.request) {
+        logHandler.log( "info", event.request.ip )
+    }
 
-    const eventId = captureEvent( eventEntry )
-    logHandler.log("info", `Sentry eventId: ${eventId}`)
+    // const eventId = Sentry.captureEvent( eventEntry )
+    // logHandler.log("info", `Sentry eventId: ${eventId}`)
 }

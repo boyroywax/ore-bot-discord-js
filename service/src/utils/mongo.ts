@@ -1,8 +1,8 @@
 import { connect, disconnect, model } from 'mongoose'
-import { logHandler } from './logHandler'
-import { errorHandler } from './errorHandler'
+
+import { logHandler, errorLogger } from './logHandler'
 import { UserLog } from '../interfaces/DiscordUser'
-import { DiscordUserModel, UserLogModel, BotBalanceModel} from '../models/discordUserModel'
+import { DiscordUserModel, UserLogModel, BotBalanceModel} from '../models/DiscordUserModel'
 import { logEntry } from "./userLog"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
 
@@ -68,7 +68,7 @@ export async function verifyLogin(
         })
     }
     catch (err) {
-        logHandler.error("Error verifying login: " + err)
+        errorLogger("Error verifying login: " + err)
     }
     await disconnect()
     return loggedIn
@@ -113,12 +113,12 @@ export async function verifyLogout( stateIn: string ): Promise<boolean> {
                     comment: "Cannot verify discordID."
                 } 
                 await logEntry('LogOut', BigInt(0), logArgs)
-                logHandler.error('verifyLogout failed')
+                errorLogger('verifyLogout failed')
             }
         })
     }
     catch (error) {
-        logHandler.error("Error verifying logout: " + error)
+        errorLogger("Error verifying logout: " + error)
     }
     await disconnect()
     return logoutSuccess
@@ -140,7 +140,7 @@ export async function updateBotBalance( userDiscordId: bigint, botBalance: numbe
         })
     }
     catch (err) {
-        errorHandler("updateBotBalance Failed: ", err)
+        errorLogger("updateBotBalance Failed: ", err)
     }
     await disconnect()
     return saveStatus
@@ -208,7 +208,7 @@ export async function verifySign(
         })
     }
     catch (err) {
-        logHandler.error("Error verifying transaction signing: " + err)
+        errorLogger("Error verifying transaction signing: " + err)
     }
     await disconnect()
     return signed
@@ -222,7 +222,7 @@ export async function addLogEntry( entry: UserLog ): Promise<boolean> {
         saveStatus = true
     }
     catch (err) {
-        errorHandler("addLog Entry Failed: ", err)
+        errorLogger("addLog Entry Failed: ", err)
     }
     await disconnect()
     return saveStatus
