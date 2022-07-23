@@ -34,8 +34,8 @@ const LoggedInView: React.FC = () => {
 		<>
 		<Routes>
 			{/* <Route path="/" element={<None />} /> */}
-			<Route path="/sign" element={<Transfer />} />
-			<Route path="/logout" element={<LogOut />} />
+			<Route path="/app/sign" element={<Transfer />} />
+			<Route path="/app/logout" element={<LogOut />} />
 		</Routes>
 		</>
 	)

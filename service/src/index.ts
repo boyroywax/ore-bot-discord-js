@@ -29,6 +29,17 @@ app.get('/', (request: Request, response: Response) => {
 	return response.sendFile('./index.html', { root: './' })
 })
 
+app.get('/api/', (request: Request, response: Response) => {
+	// 
+	// Default index response
+	// 
+	eventLogger({
+		message: "Index hit",
+		request: request
+	})
+	return response.sendFile('./index.html', { root: './' })
+})
+
 // app.get('/auth', async (request: Request, response: Response) => {
 // 	//
 // 	// Login authentication callback
@@ -50,7 +61,7 @@ app.get('/', (request: Request, response: Response) => {
 // 	}
 // })
 
-app.get('/logout', async (request: Request, response: Response) => {
+app.get('/api/logout', async (request: Request, response: Response) => {
 	// 
 	// Logout authentification callback
 	// 
@@ -104,7 +115,7 @@ app.get('/logout', async (request: Request, response: Response) => {
 // 	return response.redirect(redirectUrl)
 // })
 
-app.get('/priceOre', async( request: Request, response: Response ) => {
+app.get('/api/priceOre', async( request: Request, response: Response ) => {
 	let price: {} = {}
 	try{
 		price = await getPriceData("coingecko")
