@@ -196,10 +196,13 @@ export async function transferFunds(discordUser: bigint, amount: number, destina
                     }
                     else {
                         const treasuryAddress: string = process.env.BOT_TREASURER_OREID || ""
-                        let transaction: OreTx = new OreTx( treasuryAddress, oreIdAccount, amount )
-                        const[ signUrlCreated, signUrlStatus, signUrl ] = await transaction.createSigningLink()
-                        if (!signUrlCreated) {
-                            status = signUrlStatus
+                        const signUrl: string = process.env.OREID_PORTAL_URL 
+                            + '/sign?txtype=transfer&toaddress=' + treasuryAddress
+                            + `&amount=` + String(amount)
+                            + '&state=' + state
+
+                        if (!signUrl) {
+                            status = "Could not generate signing url."
                         } 
                         else {
                             completed = true

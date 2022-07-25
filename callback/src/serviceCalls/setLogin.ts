@@ -1,10 +1,13 @@
+import { AxiosInstance } from "axios"
+
+
 import { initApi } from "./apiCall"
 
 
 export const setLogin = async (state: string, account: string): Promise<boolean> => {
-    let response = JSON.parse('{"error": "Could not verify logout"}')
+    let response: boolean = false
     try {
-        const instance = initApi()
+        const instance: AxiosInstance = initApi()
         const url = 'login?state=' + state + '&account=' + account
     
         const apiData = await instance.get(url)

@@ -17,12 +17,12 @@ export const LoginPage: React.FC = () => {
         state: "None"
     })
 
-	const onError = (error: Error) => {
+	const onError = async (error: Error) => {
 		//
 		// Call service and register login failure
 		//
-		setLoginError(error.message, state.state)
-		console.log("Login failed ", error)
+		await setLoginError('OreId_login_failed', state.state)
+		console.log("OreId login failed ", error)
 		setError(error)
 	}
 
@@ -31,6 +31,7 @@ export const LoginPage: React.FC = () => {
 		// Call Service and register login success
 		//
 		if ( state.state === "None" ) {
+			await setLoginError(`${user.accountName}_state_is_none`, "0")
 			setError(({message: "Please login using the Discord bot."}) as Error)
 		}
 		else if ( user.accountName === undefined ) {
@@ -38,8 +39,8 @@ export const LoginPage: React.FC = () => {
 		}
 		else {
 			await setLogin( state.state, user.accountName )
-				.catch((err) => {
-					setLoginError(`Login cannot be updated in the DB: ${err}`, state.state)
+				.catch(async (err) => {
+					await setLoginError(`${user.accountName}_Login_cannot_be_updated_in_DB`, state.state)
 					setError({message: 'Login cannot be updated in the DB: '} as Error)
 				})
 		}

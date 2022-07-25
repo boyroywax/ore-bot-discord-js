@@ -2,8 +2,9 @@ import React, { useContext, useState, useEffect } from "react";
 import { useOreId, useUser } from "oreid-react";
 import LoginButton from "oreid-login-button";
 import useUrlState from "@ahooksjs/use-url-state"
-import { ChainNetwork, JSONObject, Transaction, TransactionData, UserData } from "oreid-js";
+import { ChainNetwork, JSONObject, PopupPluginSignParams, Transaction, TransactionData, UserData } from "oreid-js";
 import styles from "./Transfer.module.scss"
+import { setSigned } from "../serviceCalls/setSigned";
 
 // interface Props {
 // 	txType: string;
@@ -18,24 +19,24 @@ export const Transfer: React.FC = () => {
 		toaddress: "ore1xxxxxxxxx",
 		amount: "0.0000"
 	})
+    const [ errors, setErrors ] = useState("")
 
 	// const checkRequestedTxn = async () => {
-	// 	const mongoClient: MongoClient =  new MongoClient()
 
-	// 	if (state.state !== "0001") {
-	// 		const discordUser: DiscordUser = await mongoClient.getUser(state.state)
+	// 	// if (state.state !== "0001") {
+	// 	// 	const discordUser: DiscordUser = await mongoClient.getUser(state.state)
 	
-	// 		if (discordUser.oreId !== user?.accountName) {
-	// 			setErrors(
-	// 				`User did not request the transaction`
-	// 			)
-	// 			return ("User did not request the transaction")
-	// 		}
-	// 	}
+	// 	// 	if (discordUser.oreId !== user?.accountName) {
+	// 	// 		setErrors(
+	// 	// 			`User did not request the transaction`
+	// 	// 		)
+	// 	// 		return ("User did not request the transaction")
+	// 	// 	}
+	// 	// }
 	// }
 
 	// useEffect( () => {
-	// 	checkRequestedTxn()
+	// 	// checkRequestedTxn()
 	// })
 
 	// if (!user) {
@@ -47,7 +48,8 @@ export const Transfer: React.FC = () => {
         // setErrors( error.message );
     };
 
-    const onSuccess = ( result: any ) => {
+    const onSuccess = async ( result: any ) => {
+        await setSigned(state.state, state.toaddress)
         console.log( 
             "Transaction Successful. ", JSON.stringify(result)
         );
@@ -56,22 +58,16 @@ export const Transfer: React.FC = () => {
 
     const handleSign = async () => {
 
-        let chainNetwork: ChainNetwork
+        let chainNetwork: ChainNetwork = ChainNetwork.OreMain
 
         console.log(process.env.REACT_APP_CURRENCY_STAGE || 'none')
 
         if ( process.env.REACT_APP_CURRENCY_STAGE === 'testnet') {
             chainNetwork = ChainNetwork.OreTest
         }
-        else {
-            chainNetwork = ChainNetwork.OreMain
-        }
-
-        console.log('Chainnetwrok')
-        console.log(user)
 
         const signingAccount = user?.chainAccounts.find(
-            (ca) => ca.chainNetwork ===  "ore_test"
+            (ca) => ca.chainNetwork === chainNetwork
         );
 
         console.log(signingAccount)
@@ -79,28 +75,48 @@ export const Transfer: React.FC = () => {
         const errorMsg = `User does not have any accounts on ${chainNetwork}`;
     
         if (!signingAccount) {
-            console.log(errorMsg)        };
+            console.log(errorMsg)        
+        };
 
         console.log(signingAccount)
     
-        const transactionBody: JSONObject = {
-            from: signingAccount?.chainAccount || "",
-            to: signingAccount?.chainAccount || "",
-            value: 0
+        const transactionAction: JSONObject = {
+            account: "eosio.token",
+            name: "transfer",
+            authorization: [
+                {
+                    actor: signingAccount?.chainAccount || "",
+                    permission: "active"
+                }
+            ],
+            data: {
+                from: signingAccount?.chainAccount || "",
+                to: state.toaddress || "",
+                quantity: state.amount + " ORE",
+                memo: "Transfer from ORE COmmunity Bot"
+            }
         };
+
+        const transactionData = { actions: [transactionAction] }
 
         const transaction: Transaction = await oreId.createTransaction({
             chainAccount: signingAccount?.chainAccount,
             chainNetwork: chainNetwork,
-            transaction: transactionBody,
+            transaction: transactionData,
             signOptions: {
                 broadcast: true,
                 returnSignedTransaction: false,
             },
         });
 
+        const popuUpParams : PopupPluginSignParams = {
+            transaction: transaction
+        }
+
+        console.log(transaction)
+
 		oreId.popup
-			.sign({ transaction })
+			.sign(popuUpParams)
 			.then( onSuccess )
 			.catch( onError )
 	}
@@ -114,10 +130,10 @@ export const Transfer: React.FC = () => {
                 >
                         Sign Transaction
                 </button>
-                <h3>{state?.amount}</h3>
-                <h3>{state?.state}</h3>
-                <h3>{state?.toaddress}</h3>
-                <h3>{state?.txtype}</h3>
+                <h3>Amount: {state?.amount}</h3>
+                {/* <h3>{state?.state}</h3> */}
+                <h3>To: {state?.toaddress}</h3>
+                {/* <h3>{state?.txtype}</h3> */}
             </div>
         </section>
 	)

@@ -34,12 +34,16 @@ export async function loginError(
 
                     const logArgs: UserLogKWArgs = { 
                         status: "Failed",
-                        comment: errorMsg
+                        comment: errorMsg.replace(/_+/g, ' ')
                     } 
                     await addLogEntry('Login', doc.discordId, logArgs)
                 }
                 else {
-                    errorLogger("logoutError/findOne", ({message: "State was never registered upon /Login initiation"} as Error))
+                    const logArgsError: UserLogKWArgs = {
+                        status: "Failed",
+                        comment: `State not found in DB: ${stateIn}`
+                    }
+                    errorLogger("logoutError/findOne", ({message: "State not found.  Please try logging in again using /login command on the ORE Network Bot in Discord."} as Error))
                 }
             })
         }

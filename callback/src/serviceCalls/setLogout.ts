@@ -2,7 +2,7 @@ import { initApi } from "./apiCall"
 
 
 export const setLogout = async (state: string): Promise<boolean> => {
-    let response = JSON.parse('{"error": "Could not verify logout"}')
+    let response: boolean = false
     try {
         const instance = initApi()
         const url = 'logout?state=' + state

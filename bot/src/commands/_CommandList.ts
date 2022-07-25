@@ -25,8 +25,6 @@ const AdminCommandList: CommandInt[] = [
     addperm,
     buyRamByte,
     delegateBW,
-    transfer,
-    withdraw
 ]
 
 const UserCommandList: CommandInt[] = [ 
@@ -41,7 +39,9 @@ const UserCommandList: CommandInt[] = [
     login,
     logout,
     price,
-    tip
+    tip,
+    transfer,
+    withdraw
 ]
 
 
