@@ -64,8 +64,8 @@ export const drip: CommandInt = {
                     dripEmbed.setDescription("The faucet did not drop any tokens!")
                     dripEmbed.addField("Reason for failure", dripComment, false)
 
-                        // compose User's log entry for failed faucetDrip
-                        const logArgs: UserLogKWArgs = {
+                    // compose User's log entry for failed faucetDrip
+                    const logArgs: UserLogKWArgs = {
                         comment: dripComment, 
                         status: "Failed"
                     } 

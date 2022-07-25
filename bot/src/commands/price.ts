@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { MessageEmbed } from "discord.js"
 
-import { getPriceData } from "../modules/priceCheck"
 import { CommandInt } from "../interfaces/CommandInt"
-import { errorHandler } from "../utils/errorHandler"
-import { logHandler } from "../utils/logHandler"
+import { errorLogger } from "../utils/logHandler"
+import { getPrice } from "../serviceCalls"
+import { PriceData } from "interfaces/PriceData"
 
 
 export const price: CommandInt = {
@@ -19,7 +19,7 @@ export const price: CommandInt = {
             // Create a message only the user can see
             await interaction.deferReply({ ephemeral: false })
 
-            const priceData = await getPriceData('coingecko')
+            const priceData: PriceData = await getPrice()
 
             const priceEmbed = new MessageEmbed()
                 .setThumbnail(process.env.CURRENCY_LOGO || 'https://imgur.com/5M8hB6N.png')
@@ -54,7 +54,7 @@ export const price: CommandInt = {
             await interaction.editReply( {embeds: [priceEmbed]})
         }
         catch (err) {
-            errorHandler("/price command", err)
+            errorLogger("/price command", err)
         }
         return
     }

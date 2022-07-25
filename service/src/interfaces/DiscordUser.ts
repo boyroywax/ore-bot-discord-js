@@ -40,4 +40,5 @@ export interface UserLogKWArgs {
     amount?: number
     txnId?: string
     comment?: string
+    ip?: string
 }

@@ -1,14 +1,14 @@
-import { OreIdOptions } from 'oreid-js'
-import dotenv from "dotenv"
+import { OreId } from "oreid-js"
 
-dotenv.config({path: "../../.env"})
+export class oreId {
+    instance: OreId = new OreId({
+        appName: process.env.OREID_APP_NAME || "",
+        appId: process.env.OREID_APP_ID || "",
+        oreIdUrl: process.env.OREID_URL || "",
+    })
 
-
-export const oreIdOptions: OreIdOptions = {
-    appName: process.env.OREID_APP_NAME || "Discord Bot",
-    appId: process.env.OREID_APP_ID || '',
-    apiKey: process.env.OREID_API_KEY || '',
-    oreIdUrl: process.env.OREID_URL || "https://service.oreid.io",
-    authCallbackUrl: process.env.OREID_AUTH_CALLBACK_URL,
-    signCallbackUrl: process.env.OREID_SIGN_CALLBACK_URL,
+    public async connect(): Promise<OreId> {
+        this.instance.init()
+        return this.instance
+    }
 }

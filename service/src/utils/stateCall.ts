@@ -1,4 +1,4 @@
-import { logHandler } from "./logHandler"
+import { debugLogger } from "./logHandler"
 import * as CryptoJS from 'crypto-js'
 
 
@@ -9,7 +9,7 @@ function fromHex(hex: string){
     }
     catch(e){
       let str = hex
-      logHandler.info('invalid hex input: ' + hex + "\nerror: " + e)
+      debugLogger('invalid hex input: ' + hex + "\nerror: " + e)
     }
     return str
   }

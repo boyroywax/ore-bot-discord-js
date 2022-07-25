@@ -40,14 +40,14 @@ FROM node:17.4-alpine3.15
 WORKDIR /usr/app
 
 COPY --from=ts-remover /usr/app ./
-COPY .env ./
+# COPY .env ./
 COPY ./static ./
 
 USER 1000
 
 EXPOSE 53134
 
-CMD ["node", "--trace-deprecation", "callback.js"]
+CMD ["node", "--trace-deprecation", "index.js"]
 
 
 

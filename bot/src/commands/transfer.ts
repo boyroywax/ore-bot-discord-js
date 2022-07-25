@@ -46,8 +46,10 @@ export const transfer: CommandInt = {
             option.setName('to_account')
                 .setDescription('The account to transfer funds to')
                 .setRequired(true)
-                .addChoice("Active Account", "active")
-                .addChoice("ORE-ID Account", "oreid")
+                .addChoices(
+                    {name: "Active Account", value: "active"},
+                    {name: "ORE-ID Account", value: "oreid"}
+                )
         )       
         .addNumberOption(option => option.setName("amount").setDescription("Enter withdrawal amount").setRequired(true)),
     run: async (interaction) => {

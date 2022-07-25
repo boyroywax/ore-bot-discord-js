@@ -13,6 +13,7 @@ import "./App.scss";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { LoginPage } from "./LoginPage";
+import { LogOut } from "./LogOut";
 
 
 // dotenv.config()
@@ -33,7 +34,8 @@ const LoggedInView: React.FC = () => {
 		<>
 		<Routes>
 			{/* <Route path="/" element={<None />} /> */}
-			<Route path="/sign" element={<Transfer />} />
+			<Route path="/app/sign" element={<Transfer />} />
+			<Route path="/app/logout" element={<LogOut />} />
 		</Routes>
 		</>
 	)

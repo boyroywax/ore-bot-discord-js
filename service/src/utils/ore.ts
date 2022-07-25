@@ -6,7 +6,7 @@ import { AuthProvider, ChainNetwork, TransactionData, TransactionSignOptions } f
 //  let user: UserSourceData | undefined = await callApiGetUser(oreId2, {account: toEosEntityName(fromUser)})
  // const oreAccount = oreId2.auth.user.data.chainAccounts.find(ca => ca.chainNetwork === "ore_main")
  // let userInfo = await oreId2.callOreIdApi(RequestType.Get, ApiEndpoint.GetUser, {"account": fromUser} )
- // logHandler.info(JSON.stringify(userInfo))
+ // debugLogger(JSON.stringify(userInfo))
  // await userInfo.getData()
  // if (oreAccount) {
 

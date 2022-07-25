@@ -21,12 +21,12 @@
   },
   "homepage": "https://github.com/boyroywax/ore-bot-discord-js#readme",
   "devDependencies": {
-    "@types/node": "^17.0.14",
-    "typescript": "^4.5.5"
+    "@types/node": "^18.0.6",
+    "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@discordjs/builders": "^0.12.0",
-    "@discordjs/rest": "^0.3.0",
+    "@discordjs/builders": "^1.0.0",
+    "@discordjs/rest": "^1.0.0",
     "@open-rights-exchange/chainjs": "^3.4.1",
     "@sentry/integrations": "^6.17.3",
     "@sentry/node": "^6.17.3",
@@ -40,6 +40,6 @@
     "oreid-js": "^3.0.6",
     "oreid-webwidget": "^1.0.3",
     "url-parse": "^1.5.10",
-    "winston": "^3.5.0"
+    "winston": "^3.5.1"
   }
 }
