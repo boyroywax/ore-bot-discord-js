@@ -24,8 +24,6 @@ profiles:
         - ./k8s-spec/dev/managed-certs-2.yaml
         - ./k8s-spec/dev/service-ingress-static.yaml
 
-
-
 - name: development
   build:
     artifacts:

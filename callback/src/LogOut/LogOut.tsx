@@ -1,6 +1,6 @@
-import { useOreId } from "oreid-react";
+import { useOreId, useIsLoggedIn } from "oreid-react";
 import React, { useEffect, useState } from "react";
-import { verifyLogout } from "../serviceCalls/verifyLogout"
+import { setLogout } from "../serviceCalls/setLogout"
 import useUrlState from "@ahooksjs/use-url-state";
 
 export const LogOut: React.FC = () => {
@@ -12,8 +12,8 @@ export const LogOut: React.FC = () => {
     const handleLogOut = async () => {
         let verified: boolean = false
         try {
-            verified = await verifyLogout(state.state)
             oreId.logout()
+			verified = await setLogout(state.state)
 		    console.log("Logout successfull.")
         }
         catch (error) {
@@ -36,7 +36,7 @@ export const LogOut: React.FC = () => {
 		//
         let verified: boolean = false
         try {
-            verified = await verifyLogout(state.state)
+            verified = await setLogout(state.state)
 		    console.log("Logout successfull. User Data: ")
         }
         catch (error) {
@@ -45,14 +45,14 @@ export const LogOut: React.FC = () => {
         return verified
 	};
 
-    // useEffect(() => { 
-    //     try {
-    //         handleLogOut()
-    //     }
-    //     catch(err) {
-    //         onError(err as Error)
-    //     }
-    // })
+    useEffect(() => { 
+        try {
+            handleLogOut()
+        }
+        catch(err) {
+            onError(err as Error)
+        }
+    })
 
 	return (
 		<section>

@@ -1,2 +1,2 @@
 export * from "./apiCall"
-export * from "./verifyLogout"
+export * from "./setLogout"

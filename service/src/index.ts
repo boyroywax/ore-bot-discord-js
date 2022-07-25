@@ -26,7 +26,7 @@ app.get('/', (request: Request, response: Response) => {
 		message: "Index hit",
 		request: request
 	})
-	return response.sendFile('./index.html', { root: './' })
+	return response.status(200).send(JSON.parse('{"status": "ready"}'))
 })
 
 app.get('/api/', (request: Request, response: Response) => {
@@ -128,7 +128,7 @@ app.get('/api/priceOre', async( request: Request, response: Response ) => {
 		message: "/priceOre Hit",
 		request: request
 	})
-	return response.status(200).send(JSON.stringify(price))
+	return response.status(200).send(price)
 })
 
 app.listen(port, '0.0.0.0', () => debugLogger(`App listening at http://0.0.0.0:${port}`));
