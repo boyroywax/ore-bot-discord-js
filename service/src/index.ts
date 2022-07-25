@@ -1,11 +1,10 @@
 import express, { Request, Response } from "express"
-// import { OreId, UserData } from "oreid-js";
-// import { OreIdWebWidget } from "oreid-webwidget";
 
 import { eventLogger, errorLogger, debugLogger } from "./utils/logHandler"
-// import { verifyLogin, verifyLogout, verifySign } from "./utils/mongo"
 import { getPriceData } from "./actions/priceCheck"
 import { verifyLogout } from "./actions/verifyLogout"
+import { verifyLogin } from "./actions/verifyLogin"
+import { loginError } from "./actions/loginError"
 
 
 const app = express()
@@ -26,7 +25,7 @@ app.get('/', (request: Request, response: Response) => {
 		message: "Index hit",
 		request: request
 	})
-	return response.status(200).send(JSON.parse('{"status": "ready"}'))
+	return response.status(200).send({status: "ready"})
 })
 
 app.get('/api/', (request: Request, response: Response) => {
@@ -40,26 +39,48 @@ app.get('/api/', (request: Request, response: Response) => {
 	return response.sendFile('./index.html', { root: './' })
 })
 
-// app.get('/auth', async (request: Request, response: Response) => {
-// 	//
-// 	// Login authentication callback
-// 	// 
-// 	const user: string = request.query.account?.toString() || ''
-// 	const state: string = request.query.state?.toString() || ''
-// 	try {
-// 		await verifyLogin(user, state).then(async function(loginSuccess: boolean) {
-// 			if ((loginSuccess == true) && (user != '')) {
-// 				return response.sendFile('./login-success.html', { root: '.' })
-// 			}
-// 			else {
-// 				return response.sendFile('./login-failure.html', { root: '.' })
-// 			}
-// 		})
-// 	}
-// 	catch (err) {
-// 		errorLogger("Login authentification failed: ", err)
-// 	}
-// })
+app.get('/api/login', async (request: Request, response: Response) => {
+	//
+	// Login authentication callback
+	// 
+	const user: string = request.query.account?.toString() || ''
+	const state: string = request.query.state?.toString() || ''
+	try {
+		await verifyLogin(user, state).then(async function(loginSuccess: boolean) {
+			if ((loginSuccess == true) && (user != '')) {
+				return response.status(200).send({result: true})
+			}
+			else {
+				return response.status(404).send({result: false})
+			}
+		})
+	}
+	catch (err) {
+		errorLogger("/api/login", err)
+		return response.status(404).send({result: false})
+	}
+})
+app.get('/api/loginError', async (request: Request, response: Response) => {
+	//
+	// Login authentication callback
+	// 
+	const errorMsg: string = request.query.error?.toString() || ''
+	const state: string = request.query.state?.toString() || ''
+	try {
+		await loginError(errorMsg, state).then(async function(errorSuccess: boolean) {
+			if ((errorSuccess == true)) {
+				return response.status(200).send({result: true})
+			}
+			else {
+				return response.status(404).send({result: false})
+			}
+		})
+	}
+	catch (err) {
+		errorLogger("/api/loginError", err)
+		return response.status(404).send({result: false})
+	}
+})
 
 app.get('/api/logout', async (request: Request, response: Response) => {
 	// 
@@ -83,7 +104,7 @@ app.get('/api/logout', async (request: Request, response: Response) => {
 		})
 	}
 	catch (err) {
-		errorLogger("/logout", err)
+		errorLogger("/api/logout", err)
 		return response.status(404).send({result: false})
 	}
 
@@ -121,11 +142,11 @@ app.get('/api/priceOre', async( request: Request, response: Response ) => {
 		price = await getPriceData("coingecko")
 	}
 	catch (err) {
-		errorLogger('/priceOre', err)
+		errorLogger('/api/priceOre', err)
 		return response.status(404).send({error: "price not found"})
 	}
 	eventLogger({
-		message: "/priceOre Hit",
+		message: "/api/priceOre Hit",
 		request: request
 	})
 	return response.status(200).send(price)
