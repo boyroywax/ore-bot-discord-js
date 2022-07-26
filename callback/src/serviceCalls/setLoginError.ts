@@ -8,7 +8,7 @@ export const setLoginError = async ( errorMsg: string, state: string ): Promise<
     let response: boolean = false
     try {
         const instance: AxiosInstance = initApi()
-        const url = 'loginError?error=' + errorMsg + '&=state' + state
+        const url = 'loginError?error=' + errorMsg + '&state=' + state
     
         const apiData = await instance.get(url)
         console.info('Data retrieved from Service: ' + JSON.stringify(apiData.data))

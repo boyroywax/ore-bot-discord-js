@@ -23,6 +23,17 @@ app.get('/', (request: Request, response: Response) => {
 	return response.status(200).send({status: "ready"})
 })
 
+app.get('/health-check', (request: Request, response: Response) => {
+	// 
+	// Default index response
+	// 
+	eventLogger({
+		message: "/health-check hit",
+		request: request
+	})
+	return response.status(200).send({status: "ready"})
+})
+
 app.get('/api/', (request: Request, response: Response) => {
 	// 
 	// Default index response

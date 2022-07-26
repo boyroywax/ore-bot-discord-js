@@ -39,6 +39,19 @@ spec:
         ports:
         - containerPort: 53134
           name: ore-service-d
+        readinessProbe:
+          httpGet:
+            path: /health-check
+            port: 53134
+          initialDelaySeconds: 5
+          periodSeconds: 3
+          timeoutSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health-check
+            port: 53135
+          initialDelaySeconds: 30
+          periodSeconds: 3
       restartPolicy: Always
 ---
 apiVersion: v1

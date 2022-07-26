@@ -1,9 +1,9 @@
 import useUrlState from "@ahooksjs/use-url-state";
 import { AuthProvider, UserData } from "oreid-js";
-import { useOreId } from "oreid-react";
-import React, { useState } from "react";
-import { setLogin } from "src/serviceCalls/setLogin";
-import { setLoginError } from "src/serviceCalls/setLoginError";
+import { useOreId, useIsLoggedIn, useUser } from "oreid-react";
+import React, { useEffect, useState } from "react";
+import { setLogin } from "../serviceCalls/setLogin";
+import { setLoginError } from "../serviceCalls/setLoginError";
 import styles from "./LoginPage.module.scss";
 import LogoEmail from "./logo-email.svg";
 import LogoFb from "./logo-fb.svg";
@@ -13,7 +13,7 @@ import { ReactComponent as Logo } from "./logo.svg";
 export const LoginPage: React.FC = () => {
 	const oreId = useOreId()
 	const [ error, setError ] = useState<Error | null>()
-    const [ state ] = useUrlState({
+    const [ state, setState ] = useUrlState({
         state: "None"
     })
 
@@ -41,8 +41,12 @@ export const LoginPage: React.FC = () => {
 			await setLogin( state.state, user.accountName )
 				.catch(async (err) => {
 					await setLoginError(`${user.accountName}_Login_cannot_be_updated_in_DB`, state.state)
-					setError({message: 'Login cannot be updated in the DB: '} as Error)
+					setError(err)
 				})
+			setState({state: "0"})
+			if (window.location.href == "/app/login") {
+				window.location.replace("/app/landing")
+			}
 		}
 		console.log("Login successfull. User Data: ", user);
 
@@ -64,14 +68,9 @@ export const LoginPage: React.FC = () => {
 
 			<div className={styles.content}>
 				<h2>
-					Seamless Multi-Chain <br />
-					Auth for Web3{" "}
+					Please Login <br />
+					to complete that action{" "}
 				</h2>
-				<p>
-					Create a new account or login to ORE ID
-					<br />
-					using one of the below options.{" "}
-				</p>
 			</div>
 
 			<button
