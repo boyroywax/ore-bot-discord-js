@@ -31,17 +31,6 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "100m"
-        # envFrom:
-        #   - configMapRef:
-        #       name: config-dev
-        #   - secretRef:
-        #       name: bot-secrets-dev
-        # env:
-        #   - name: REACT_APP_OREID_APP_ID
-        #     valueFrom:
-        #       configMapKeyRef:
-        #         name: config-dev
-        #         key: OREID_APP_ID 
         ports:
         - containerPort: 3000
           name: ore-callback-d
