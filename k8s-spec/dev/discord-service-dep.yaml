@@ -39,6 +39,9 @@ spec:
         ports:
         - containerPort: 53134
           name: ore-service-d
+        securityContext:
+          runAsUser: 1000
+          runAsNonRoot: true
         startupProbe:
           httpGet:
             path: /liveness-check
