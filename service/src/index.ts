@@ -6,6 +6,10 @@ import { verifyLogout } from "./actions/verifyLogout"
 import { verifyLogin } from "./actions/verifyLogin"
 import { loginError } from "./actions/loginError"
 import { verifySign } from "./actions/verifySign"
+import { User, UserData } from "oreid-js"
+import { getDiscordUserFromOreId, getDiscordUserFromState } from "actions/getUser"
+import { DiscordUser } from "interfaces/DiscordUser"
+import { checkOreIdLink } from "actions/checkOreIdLink"
 
 
 const app = express()
@@ -108,7 +112,7 @@ app.get('/api/logout', async (request: Request, response: Response) => {
 		request: request
 	})
 	const state: string = request.query.state?.toString() || ''
-	console.log('state: ' + state)
+
 	try {
 		await verifyLogout(state).then(async function(logoutSuccess) {
 			debugLogger("logoutSuccess: " + logoutSuccess)
@@ -151,19 +155,31 @@ app.get('/api/sign', async (request: Request, response: Response) => {
 })
 
 app.get('/api/priceOre', async( request: Request, response: Response ) => {
-	let price: {} = {}
+	eventLogger({
+		message: "/api/priceOre Hit",
+		request: request
+	})
 	try{
-		price = await getPriceData("coingecko")
+		const price = await getPriceData("coingecko")
+		return response.status(200).send({"price": price})
 	}
 	catch (err) {
 		errorLogger('/api/priceOre', err)
 		return response.status(404).send({error: "price not found" + err})
 	}
-	eventLogger({
-		message: "/api/priceOre Hit",
-		request: request
-	})
-	return response.status(200).send({"price": price})
+})
+
+app.get('/api/checkOreIdLink', async(request: Request, response: Response) => {
+	const oreIdRequestingLink: string = request.query.oreid?.toString() || ""
+	const state: string = request.query.state?.toString() || ""
+	try {
+		const [ available, oreIdLinked ] = await checkOreIdLink(oreIdRequestingLink, state)
+		return response.status(200).send({"available": available, "oreIdLinked": oreIdLinked})
+	}
+	catch (err) {
+		errorLogger('/api/checkOreIdLink', err)
+		return response.status(404).send({error: "Could not verify account link request"})
+	}
 })
 
 app.listen(port, '0.0.0.0', () => debugLogger(`App listening at http://0.0.0.0:${port}`));

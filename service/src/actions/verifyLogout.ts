@@ -46,7 +46,7 @@ export async function verifyLogout( stateIn: string ): Promise<boolean> {
                         comment: "Cannot verify discordID."
                     } 
                     await addLogEntry('LogOut', BigInt(0), logArgs)
-                    errorLogger('verifyLogout', {message: "Cannot verify state in DB"} )
+                    errorLogger('verifyLogout', ({message: "Cannot verify state in DB"} as Error))
                 }
         })
     }
