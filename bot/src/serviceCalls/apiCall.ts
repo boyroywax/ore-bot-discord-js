@@ -1,7 +1,5 @@
 import axios, { AxiosInstance } from "axios"
 
-import {  errorLogger } from "../utils/logHandler"
-
 
 export const initApi = (): AxiosInstance => {
     const port: string = process.env.SERVICE_PORT || "53134"

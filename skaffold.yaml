@@ -17,13 +17,6 @@ profiles:
         - ./k8s-spec/dev/managed-certs.yaml
         - ./k8s-spec/dev/auth-ingress-static.yaml
 
-- name: ingress-dev-2
-  deploy:
-    kubectl:
-      manifests:
-        - ./k8s-spec/dev/managed-certs-2.yaml
-        - ./k8s-spec/dev/service-ingress-static.yaml
-
 - name: development
   build:
     artifacts:

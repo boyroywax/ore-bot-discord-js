@@ -1,5 +1,7 @@
-import { logHandler } from "./logHandler"
+import { debugLogger, logHandler } from "./logHandler"
 import * as CryptoJS from 'crypto-js'
+import RIPEMD160 from "ripemd160"
+
 
 
 function toHex(str: string): string{
@@ -32,7 +34,8 @@ function encrypt(message: string, key: string): string{
     // AES encrypts a <message> using the <key>
     // Returns an ecrypted hex string
     // 
-    let encryptedMessage = CryptoJS.AES.encrypt(message, key)
+    const encryptedMessage = CryptoJS.AES.encrypt(message, key)
+    debugLogger(encryptedMessage)
     return toHex(encryptedMessage.toString())
 }
 
@@ -53,6 +56,10 @@ export function createState(payload: Date): string{
     const passwordSecret: string = process.env.BOT_SECRET || ''
 
     let encryptedMessageString: string = encrypt(payload.toString(), passwordSecret)
+    // encryptedMessageString = (new RIPEMD160(encryptedMessageString)).toString('hex')
+    encryptedMessageString = new RIPEMD160().update(encryptedMessageString).digest('hex')
+    debugLogger(encryptedMessageString)
+    // encryptedMessageString = String.prototype.substring(0,24)
     logHandler.info('encryptedMessageString: ' + encryptedMessageString)
     return encryptedMessageString
 }
@@ -65,3 +72,8 @@ export function readState(state: string): string{
     const passwordSecret: string = process.env.BOT_SECRET || ''
     return decrypt(fromHexString, passwordSecret)
 }
+
+(async () => {
+
+  createState(new Date)
+})

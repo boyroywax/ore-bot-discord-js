@@ -1,6 +1,6 @@
 import { useOreId, useIsLoggedIn } from "oreid-react";
 import React, { useEffect, useState } from "react";
-import { setLogout } from "../serviceCalls/setLogout"
+import { setLogout } from "../serviceCalls/setLogout";
 import useUrlState from "@ahooksjs/use-url-state";
 
 export const LogOut: React.FC = () => {
@@ -9,11 +9,13 @@ export const LogOut: React.FC = () => {
     const [state] = useUrlState({
         state: "None"
     })
+	let loggedIn = useIsLoggedIn()
+
     const handleLogOut = async () => {
         let verified: boolean = false
         try {
-            oreId.logout()
 			verified = await setLogout(state.state)
+			// oreId.logout()
 		    console.log("Logout successfull.")
         }
         catch (error) {
@@ -37,7 +39,7 @@ export const LogOut: React.FC = () => {
         let verified: boolean = false
         try {
             verified = await setLogout(state.state)
-		    console.log("Logout successfull. User Data: ")
+		    console.log("Logout successfull.")
         }
         catch (error) {
             console.error(error)
@@ -45,20 +47,21 @@ export const LogOut: React.FC = () => {
         return verified
 	};
 
-    useEffect(() => { 
-        try {
-            handleLogOut()
-        }
-        catch(err) {
-            onError(err as Error)
-        }
-    })
+    // useEffect(() => {
+    //     try {
+    //         handleLogOut()
+	// 			.then(() => window.location.replace("/app"))
+    //     }
+    //     catch(err) {
+    //         onError(err as Error)
+    //     }
+    // })
 
 	return (
 		<section>
 			<div>
 				<h2>
-					Logout <br />
+					Unlink your <br />
 					ORE ID{" "}
 				</h2>
 			</div>
@@ -66,9 +69,10 @@ export const LogOut: React.FC = () => {
 			<button
 				onClick={() => {
 					handleLogOut()
+						.then(() => window.location.replace("/app"))					
 				}}
 			>
-				<span>Logout</span>
+				<span>Unlink</span>
 			</button>
 
 			{error && <div className="App-error">Error: {error.message}</div>}

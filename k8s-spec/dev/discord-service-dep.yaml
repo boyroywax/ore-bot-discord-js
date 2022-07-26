@@ -26,11 +26,11 @@ spec:
         image: boyroywax/ore-discord-service-dev
         resources:
           requests:
-            memory: "128Mi"
-            cpu: "50m"
-          limits:
             memory: "256Mi"
             cpu: "100m"
+          limits:
+            memory: "320Mi"
+            cpu: "200m"
         envFrom:
           - configMapRef:
               name: config-dev
@@ -39,6 +39,19 @@ spec:
         ports:
         - containerPort: 53134
           name: ore-service-d
+        readinessProbe:
+          httpGet:
+            path: /health-check
+            port: 53134
+          initialDelaySeconds: 5
+          periodSeconds: 3
+        livenessProbe:
+          httpGet:
+            path: /liveness-check
+            port: 53134
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 2
       restartPolicy: Always
 ---
 apiVersion: v1

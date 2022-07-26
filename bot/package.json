@@ -30,7 +30,9 @@
     "@open-rights-exchange/chainjs": "^3.4.1",
     "@sentry/integrations": "^6.17.3",
     "@sentry/node": "^6.17.3",
+    "@types/ripemd160": "^2.0.0",
     "axios": "^0.25.0",
+    "bs58check": "^2.1.2",
     "chalk": "^5.0.0",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.6.0",
@@ -39,6 +41,7 @@
     "mongoose-long": "^0.5.1",
     "oreid-js": "^3.0.6",
     "oreid-webwidget": "^1.0.3",
+    "ripemd160": "^2.0.2",
     "url-parse": "^1.5.10",
     "winston": "^3.5.1"
   }

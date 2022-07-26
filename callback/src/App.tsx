@@ -14,6 +14,9 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { LoginPage } from "./LoginPage";
 import { LogOut } from "./LogOut";
+import { Landing } from "./Landing";
+import { AutoLogin } from "./AutoLogin/AutoLogin";
+import { UserPage } from "./UserPage";
 
 
 // dotenv.config()
@@ -28,12 +31,12 @@ const oreId = new OreId({
 });
 
 const LoggedInView: React.FC = () => {
-	// const user = useUser();
-	// if (!user) return null;
 	return(
 		<>
 		<Routes>
-			{/* <Route path="/" element={<None />} /> */}
+			<Route path="/app" element={<UserPage />} />
+			<Route path="/app/login" element={<AutoLogin />} />
+			<Route path="/app/landing" element={<Landing />} />
 			<Route path="/app/sign" element={<Transfer />} />
 			<Route path="/app/logout" element={<LogOut />} />
 		</Routes>
@@ -69,7 +72,7 @@ export const App: React.FC = () => {
 		<>
 		<BrowserRouter>
 			<OreidProvider oreId={ oreId }>
-					<AppWithProvider />
+				<AppWithProvider />
 			</OreidProvider>
 		</BrowserRouter>
 		</>

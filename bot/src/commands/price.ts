@@ -3,8 +3,8 @@ import { MessageEmbed } from "discord.js"
 
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorLogger } from "../utils/logHandler"
-import { getPrice } from "../serviceCalls"
-import { PriceData } from "interfaces/PriceData"
+import { getPrice } from "../serviceCalls/getPrice"
+import { PriceData } from "../interfaces/PriceData"
 
 
 export const price: CommandInt = {
