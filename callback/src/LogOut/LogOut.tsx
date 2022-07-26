@@ -14,8 +14,8 @@ export const LogOut: React.FC = () => {
     const handleLogOut = async () => {
         let verified: boolean = false
         try {
-            oreId.logout()
 			verified = await setLogout(state.state)
+			// oreId.logout()
 		    console.log("Logout successfull.")
         }
         catch (error) {

@@ -21,7 +21,7 @@ export async function verifyLogout( stateIn: string ): Promise<boolean> {
         // a state that matches the callback value
         debugLogger("Finding: " + stateIn)
         // const OreIdUser = model('OreIdUser', discordSchema)
-        await DiscordUserModel.findOne({ "state": stateIn })
+        await DiscordUserModel.findOne({ "state": String(stateIn) })
             .exec().then(async function(doc) {
                 debugLogger('document fetched: ' + doc)
                 // If the doc exists, set the loggedIn value to false
@@ -46,7 +46,7 @@ export async function verifyLogout( stateIn: string ): Promise<boolean> {
                         comment: "Cannot verify discordID."
                     } 
                     await addLogEntry('LogOut', BigInt(0), logArgs)
-                    errorLogger('verifyLogout', "error" )
+                    errorLogger('verifyLogout', {message: "Cannot verify state in DB"} )
                 }
         })
     }
