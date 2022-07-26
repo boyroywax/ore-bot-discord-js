@@ -9,23 +9,28 @@ export const AutoLogin: React.FC = () => {
 	const oreId = useOreId()
 	const [ error, setError ] = useState<Error | null>()
     const [ state, setState ] = useUrlState({
-        state: "None"
+        state: "None",
+		loggedIn: false
     })
 	const loggedIn: boolean = useIsLoggedIn()
 	const user = useUser()
 
 	useEffect(() => {
-		if (loggedIn) {
-			if (user != undefined) {
-				onSuccess({user})
-					.then(() => {			
-						window.location.replace("/app/landing")
-						setState({state: "0"})
-					})
-					.catch((err) => console.log(err))
+		if (!state.loggedIn) {
+			if (loggedIn) {
+				if (user != undefined) {
+					onSuccess({user})
+						.then(() => {			
+							window.location.replace("/app/landing")
+							setState({state: "0", loggedIn: true})
+						})
+						.catch((err) => console.log(err))
+				}
 			}
 		}
-		// window.location.replace("/app/landing")
+		else {
+			window.location.replace("/app")
+		}
 	})
 
 	const onSuccess = async ({ user }: { user: UserData }) => {

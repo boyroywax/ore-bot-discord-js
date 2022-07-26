@@ -14,7 +14,9 @@ export const LoginPage: React.FC = () => {
 	const oreId = useOreId()
 	const [ error, setError ] = useState<Error | null>()
     const [ state, setState ] = useUrlState({
-        state: "None"
+        state: "None",
+		loggedIn: false,
+		account: "None"
     })
 
 	const onError = async (error: Error) => {
@@ -43,7 +45,7 @@ export const LoginPage: React.FC = () => {
 					await setLoginError(`${user.accountName}_Login_cannot_be_updated_in_DB`, state.state)
 					setError(err)
 				})
-			setState({state: "0"})
+			setState({state: state.state, loggedIn: true, account: user.accountName })
 			if (window.location.href == "/app/login") {
 				window.location.replace("/app/landing")
 			}
