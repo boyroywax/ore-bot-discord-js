@@ -4,7 +4,7 @@ import { HelpersEos } from "@open-rights-exchange/chain-js-plugin-eos"
 import { errorLogger, debugLogger } from '../utils/logHandler'
 
 
-export async function validateAddress(address: string): Promise<[ boolean, string ]> {
+export async function checkAddress(address: string): Promise<[ boolean, string ]> {
     let isValid: boolean = false
     let status: string = "Validating Send Transaction"
     try {
