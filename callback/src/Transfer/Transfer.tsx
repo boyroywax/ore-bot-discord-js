@@ -6,6 +6,7 @@ import { ChainNetwork, JSONObject, PopupPluginSignParams, Transaction, Transacti
 import styles from "./Transfer.module.scss"
 import { setSigned } from "../serviceCalls/setSigned";
 
+
 // interface Props {
 // 	txType: string;
 // }
@@ -20,28 +21,6 @@ export const Transfer: React.FC = () => {
 		amount: "0.0000"
 	})
     const [ errors, setErrors ] = useState("")
-
-	// const checkRequestedTxn = async () => {
-
-	// 	// if (state.state !== "0001") {
-	// 	// 	const discordUser: DiscordUser = await mongoClient.getUser(state.state)
-	
-	// 	// 	if (discordUser.oreId !== user?.accountName) {
-	// 	// 		setErrors(
-	// 	// 			`User did not request the transaction`
-	// 	// 		)
-	// 	// 		return ("User did not request the transaction")
-	// 	// 	}
-	// 	// }
-	// }
-
-	// useEffect( () => {
-	// 	// checkRequestedTxn()
-	// })
-
-	// if (!user) {
-	// 	setErrors("User undefined");
-	// }
 
     const onError = ( error: Error ) => {
         console.log("Transaction failed ", error);

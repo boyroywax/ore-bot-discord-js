@@ -6,10 +6,7 @@ import { verifyLogout } from "./actions/verifyLogout"
 import { verifyLogin } from "./actions/verifyLogin"
 import { loginError } from "./actions/loginError"
 import { verifySign } from "./actions/verifySign"
-import { User, UserData } from "oreid-js"
-import { getDiscordUserFromOreId, getDiscordUserFromState } from "actions/getUser"
-import { DiscordUser } from "interfaces/DiscordUser"
-import { checkOreIdLink } from "actions/checkOreIdLink"
+import { checkOreIdLink } from "./actions/checkOreIdLink"
 
 
 const app = express()
