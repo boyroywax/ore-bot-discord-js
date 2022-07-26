@@ -28,7 +28,7 @@ class Price implements PriceData {
         try {
             const instance = axios.create({
                 baseURL: process.env.COINGECKO_API_ENDPOINT || 'https://api.coingecko.com',
-                timeout: 1000,
+                timeout: 100000,
                 headers: {'accept': 'application/json'}
             })
         
