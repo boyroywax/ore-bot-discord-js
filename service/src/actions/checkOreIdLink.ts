@@ -14,16 +14,16 @@ export const checkOreIdLink = async(oreIdAttemptingAction: string, state: string
                 oreIdLinked = intendedUser.oreId || "None"
                 console.log(`oreIdLinked ${oreIdLinked}`)
                 console.log(`attempting Action ${oreIdAttemptingAction}`)
-                if (oreIdLinked == oreIdAttemptingAction ) {
-                    available = true
-                }
-            }
-            else {
-                available = true
             }
         }
-        else {
+        if (oreIdLinked === oreIdAttemptingAction ) {
             available = true
+        }
+        if ((intendedUser.oreId === null) && (currentUser === null)) {
+            available = true
+        }
+        if (oreIdLinked === "None") {
+            available=true
         }
     }
     catch (error) {
