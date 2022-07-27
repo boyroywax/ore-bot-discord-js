@@ -19,7 +19,7 @@ export async function verifySign(
     try {
         // Declare the DiscordUser model and search mongodb for
         // a state that matches the callback value
-        const findUser = await DiscordUserModel.findOne({ "state": String(stateIn) })
+        await DiscordUserModel.findOne({ "state": String(stateIn) })
         .exec().then(async function(doc) {
             // If the doc exists, set the loggedIn value to true
             // Reset the state to "None"
@@ -46,7 +46,7 @@ export async function verifySign(
                 await addLogEntry('Transfer', doc.discordId, logArgs)
             }
             else {
-                const findUser = await DiscordUserModel.findOne({ "oreId": userOreId })
+                await DiscordUserModel.findOne({ "oreId": userOreId })
                 .exec().then(async function(doc) {
                     if (doc?.discordId) {
                         const logArgs: UserLogKWArgs = {
@@ -54,7 +54,7 @@ export async function verifySign(
                             status: "Failed",
                             comment: "Cannot Find ORE-ID User, please request a new /transfer"
                         } 
-                        await addLogEntry('Login', doc?.discordId, logArgs)
+                        await addLogEntry('Transfer', doc?.discordId, logArgs)
                     }
                     else {
                         const logArgs: UserLogKWArgs = {
@@ -62,7 +62,7 @@ export async function verifySign(
                             status: "Failed",
                             comment: "Cannot verify discordID, This may be the users first time logging in."
                         } 
-                        await addLogEntry('Login', BigInt(0), logArgs)
+                        await addLogEntry('Transfer', BigInt(0), logArgs)
                     }
                 })
             }

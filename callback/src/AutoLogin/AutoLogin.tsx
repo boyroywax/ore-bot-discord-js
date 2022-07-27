@@ -21,7 +21,7 @@ export const AutoLogin: React.FC = () => {
 			if (loggedIn) {
 				if (user != undefined) {
 					checkOreIdLink(user.accountName, state.state).then(({available, oreIdLinked}) => { 
-						if (available) {
+						if (oreIdLinked === "None") {
 							onSuccess({user})
 								.then(() => {
 									window.location.replace("/app/landing")

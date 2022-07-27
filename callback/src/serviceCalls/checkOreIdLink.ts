@@ -10,7 +10,7 @@ export const checkOreIdLink = async (currentUserOreId: string, state: string): P
         const apiData = await instance.get(url)
         console.info('Data retrieved from Service: ' + JSON.stringify(apiData.data))
         const actionAvailable = Boolean(apiData.data.available)
-        const oreIdLinked = String(apiData.data.oreIdLinked) || "None"
+        const oreIdLinked = String(apiData.data.oreIdLinked)
         response = {"available": actionAvailable, "oreIdLinked": oreIdLinked }
     }
     catch (err) {

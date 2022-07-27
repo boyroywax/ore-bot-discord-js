@@ -34,7 +34,8 @@ export const LoginPage: React.FC = () => {
 		// Call Service and register login success
 		//
 		const {available, oreIdLinked} = await checkOreIdLink(user.accountName, state.state)
-		if (available) { 
+		console.log(oreIdLinked)
+		if (oreIdLinked == "None") { 
 			if ( state.state === "None" ) {
 				await setLoginError(`${user.accountName}_state_is_none`, "0")
 				setError(({message: "Please login using the Discord bot."}) as Error)

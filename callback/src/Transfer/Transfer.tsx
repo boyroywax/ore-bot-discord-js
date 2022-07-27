@@ -22,7 +22,6 @@ export const Transfer: React.FC = () => {
 		toaddress: "ore1xxxxxxxxx",
 		amount: "0.0000"
 	})
-    const [ errors, setErrors ] = useState("")
 
     const onError = ( error: Error ) => {
         console.log("Transaction failed ", error);
@@ -45,7 +44,7 @@ export const Transfer: React.FC = () => {
             return
         }
         if (oreIdLinked !== user?.accountName) {
-            setError({message: "Action is not being performed by the user who requested it onthe bot."} as Error)
+            setError({message: "Action is not being performed by the user who requested. Please login to the proper account to complete this transaction."} as Error)
             return
         }
 
