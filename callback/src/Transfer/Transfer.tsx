@@ -5,6 +5,7 @@ import useUrlState from "@ahooksjs/use-url-state"
 import { ChainNetwork, JSONObject, PopupPluginSignParams, Transaction, TransactionData, UserData } from "oreid-js";
 import styles from "./Transfer.module.scss"
 import { setSigned } from "../serviceCalls/setSigned";
+import { checkOreIdLink } from "src/serviceCalls/checkOreIdLink";
 
 
 // interface Props {
@@ -14,6 +15,7 @@ export const Transfer: React.FC = () => {
 	const[ txnId, setTxnId ] = useState("")
 	const user = useUser()
 	const oreId = useOreId()
+    const [error, setError] = useState<Error | null>()
 	const [ state, setState ] = useUrlState({
 		state: "None",
 		txtype: "transfer",
@@ -24,7 +26,7 @@ export const Transfer: React.FC = () => {
 
     const onError = ( error: Error ) => {
         console.log("Transaction failed ", error);
-        // setErrors( error.message );
+        setError( error );
     };
 
     const onSuccess = async ( result: any ) => {
@@ -36,6 +38,16 @@ export const Transfer: React.FC = () => {
     };
 
     const handleSign = async () => {
+        const { available, oreIdLinked } = await checkOreIdLink(user?.accountName || "None", state.state)
+
+        if (!available) {
+            setError({message: "This action is not available."} as Error)
+            return
+        }
+        if (oreIdLinked !== user?.accountName) {
+            setError({message: "Action is not being performed by the user who requested it onthe bot."} as Error)
+            return
+        }
 
         let chainNetwork: ChainNetwork = ChainNetwork.OreMain
 
@@ -113,6 +125,7 @@ export const Transfer: React.FC = () => {
                 {/* <h3>{state?.state}</h3> */}
                 <h3>To: {state?.toaddress}</h3>
                 {/* <h3>{state?.txtype}</h3> */}
+                {error && <div className="App-error">Error: {error.message}</div>}
             </div>
         </section>
 	)

@@ -19,7 +19,7 @@ export const LogOut: React.FC = () => {
 			const currentUser = user?.accountName || "Error"
 			const result = await checkOreIdLink(currentUser, state.state)
 			console.log(`${result.available} ${result.oreIdLinked}`)
-			if ((loggedIn) && (result.oreIdLinked == currentUser) && result.available) {
+			if ((loggedIn) && (result.oreIdLinked === currentUser) && result.available) {
 				verified = await setLogout(state.state)
 				// oreId.logout()
 				console.log("Logout successfull.")
