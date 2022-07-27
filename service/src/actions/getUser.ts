@@ -9,7 +9,8 @@ export const getDiscordUserFromState = async (state: string): Promise<DiscordUse
     let discordUser: DiscordUser = {discordId: BigInt(0)} as DiscordUser
     await connect(mongoUri)
     try {
-        discordUser = await DiscordUserModel.findOne({"state": state}) || {discordId: BigInt(0)} as DiscordUser
+        discordUser = (await DiscordUserModel.findOne({"state": state})) as DiscordUser
+        console.log(discordUser)
     }
     catch (err) {
         errorLogger("getDiscordUserFromState", err)
@@ -24,12 +25,15 @@ export const getDiscordUserFromState = async (state: string): Promise<DiscordUse
 
 export const getDiscordUserFromOreId = async (oreId: string): Promise<DiscordUser> => {
     let discordUser: DiscordUser = {discordId: BigInt(0)} as DiscordUser
+    console.log(discordUser)
+    console.log(`oreId: ${oreId}`)
     await connect(mongoUri)
     try {
-        discordUser = await DiscordUserModel.findOne({"oreId": oreId}) || {discordId: BigInt(0)} as DiscordUser
+        discordUser = (await DiscordUserModel.findOne({"oreId": oreId})) as DiscordUser
+        console.log(discordUser)
     }
     catch (err) {
-        errorLogger("getDiscordUserFromState", err)
+        errorLogger("getDiscordUserFromOreId", err)
     }
     finally {
         await disconnect()

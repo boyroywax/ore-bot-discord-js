@@ -167,11 +167,16 @@ app.get('/api/priceOre', async( request: Request, response: Response ) => {
 })
 
 app.get('/api/checkOreIdLink', async(request: Request, response: Response) => {
-	const oreIdRequestingLink: string = request.query.oreid?.toString() || ""
+	eventLogger({
+		message: "/api/checkOreIdLink Hit",
+		request: request
+	})
+	const currentUserOreId: string = request.query.oreid?.toString() || ""
 	const state: string = request.query.state?.toString() || ""
 	try {
-		const [ available, oreIdLinked ] = await checkOreIdLink(oreIdRequestingLink, state)
-		return response.status(200).send({"available": available, "oreIdLinked": oreIdLinked})
+		const result = await checkOreIdLink(currentUserOreId, state)
+		console.log(result)
+		return response.status(200).send(result)
 	}
 	catch (err) {
 		errorLogger('/api/checkOreIdLink', err)

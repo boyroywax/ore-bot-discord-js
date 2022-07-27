@@ -2,6 +2,7 @@ import useUrlState from "@ahooksjs/use-url-state";
 import { UserData } from "oreid-js";
 import { useOreId, useIsLoggedIn, useUser } from "oreid-react";
 import React, { useEffect, useState } from "react";
+import { checkOreIdLink } from "src/serviceCalls/checkOreIdLink";
 import { setLogin } from "../serviceCalls/setLogin";
 import { setLoginError } from "../serviceCalls/setLoginError";
 
@@ -19,12 +20,16 @@ export const AutoLogin: React.FC = () => {
 		if (!state.loggedIn) {
 			if (loggedIn) {
 				if (user != undefined) {
-					onSuccess({user})
-						.then(() => {			
-							window.location.replace("/app/landing")
-							setState({state: "0", loggedIn: true})
-						})
-						.catch((err) => console.log(err))
+					checkOreIdLink(user.accountName, state.state).then(({available, oreIdLinked}) => { 
+						if (available) {
+							onSuccess({user})
+								.then(() => {
+									window.location.replace("/app/landing")
+									setState({state: "0", loggedIn: true})
+								})
+						}
+					})
+					.catch((err) => console.log(err))
 				}
 			}
 		}

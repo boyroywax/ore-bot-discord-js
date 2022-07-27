@@ -2,6 +2,7 @@ import useUrlState from "@ahooksjs/use-url-state";
 import { AuthProvider, UserData } from "oreid-js";
 import { useOreId, useIsLoggedIn, useUser } from "oreid-react";
 import React, { useEffect, useState } from "react";
+import { checkOreIdLink } from "../serviceCalls/checkOreIdLink";
 import { setLogin } from "../serviceCalls/setLogin";
 import { setLoginError } from "../serviceCalls/setLoginError";
 import styles from "./LoginPage.module.scss";
@@ -32,27 +33,37 @@ export const LoginPage: React.FC = () => {
 		//
 		// Call Service and register login success
 		//
-		if ( state.state === "None" ) {
-			await setLoginError(`${user.accountName}_state_is_none`, "0")
-			setError(({message: "Please login using the Discord bot."}) as Error)
-		}
-		else if ( user.accountName === undefined ) {
-			setError(({message: "Error in LoginPage onSuccess - Please contact support"}) as Error)
+		const {available, oreIdLinked} = await checkOreIdLink(user.accountName, state.state)
+		if (available) { 
+			if ( state.state === "None" ) {
+				await setLoginError(`${user.accountName}_state_is_none`, "0")
+				setError(({message: "Please login using the Discord bot."}) as Error)
+			}
+			else if ( user.accountName === undefined ) {
+				setError(({message: "Error in LoginPage onSuccess - Please contact support"}) as Error)
+			}
+			else {
+				await setLogin( state.state, user.accountName )
+					.catch(async (err) => {
+						await setLoginError(`${user.accountName}_Login_cannot_be_updated_in_DB`, state.state)
+						setError(err)
+					})
+				setState({state: state.state, loggedIn: true, account: user.accountName })
+				if (window.location.href == "/app/login") {
+					window.location.replace("/app/landing")
+				}
+			}
+			console.log("Login successfull. User Data: ", user);
 		}
 		else {
-			await setLogin( state.state, user.accountName )
-				.catch(async (err) => {
-					await setLoginError(`${user.accountName}_Login_cannot_be_updated_in_DB`, state.state)
-					setError(err)
-				})
-			setState({state: state.state, loggedIn: true, account: user.accountName })
-			if (window.location.href == "/app/login") {
-				window.location.replace("/app/landing")
+			if (oreIdLinked === user.accountName) {
+				console.log("This account is already linked")
 			}
+			else if (oreIdLinked !== user.accountName)
+				console.log("Linking is Not available, " + oreIdLinked + " is already linked.")
 		}
-		console.log("Login successfull. User Data: ", user);
-
 	};
+
 	const loginWithProvider = (provider: AuthProvider) => {
 		oreId.popup
 			.auth({
