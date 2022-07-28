@@ -17,7 +17,6 @@ import { createacct } from './treasury-createAcct'
 import { addperm } from './treasury-addPerm'
 import { buyRamByte } from "./treasury-buyram"
 import { delegateBW } from "./treasury-stakeResources"
-import { callservice } from "./callService"
 
 const AdminCommandList: CommandInt[] = [
     treasurybal,
@@ -31,7 +30,6 @@ const UserCommandList: CommandInt[] = [
     activity,
     balance,
     block,
-    callservice,
     deposit,
     donate,
     drip,
