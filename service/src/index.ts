@@ -6,10 +6,7 @@ import { verifyLogout } from "./actions/verifyLogout"
 import { verifyLogin } from "./actions/verifyLogin"
 import { loginError } from "./actions/loginError"
 import { verifySign } from "./actions/verifySign"
-import { User, UserData } from "oreid-js"
-import { getDiscordUserFromOreId, getDiscordUserFromState } from "actions/getUser"
-import { DiscordUser } from "interfaces/DiscordUser"
-import { checkOreIdLink } from "actions/checkOreIdLink"
+import { checkOreIdLink } from "./actions/checkOreIdLink"
 
 
 const app = express()
@@ -170,11 +167,16 @@ app.get('/api/priceOre', async( request: Request, response: Response ) => {
 })
 
 app.get('/api/checkOreIdLink', async(request: Request, response: Response) => {
-	const oreIdRequestingLink: string = request.query.oreid?.toString() || ""
+	eventLogger({
+		message: "/api/checkOreIdLink Hit",
+		request: request
+	})
+	const currentUserOreId: string = request.query.oreid?.toString() || ""
 	const state: string = request.query.state?.toString() || ""
 	try {
-		const [ available, oreIdLinked ] = await checkOreIdLink(oreIdRequestingLink, state)
-		return response.status(200).send({"available": available, "oreIdLinked": oreIdLinked})
+		const result = await checkOreIdLink(currentUserOreId, state)
+		console.log(result)
+		return response.status(200).send(result)
 	}
 	catch (err) {
 		errorLogger('/api/checkOreIdLink', err)

@@ -1,10 +1,12 @@
-import { useOreId, useIsLoggedIn } from "oreid-react";
+import { useOreId, useIsLoggedIn, useUser } from "oreid-react";
 import React, { useEffect, useState } from "react";
 import { setLogout } from "../serviceCalls/setLogout";
 import useUrlState from "@ahooksjs/use-url-state";
+import { checkOreIdLink } from "../serviceCalls/checkOreIdLink";
 
 export const LogOut: React.FC = () => {
 	const oreId = useOreId()
+	const user = useUser()
 	const [error, setError] = useState<Error | null>()
     const [state] = useUrlState({
         state: "None"
@@ -14,9 +16,19 @@ export const LogOut: React.FC = () => {
     const handleLogOut = async () => {
         let verified: boolean = false
         try {
-			verified = await setLogout(state.state)
-			// oreId.logout()
-		    console.log("Logout successfull.")
+			const currentUser = user?.accountName || "Error"
+			const result = await checkOreIdLink(currentUser, state.state)
+			console.log(`${result.available} ${result.oreIdLinked}`)
+			if ((loggedIn) && (result.oreIdLinked === currentUser) && result.available) {
+				verified = await setLogout(state.state)
+				// oreId.logout()
+				console.log("Logout successfull.")
+				window.location.replace("/app")
+			}
+			else {
+				console.error('handleLogout Failed')
+				setError(({message: `${user?.accountName} account cannot logout ${result.oreIdLinked} `} as Error))
+			}
         }
         catch (error) {
             console.error(error)
@@ -69,7 +81,7 @@ export const LogOut: React.FC = () => {
 			<button
 				onClick={() => {
 					handleLogOut()
-						.then(() => window.location.replace("/app"))					
+						// .then(() => window.location.replace("/app"))					
 				}}
 			>
 				<span>Unlink</span>

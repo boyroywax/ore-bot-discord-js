@@ -72,8 +72,3 @@ export function readState(state: string): string{
     const passwordSecret: string = process.env.BOT_SECRET || ''
     return decrypt(fromHexString, passwordSecret)
 }
-
-(async () => {
-
-  createState(new Date)
-})

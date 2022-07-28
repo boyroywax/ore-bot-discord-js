@@ -1,23 +1,26 @@
+import { DiscordUser } from "../interfaces/DiscordUser"
 import { getDiscordUserFromOreId, getDiscordUserFromState } from "./getUser"
 
 
-export const checkOreIdLink = async(oreIdAttemptingToLink: string, state: string): Promise<[boolean, string]> => {
-    let available: boolean = true
+export const checkOreIdLink = async(oreIdAttemptingAction: string, state: string): Promise<{available: boolean, oreIdLinked: string}> => {
+    let available: boolean = false
     let oreIdLinked: string = "None"
     try {
-        const userToLink = await getDiscordUserFromState(state)
-        const userRequestingLink = await getDiscordUserFromOreId(oreIdAttemptingToLink)
-        if (userRequestingLink.discordId !== BigInt(0)) {
-            available = false
-            oreIdLinked = userRequestingLink.oreId || "Unavailable"
-        }
-        else if (userToLink.oreId === oreIdAttemptingToLink ) {
-            available = false
-            oreIdLinked = oreIdAttemptingToLink
+        const intendedUser: DiscordUser = await getDiscordUserFromState(state)
+        // const currentUser: DiscordUser = await getDiscordUserFromOreId(oreIdAttemptingAction)
+        // console.log(`currentUser: ${currentUser}`)
+
+        oreIdLinked = intendedUser.oreId || "None"
+        console.log(`oreIdLinked ${oreIdLinked}`)
+        console.log(`attempting Action ${oreIdAttemptingAction}`)
+
+        if (oreIdLinked === oreIdAttemptingAction ) {
+            available = true
         }
     }
     catch (error) {
-
+        console.error("checkOreIdLink failed", error)
     }
-    return [available, oreIdLinked]
+    console.log(`returned: ${available} ${oreIdLinked}`)
+    return ({"available": available, "oreIdLinked":  oreIdLinked})
 }

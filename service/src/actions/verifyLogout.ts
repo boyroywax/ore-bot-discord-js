@@ -48,7 +48,10 @@ export async function verifyLogout( stateIn: string ): Promise<boolean> {
                     await addLogEntry('LogOut', BigInt(0), logArgs)
                     errorLogger('verifyLogout', ({message: "Cannot verify state in DB"} as Error))
                 }
-        })
+            })
+            .catch((error) => {
+                errorLogger("DiscordModel.findOne", error)
+            })
     }
     catch (error) {
         errorLogger("verifyLogout", error)
