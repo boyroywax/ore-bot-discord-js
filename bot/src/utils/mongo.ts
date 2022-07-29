@@ -6,7 +6,6 @@ import { PriceDataModel } from '../models/PriceDataModel'
 import { errorHandler } from '../utils/errorHandler'
 import { logHandler } from '../utils/logHandler'
 import { PriceData, Price } from '../interfaces/PriceData'
-import { User } from '@sentry/node'
 
 
 const uri = process.env.MONGO_URI || "mongodb://" 
