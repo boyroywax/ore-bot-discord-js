@@ -33,9 +33,15 @@ export const UserPage: React.FC = () => {
 
     return (
         <section className={styles.UserPage}>
+            <div className={styles.firstbox} >
+                <section className={styles.Balance}>
+                    <div className={styles.card} >
+                        <h3>Active Balance:<br />{active} ORE</h3>
+                        <h3>ORE-ID Balance | {user?.accountName}<br />{oreIdBalance} ORE</h3>
+                    </div>
+                </section>
+            </div>
             <div className={styles.content}>
-                <h3>Active Balance:<br />{active} ORE</h3>
-                <h3>ORE-ID Balance | {user?.accountName}<br />{oreIdBalance} ORE</h3>
                 <h3>DiscordId Linked:<br /> {discordId}</h3>
             </div>
         </section>
