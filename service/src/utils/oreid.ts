@@ -6,6 +6,9 @@ export class oreId {
         appId: process.env.OREID_APP_ID || "",
         oreIdUrl: process.env.OREID_URL || "",
     })
+    oreEndpoint: { url: string } = {
+        url: process.env.CURRENCY_MAINNET || "https://ore.openrights.exchange"
+    };
 
     public async connect(): Promise<OreId> {
         this.instance.init()

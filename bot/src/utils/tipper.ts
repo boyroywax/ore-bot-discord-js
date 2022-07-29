@@ -3,7 +3,7 @@ import { connect, disconnect } from 'mongoose'
 import { logHandler } from '../utils/logHandler'
 import { errorHandler } from '../utils/errorHandler'
 import { BotBalanceModel, UserLogModel } from '../models/DiscordUserModel'
-import { BotBalance, DiscordUser, UserLog } from '../interfaces/DiscordUser'
+import { ActiveBalance, DiscordUser, UserLog } from '../interfaces/DiscordUser'
 import { checkLoggedIn, updateBotBalance, zeroBotBalance } from './mongo'
 import { listActivity } from './userLog'
 
@@ -29,7 +29,7 @@ function getRandomArbitrary(min: number, max: number): number {
     return Math.random() * (max - min) + min;
     }
 
-export async function getBotBalance( userDiscordId: bigint ): Promise<number> {
+export async function getActiveBalance( userDiscordId: bigint ): Promise<number> {
     // 
     // Retrieves the user's balance in the user's bot account
     // Creates a botBalance entry for the user if they do not have one
@@ -39,7 +39,7 @@ export async function getBotBalance( userDiscordId: bigint ): Promise<number> {
     try {
         const userInfo = await BotBalanceModel.findOne({"discordId": userDiscordId})
         if (userInfo) {
-            botBalance = userInfo.botBalance
+            botBalance = userInfo.activeBalance
         }
         else {
             const zeroCompleted: boolean = await zeroBotBalance(userDiscordId)
@@ -67,8 +67,8 @@ export async function doTip( fromUser: bigint, recipient: bigint, amount: number
     try {
         // Retrive both users balances
         // Creates an entry in botBalance if none exists
-        let fromUserBalance: number = await getBotBalance(fromUser)
-        let recipientBalance: number = await getBotBalance(recipient)
+        let fromUserBalance: number = await getActiveBalance(fromUser)
+        let recipientBalance: number = await getActiveBalance(recipient)
 
         if (recipient == BigInt(process.env.DISCORD_CLIENT_ID || "936064780081434737") ) {
             tipCompleted = false
@@ -159,11 +159,11 @@ export async function faucetDrip( recipient: bigint ): Promise<[ boolean, number
         if (dripTimeWaiting >= dripTimeLimit) {
             // Retrive the user's botBalance
             // Creates an entry in botBalance if none exists
-            let recipientBalance: number = await getBotBalance(recipient)
+            let recipientBalance: number = await getActiveBalance(recipient)
 
             // Retreive the bot's faucet balance
             // Creates a faucet balance if one does not exist
-            let faucetBalance: number = await getBotBalance( faucetUser )
+            let faucetBalance: number = await getActiveBalance( faucetUser )
 
             // Generate a random number from Faucet MIN and MAX
             dripAmount = precisionRound(getRandomArbitrary(
@@ -211,7 +211,7 @@ export async function faucetDrip( recipient: bigint ): Promise<[ boolean, number
 export async function faucetDonate ( amount: number, donor: bigint ): Promise<[ boolean, string, number ]> {
     let donationCompleted: boolean = false
     let donationComment: string = "Faucet Donation from " + donor + " for "+ amount + " initiated"
-    let donationFundTotal: number = await getBotBalance(faucetUser)
+    let donationFundTotal: number = await getActiveBalance(faucetUser)
     try {
         const [ donationComplete, donationStatus ] = await doTip( donor, faucetUser, amount)
         

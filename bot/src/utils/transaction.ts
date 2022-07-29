@@ -5,7 +5,7 @@ import { isValidEosEntityName , toEosSymbol, toEosEntityName} from '@open-rights
 import { logHandler } from "./logHandler"
 import { createOreConnection } from "./chains"
 import { errorHandler } from './errorHandler'
-import { getBotBalance, precisionRound } from './tipper'
+import { getActiveBalance, precisionRound } from './tipper'
 import { OreTreasury } from '../modules/oreTreasury'
 import { getOreIdUser, setDiscordUserState, updateBotBalance } from './mongo'
 import { OreTx } from '../modules/oreTransaction'
@@ -87,7 +87,7 @@ export function verifyBalance ( userAmountRequested: number, balance: number): [
 export async function verifyBotBalance( discordUser: bigint, amount: number ): Promise<[ boolean, string, number ]> {
     let completed: boolean = false
     let status: string = "Initiating Verification of bot balance."
-    const userBotBalance: number = await getBotBalance(discordUser);
+    const userBotBalance: number = await getActiveBalance(discordUser);
 
     [ completed, status ] = verifyBalance(amount, userBotBalance)
 

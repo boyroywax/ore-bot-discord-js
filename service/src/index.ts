@@ -7,6 +7,10 @@ import { verifyLogin } from "./actions/verifyLogin"
 import { loginError } from "./actions/loginError"
 import { verifySign } from "./actions/verifySign"
 import { checkOreIdLink } from "./actions/checkOreIdLink"
+import { getActiveBalance } from "./actions/activeBalance"
+import { getOreIdBalance } from "./actions/oreIdBalance"
+import { ActiveBalanceModel } from "models/DiscordUserModel"
+import { oreId } from "utils/oreid"
 
 
 const app = express()
@@ -147,6 +151,42 @@ app.get('/api/sign', async (request: Request, response: Response) => {
 	catch (err) {
 		errorLogger('/api/sign', err)
 		return response.status(404).send({result: false})
+	}
+
+})
+
+app.get('/api/balance', async (request: Request, response: Response) => {
+	// 
+	// Send the User's Active Balance 
+	// 
+	const balanceType: string = request.query.type?.toString() || 'default'
+	const discordUser: string = request.query.user?.toString() || ''
+	let result: {} = { "activeBalance": "None", "oreIdBalance": "None", "oreIdAccount": "None" }
+
+	try {
+		switch (balanceType){
+			case "active": {
+				const activeBalance = await getActiveBalance( BigInt(discordUser) )
+				result = { "activeBalance": activeBalance, "oreIdBalance": "None", "oreIdAccount": "None" }
+				break
+			}
+			case "oreid": {
+				const oreIdResult = await getOreIdBalance( BigInt(discordUser) )
+				result = { "activeBalance": "None", "oreIdBalance": oreIdResult.oreIdBalance, "oreIdAccount": oreIdResult.oreIdAccountName }
+				break
+			}
+			default: {
+				const activeBalance = await getActiveBalance( BigInt(discordUser) )
+				const oreIdResult = await getOreIdBalance( BigInt(discordUser) )
+				result = { "activeBalance": activeBalance, "oreIdBalance": oreIdResult.oreIdBalance, "oreIdAccount": oreIdResult.oreIdAccountName }
+				break
+			}
+		}
+		return response.status(200).send(result)
+	}
+	catch (err) {
+		errorLogger('/api/balance', err)
+		return response.status(404).send(result)
 	}
 
 })

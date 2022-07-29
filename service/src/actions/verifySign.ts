@@ -1,7 +1,7 @@
 import { connect, disconnect } from 'mongoose'
 
 import { errorLogger } from '../utils/logHandler'
-import { DiscordUserModel, BotBalanceModel} from '../models/DiscordUserModel'
+import { DiscordUserModel, ActiveBalanceModel} from '../models/DiscordUserModel'
 import { addLogEntry } from "./activityLog"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
 import { mongoUri } from '../utils/mongo'
@@ -32,9 +32,9 @@ export async function verifySign(
                 await doc.save()
 
                 // increment the users bot balance
-                await BotBalanceModel.findOne({"discordId": doc.discordId}).exec().then( async function(balanceDoc){
+                await ActiveBalanceModel.findOne({"discordId": doc.discordId}).exec().then( async function(balanceDoc){
                     if (balanceDoc) {
-                        balanceDoc.botBalance = balanceDoc.botBalance + (doc.pendingTransaction  || 0.00)
+                        balanceDoc.activeBalance = balanceDoc.activeBalance + (doc.pendingTransaction  || 0.00)
                         await balanceDoc.save()
                     }
                 })

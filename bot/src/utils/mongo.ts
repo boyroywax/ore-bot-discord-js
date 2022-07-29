@@ -175,16 +175,16 @@ export async function zeroBotBalance ( userDiscordId: bigint ): Promise<boolean>
     try {
         const updateOutput = await BotBalanceModel.findOne({ "discordId": userDiscordId }).exec().then( async function(doc) {
             if (!doc) {
-                // Generate a BotBalance for the user
+                // Generate a ActiveBalance for the user
                 const botBalanceDoc = new BotBalanceModel
                 botBalanceDoc.discordId = userDiscordId
-                botBalanceDoc.botBalance = 0.0
+                botBalanceDoc.activeBalance = 0.0
                 botBalanceDoc.botToken = process.env.CURRENCY_TOKEN || "ORE"
                 await botBalanceDoc.save()
                 balanceZeroed = true
             }
             else {
-                doc.botBalance = 0.0
+                doc.activeBalance = 0.0
                 await doc.save()
                 balanceZeroed = true
             }
@@ -206,7 +206,7 @@ export async function updateBotBalance( userDiscordId: bigint, botBalance: numbe
     try {        
         const updateOutput = await BotBalanceModel.findOne({ "discordId": userDiscordId }).exec().then( async function(doc) {
             if (doc) {
-                doc.botBalance = botBalance
+                doc.activeBalance = botBalance
                 await doc.save()
                 saveStatus = true
             }

@@ -4,10 +4,8 @@ import { MessageEmbed } from "discord.js"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { checkLoggedIn } from "../utils/mongo"
-import { logHandler } from "../utils/logHandler"
-import { getOreIdBalance } from "../utils/oreid";
 import { unauthorizedCommand } from "../utils/loginCheck";
-import { getBotBalance } from "../utils/tipper";
+import { getBalances } from "../serviceCalls/getBalances";
 
 export const balance: CommandInt = {
     data: new SlashCommandBuilder()
@@ -31,11 +29,8 @@ export const balance: CommandInt = {
                 // Create a message only the user can see
                 await interaction.deferReply({ ephemeral: true })
 
-                // Fetch the user's balance on the bot
-                const botBalance: number = await getBotBalance(userDiscordId)
-
                 // Fetch the user ORE-ID balance
-                const [ oreIdUserName, oreIdBalance ]=  await getOreIdBalance(userDiscordId)
+                const {activeBalance, oreIdBalance, oreIdAccount }=  await getBalances(userDiscordId)
 
                 // Construct login embed
                 const balanceEmbed = new MessageEmbed()
@@ -44,12 +39,12 @@ export const balance: CommandInt = {
                     .setDescription("Your " + process.env.CURRENCY + " Balances")
                     .setURL("https://oreid.io")
                     .addField(
-                        "🤖 Balance",
-                        String(botBalance) + " " + process.env.CURRENCY_TOKEN,
+                        "Active Balance",
+                        String(activeBalance) + " " + process.env.CURRENCY_TOKEN,
                         false
                     )
                     .addField(
-                        "⛅️ ORE-ID Balance | " + oreIdUserName,
+                        "ORE-ID Balance | " + oreIdAccount,
                         String(oreIdBalance) + " " + process.env.CURRENCY_TOKEN,
                         false
                     )
