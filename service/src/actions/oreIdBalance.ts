@@ -10,7 +10,7 @@ export async function getOreIdBalance( discordId: bigint ): Promise<{ oreIdAccou
     // 
     // const ore = new Ore()
     let oreIdAccountName: string = "None"
-    let oreIdBalance: string = "0.0000 ORE"
+    let oreIdBalance: string = "0.0000"
     try{
         const discordUser: DiscordUser = await getDiscordUserFromDiscordId( discordId )
         oreIdAccountName = discordUser.oreId || ""
@@ -20,5 +20,5 @@ export async function getOreIdBalance( discordId: bigint ): Promise<{ oreIdAccou
     } catch (err) {
         errorLogger('getOreIdBalance', err)
     }
-    return { "oreIdAccountName": oreIdAccountName, "oreIdBalance": oreIdBalance }
+    return { "oreIdAccountName": oreIdAccountName, "oreIdBalance": oreIdBalance.split(' ')[0] }
 }

@@ -9,6 +9,9 @@ import { verifySign } from "./actions/verifySign"
 import { checkOreIdLink } from "./actions/checkOreIdLink"
 import { getActiveBalance } from "./actions/activeBalance"
 import { getOreIdBalance } from "./actions/oreIdBalance"
+import { DiscordUser } from "./interfaces/DiscordUser"
+import { getDiscordUserFromDiscordId, getDiscordUserFromOreId, getDiscordUserFromState } from "./actions/getUser"
+import { DiscordUserModel } from "models/DiscordUserModel"
 
 
 const app = express()
@@ -174,8 +177,7 @@ app.get('/api/balance', async (request: Request, response: Response) => {
 				break
 			}
 			default: {
-				const activeBalanceRaw = await getActiveBalance( BigInt(discordUser) )
-				const activeBalance = activeBalanceRaw + " ORE"
+				const activeBalance = await getActiveBalance( BigInt(discordUser) )
 				const oreIdResult = await getOreIdBalance( BigInt(discordUser) )
 				result = { "activeBalance": activeBalance, "oreIdBalance": oreIdResult.oreIdBalance, "oreIdAccount": oreIdResult.oreIdAccountName }
 				break
@@ -221,6 +223,41 @@ app.get('/api/checkOreIdLink', async(request: Request, response: Response) => {
 		errorLogger('/api/checkOreIdLink', err)
 		return response.status(404).send({error: "Could not verify account link request"})
 	}
+})
+
+app.get('/api/getUser', async (request: Request, response: Response) => {
+	// 
+	// Send the User's Active Balance 
+	// 
+	const userType: string = request.query.type?.toString() || 'default'
+	const user: string = request.query.user?.toString() || ''
+	let result = {user: {} as DiscordUser, discordId: ""}
+
+	try {
+		switch (userType){
+			case "oreid": {
+				const resultData = await getDiscordUserFromOreId( user )
+				result = { user: resultData, discordId: String(resultData.discordId.toString()) }
+				break
+			}
+			case "discorid": {
+				const resultData = await getDiscordUserFromDiscordId( BigInt(user) )
+				result = {user: resultData, discordId: resultData.discordId.toString() }
+				break
+			}
+			case 'state': {
+				const resultData = await getDiscordUserFromState( user )
+				result = {user: resultData, discordId: String(resultData.discordId.toString()) }
+				break
+			}
+		}
+		return response.status(200).send(result)
+	}
+	catch (err) {
+		errorLogger('/api/getUser', err)
+		return response.status(404).send(result)
+	}
+
 })
 
 app.listen(port, '0.0.0.0', () => debugLogger(`App listening at http://0.0.0.0:${port}`));

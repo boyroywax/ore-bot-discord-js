@@ -21,7 +21,6 @@ export const getDiscordUserFromState = async (state: string): Promise<DiscordUse
     return discordUser
 }
 
-
 export const getDiscordUserFromOreId = async (oreId: string): Promise<DiscordUser> => {
     let discordUser: DiscordUser = {discordId: BigInt(0)} as DiscordUser
     await connect(mongoUri)
