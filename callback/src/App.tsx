@@ -17,6 +17,7 @@ import { LogOut } from "./LogOut";
 import { Landing } from "./Landing";
 import { AutoLogin } from "./AutoLogin/AutoLogin";
 import { UserPage } from "./UserPage";
+import { Nav } from "./Nav";
 
 
 // dotenv.config()
@@ -49,7 +50,12 @@ const AppWithProvider: React.FC = () => {
 	return (
 		<div className="App">
 			<Header />
-			{isLoggedIn ? <LoggedInView /> : <LoginPage />}
+			{isLoggedIn ? 
+				<div>
+					<Nav />
+					<LoggedInView />
+				</div>
+			 : <LoginPage />}
 			<Footer />
 		</div>
 	);

@@ -10,8 +10,6 @@ export const getUser = async ( userId: string, userType: string ): Promise<any> 
         )
         console.log('Data retrieved from Service: ' + JSON.stringify( apiData.data ))
         let response = apiData.data
-        response.user.discordId = response.discordId
-        response = response.user
         return response
     }
     catch (err) {

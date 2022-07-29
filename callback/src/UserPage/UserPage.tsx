@@ -7,13 +7,12 @@ import { getBalances } from "../serviceCalls/getBalances";
 export const UserPage: React.FC = () => {
     const user = useUser()
     const loggedIn = useIsLoggedIn()
-    const [ active, setActive ] = useState<number>()
-    const [ oreIdBalance, setOreIdBalance ] = useState<number>()
+    const [ active, setActive ] = useState<number>(0)
+    const [ oreIdBalance, setOreIdBalance ] = useState<number>(0)
     // const [ oreId, setOreId ]
 
     const fetchData = async() => {
-        console.log(user)
-        const userData = await getUser(user?.accountName || "None", "oreid")
+        const userData = await getUser((user?.accountName || "None"), "oreid")
         
         const balances = await getBalances(BigInt(userData.discordId) || BigInt(0))
         setActive(Number(balances.activeBalance))
@@ -21,8 +20,9 @@ export const UserPage: React.FC = () => {
     }
 
     useEffect(() => {
-        if (loggedIn) {
+        if ((loggedIn) && (user)) {
             fetchData()
+            return
         }
     })
 

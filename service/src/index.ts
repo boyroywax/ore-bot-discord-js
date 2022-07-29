@@ -231,25 +231,32 @@ app.get('/api/getUser', async (request: Request, response: Response) => {
 	// 
 	const userType: string = request.query.type?.toString() || 'default'
 	const user: string = request.query.user?.toString() || ''
-	let result = {user: {} as DiscordUser, discordId: ""}
+	let resultData: DiscordUser = ({} as DiscordUser)
+	let result: {} = {}
 
 	try {
 		switch (userType){
 			case "oreid": {
-				const resultData = await getDiscordUserFromOreId( user )
-				result = { user: resultData, discordId: String(resultData.discordId.toString()) }
+				resultData = await getDiscordUserFromOreId( user )
 				break
 			}
-			case "discorid": {
-				const resultData = await getDiscordUserFromDiscordId( BigInt(user) )
-				result = {user: resultData, discordId: resultData.discordId.toString() }
+			case "discordid": {
+				resultData = await getDiscordUserFromDiscordId( BigInt(user) )
 				break
 			}
 			case 'state': {
-				const resultData = await getDiscordUserFromState( user )
-				result = {user: resultData, discordId: String(resultData.discordId.toString()) }
+				resultData = await getDiscordUserFromState( user )
 				break
 			}
+		}
+		result = {
+			discordId: resultData.discordId.toString(),
+			loggedIn: resultData.loggedIn,
+			lastLogin: resultData.lastLogin,
+			dateCreated: resultData.dateCreated,
+			oreId: resultData.oreId,
+			state: resultData.state,
+			pendingTransaction: resultData.pendingTransaction
 		}
 		return response.status(200).send(result)
 	}
@@ -257,7 +264,6 @@ app.get('/api/getUser', async (request: Request, response: Response) => {
 		errorLogger('/api/getUser', err)
 		return response.status(404).send(result)
 	}
-
 })
 
 app.listen(port, '0.0.0.0', () => debugLogger(`App listening at http://0.0.0.0:${port}`));
