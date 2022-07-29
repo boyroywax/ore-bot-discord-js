@@ -23,13 +23,13 @@ export const DiscordUserModel = model<DiscordUser>('DiscordUser', discordSchema)
 //  
 // User's balance on the bot application
 // 
-export const botBalanceSchema = new Schema<ActiveBalance>({
+export const activeBalanceSchema = new Schema<ActiveBalance>({
     discordId: { type: Schema.Types.Long, required: true, index: true },
-    botToken: { type: String, required: true , default: process.env.CURRENCY_TOKEN},
-    botBalance: { type: Number, required: true },
+    activeToken: { type: String, required: true , default: process.env.CURRENCY_TOKEN},
+    activeBalance: { type: Number, required: true },
 })
 
-export const BotBalanceModel = model<ActiveBalance>('ActiveBalance', botBalanceSchema)
+export const ActiveBalanceModel = model<ActiveBalance>('ActiveBalance', activeBalanceSchema)
 
 // 
 // Logging a user's actions

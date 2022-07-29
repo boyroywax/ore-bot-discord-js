@@ -16,8 +16,8 @@ export interface DiscordUser {
 // 
 export interface ActiveBalance {
     discordId: bigint
-    botToken: string
-    botBalance: number
+    activeToken: string
+    activeBalance: number
 }
 
 //

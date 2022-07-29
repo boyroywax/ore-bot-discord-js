@@ -13,13 +13,13 @@ export const getBalances = async ( userDiscordId: bigint ): Promise<{
         const instance = initApi()
     
         const apiData = await instance.get(
-            '/api/balance?type=default&user=' + String( userDiscordId )
+            '/api/balance?user=' + String( userDiscordId )
         )
         debugLogger('Data retrieved from Service: ' + JSON.stringify( apiData.data ))
         response = { 
             "activeBalance": apiData.data.activeBalance,
-            "oreIdBalance": apiData.data.oreIdBalance.oreIdBalance,
-            "oreIdAccount": apiData.data.oreIdBalance.oreIdAccountName
+            "oreIdBalance": apiData.data.oreIdBalance,
+            "oreIdAccount": apiData.data.oreIdAccount
         }
     }
     catch (err) {

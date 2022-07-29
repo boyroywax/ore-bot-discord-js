@@ -30,7 +30,7 @@ export const balance: CommandInt = {
                 await interaction.deferReply({ ephemeral: true })
 
                 // Fetch the user ORE-ID balance
-                const {activeBalance, oreIdBalance, oreIdAccount }=  await getBalances(userDiscordId)
+                const balances = await getBalances(userDiscordId)
 
                 // Construct login embed
                 const balanceEmbed = new MessageEmbed()
@@ -40,12 +40,12 @@ export const balance: CommandInt = {
                     .setURL("https://oreid.io")
                     .addField(
                         "Active Balance",
-                        String(activeBalance) + " " + process.env.CURRENCY_TOKEN,
+                        String(balances.activeBalance) + " " + process.env.CURRENCY_TOKEN,
                         false
                     )
                     .addField(
-                        "ORE-ID Balance | " + oreIdAccount,
-                        String(oreIdBalance) + " " + process.env.CURRENCY_TOKEN,
+                        "ORE-ID Balance | " + balances.oreIdAccount,
+                        String(balances.oreIdBalance) + " " + process.env.CURRENCY_TOKEN,
                         false
                     )
                 await interaction.editReply({ embeds: [balanceEmbed] })

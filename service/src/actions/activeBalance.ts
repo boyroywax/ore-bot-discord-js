@@ -8,7 +8,7 @@ import { mongoUri } from '../utils/mongo'
 export async function getActiveBalance( userDiscordId: bigint ): Promise<number> {
     // 
     // Retrieves the user's balance in the user's bot account
-    // Creates a botBalance entry for the user if they do not have one
+    // Creates a activeBalance entry for the user if they do not have one
     // 
     await connect(mongoUri)
     let activeBalance: number = 0.00
@@ -20,7 +20,7 @@ export async function getActiveBalance( userDiscordId: bigint ): Promise<number>
         else {
             const zeroCompleted: boolean = await zeroActiveBalance(userDiscordId)
             if (zeroCompleted) {
-                debugLogger('Successfully zeroed ' + userDiscordId + " botBalance")
+                debugLogger('Successfully zeroed ' + userDiscordId + " activeBalance")
             }
         }
     }

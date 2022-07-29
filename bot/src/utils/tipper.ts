@@ -2,9 +2,9 @@ import { connect, disconnect } from 'mongoose'
 
 import { logHandler } from '../utils/logHandler'
 import { errorHandler } from '../utils/errorHandler'
-import { BotBalanceModel, UserLogModel } from '../models/DiscordUserModel'
+import { ActiveBalanceModel, UserLogModel } from '../models/DiscordUserModel'
 import { ActiveBalance, DiscordUser, UserLog } from '../interfaces/DiscordUser'
-import { checkLoggedIn, updateBotBalance, zeroBotBalance } from './mongo'
+import { checkLoggedIn, updateActiveBalance, zeroActiveBalance } from './mongo'
 import { listActivity } from './userLog'
 
 
@@ -31,28 +31,28 @@ function getRandomArbitrary(min: number, max: number): number {
 
 export async function getActiveBalance( userDiscordId: bigint ): Promise<number> {
     // 
-    // Retrieves the user's balance in the user's bot account
-    // Creates a botBalance entry for the user if they do not have one
+    // Retrieves the user's balance in the user's active account
+    // Creates a activeBalance entry for the user if they do not have one
     // 
     await connect(uri)
-    let botBalance: number = 0.00
+    let activeBalance: number = 0.00
     try {
-        const userInfo = await BotBalanceModel.findOne({"discordId": userDiscordId})
+        const userInfo = await ActiveBalanceModel.findOne({"discordId": userDiscordId})
         if (userInfo) {
-            botBalance = userInfo.activeBalance
+            activeBalance = userInfo.activeBalance
         }
         else {
-            const zeroCompleted: boolean = await zeroBotBalance(userDiscordId)
+            const zeroCompleted: boolean = await zeroActiveBalance(userDiscordId)
             if (zeroCompleted) {
-                logHandler.info('Successfully zeroed ' + userDiscordId + " botBalance")
+                logHandler.info('Successfully zeroed ' + userDiscordId + " activeBalance")
             }
         }
     }
     catch(err) {
-        errorHandler('getBotBalance failed: ', err)
+        errorHandler('getActiveBalance failed: ', err)
     }
     await disconnect()
-    return botBalance
+    return activeBalance
 }
 
 export async function doTip( fromUser: bigint, recipient: bigint, amount: number ): Promise<[ boolean, string ]> {
@@ -65,8 +65,8 @@ export async function doTip( fromUser: bigint, recipient: bigint, amount: number
     let tipCompleted: boolean = false
     let tipStatus: string = "Tip Initiated"
     try {
-        // Retrive both users balances
-        // Creates an entry in botBalance if none exists
+        // Retrive activeh users balances
+        // Creates an entry in activeBalance if none exists
         let fromUserBalance: number = await getActiveBalance(fromUser)
         let recipientBalance: number = await getActiveBalance(recipient)
 
@@ -97,8 +97,8 @@ export async function doTip( fromUser: bigint, recipient: bigint, amount: number
             logHandler.info("new balances: " + fromUserBalance + " " + recipientBalance)
 
             // Write the changed balances to mongo
-            const fromUserUpdate = await updateBotBalance( fromUser, fromUserBalance )
-            const recipientUpdate = await updateBotBalance( recipient, recipientBalance )
+            const fromUserUpdate = await updateActiveBalance( fromUser, fromUserBalance )
+            const recipientUpdate = await updateActiveBalance( recipient, recipientBalance )
 
             if (fromUserUpdate && recipientUpdate) {
                 tipCompleted = true
@@ -157,11 +157,11 @@ export async function faucetDrip( recipient: bigint ): Promise<[ boolean, number
         logHandler.info("dripTimeLimit: " + dripTimeLimit)
 
         if (dripTimeWaiting >= dripTimeLimit) {
-            // Retrive the user's botBalance
-            // Creates an entry in botBalance if none exists
+            // Retrive the user's activeBalance
+            // Creates an entry in activeBalance if none exists
             let recipientBalance: number = await getActiveBalance(recipient)
 
-            // Retreive the bot's faucet balance
+            // Retreive the active's faucet balance
             // Creates a faucet balance if one does not exist
             let faucetBalance: number = await getActiveBalance( faucetUser )
 
@@ -180,8 +180,8 @@ export async function faucetDrip( recipient: bigint ): Promise<[ boolean, number
                 logHandler.info("new balances: " + recipientBalance)
 
                 // Write the changed balances to mongo
-                const fromUserUpdate = await updateBotBalance( faucetUser, faucetBalance )
-                const recipientUpdate = await updateBotBalance( recipient, recipientBalance )
+                const fromUserUpdate = await updateActiveBalance( faucetUser, faucetBalance )
+                const recipientUpdate = await updateActiveBalance( recipient, recipientBalance )
 
                 if (recipientUpdate && fromUserUpdate) {
                     dripCompleted = true

@@ -7,7 +7,7 @@ import { createOreConnection } from "./chains"
 import { errorHandler } from './errorHandler'
 import { getActiveBalance, precisionRound } from './tipper'
 import { OreTreasury } from '../modules/oreTreasury'
-import { getOreIdUser, setDiscordUserState, updateBotBalance } from './mongo'
+import { getOreIdUser, setDiscordUserState, updateActiveBalance } from './mongo'
 import { OreTx } from '../modules/oreTransaction'
 import { createState } from './stateTools'
 
@@ -84,14 +84,14 @@ export function verifyBalance ( userAmountRequested: number, balance: number): [
     return [completed, status]
 }
 
-export async function verifyBotBalance( discordUser: bigint, amount: number ): Promise<[ boolean, string, number ]> {
+export async function verifyActiveBalance( discordUser: bigint, amount: number ): Promise<[ boolean, string, number ]> {
     let completed: boolean = false
     let status: string = "Initiating Verification of bot balance."
-    const userBotBalance: number = await getActiveBalance(discordUser);
+    const userActiveBalance: number = await getActiveBalance(discordUser);
 
-    [ completed, status ] = verifyBalance(amount, userBotBalance)
+    [ completed, status ] = verifyBalance(amount, userActiveBalance)
 
-    return [completed, status, userBotBalance]
+    return [completed, status, userActiveBalance]
 }
 
 export async function verifyOreIdBalance( oreId: string, amount: number ): Promise<[ boolean, string, number ]> {
@@ -123,7 +123,7 @@ export async function transferFunds(discordUser: bigint, amount: number, destina
         // Transfer funds to personal ORE-ID Account from the treasury
         // first check the user's Active Account Balance
         if (destination == "oreid" ) {
-            const [verified, verificationStatus, activeBalance] = await verifyBotBalance(discordUser, amount)
+            const [verified, verificationStatus, activeBalance] = await verifyActiveBalance(discordUser, amount)
             if (!verified) {
                 status = verificationStatus
             }
@@ -137,10 +137,10 @@ export async function transferFunds(discordUser: bigint, amount: number, destina
                 }
                 else {
                     // get the user's active balance
-                    const [activeBalanceVerified, activeBalanceStatus, activeBalance] = await verifyBotBalance(discordUser, amount)
+                    const [activeBalanceVerified, activeBalanceStatus, activeBalance] = await verifyActiveBalance(discordUser, amount)
                     // decrease the user's Active balance
                     const activeBalanceUpdate: number = precisionRound(activeBalance - amount, 8  )
-                    const activeBalanceUpdateStatus: boolean =  await updateBotBalance(discordUser, activeBalanceUpdate)
+                    const activeBalanceUpdateStatus: boolean =  await updateActiveBalance(discordUser, activeBalanceUpdate)
 
                     if (!activeBalanceUpdateStatus) {
                         status = 'updateBalance in DB failed'

@@ -1,3 +1,3 @@
 export * from "./apiCall"
 export * from "./getPrice"
-export * from "./getUser"
+export * from "./getBalances"

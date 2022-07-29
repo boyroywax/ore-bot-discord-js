@@ -1,7 +1,7 @@
 import { connect, disconnect } from 'mongoose'
 
 import { DiscordUser, UserLog } from '../interfaces/DiscordUser'
-import { DiscordUserModel, BotBalanceModel, UserLogModel } from '../models/DiscordUserModel'
+import { DiscordUserModel, ActiveBalanceModel, UserLogModel } from '../models/DiscordUserModel'
 import { PriceDataModel } from '../models/PriceDataModel'
 import { errorHandler } from '../utils/errorHandler'
 import { logHandler } from '../utils/logHandler'
@@ -166,54 +166,56 @@ export async function getOreIdUser( userDiscordId: bigint): Promise<string> {
     return oreId
 }
 
-export async function zeroBotBalance ( userDiscordId: bigint ): Promise<boolean> {
+export async function zeroActiveBalance ( userDiscordId: bigint ): Promise<boolean> {
     // 
-    // Sets a user's bot balance back to zero, used when creating a new user.
+    // Sets a user's active balance back to zero, used when creating a new user.
     // 
     let balanceZeroed = false
     await connect(uri)
     try {
-        const updateOutput = await BotBalanceModel.findOne({ "discordId": userDiscordId }).exec().then( async function(doc) {
-            if (!doc) {
-                // Generate a ActiveBalance for the user
-                const botBalanceDoc = new BotBalanceModel
-                botBalanceDoc.discordId = userDiscordId
-                botBalanceDoc.activeBalance = 0.0
-                botBalanceDoc.botToken = process.env.CURRENCY_TOKEN || "ORE"
-                await botBalanceDoc.save()
-                balanceZeroed = true
-            }
-            else {
-                doc.activeBalance = 0.0
-                await doc.save()
-                balanceZeroed = true
-            }
-        })
+        await ActiveBalanceModel.findOne({ "discordId": userDiscordId }).exec()
+            .then( async function(doc: any) {
+                if (!doc) {
+                    // Generate a ActiveBalance for the user
+                    const activeBalanceDoc = new ActiveBalanceModel
+                    activeBalanceDoc.discordId = userDiscordId
+                    activeBalanceDoc.activeBalance = 0.0
+                    activeBalanceDoc.activeToken = process.env.CURRENCY_TOKEN || "ORE"
+                    await activeBalanceDoc.save()
+                    balanceZeroed = true
+                }
+                else {
+                    doc.activeBalance = 0.0
+                    await doc.save()
+                    balanceZeroed = true
+                }
+            })
     }
     catch (err) {
-        errorHandler("zeroBotBalance failed: ", err)
+        errorHandler("zeroActiveBalance failed: ", err)
     }
     await disconnect()
     return balanceZeroed
 }
 
-export async function updateBotBalance( userDiscordId: bigint, botBalance: number ): Promise<boolean> {
+export async function updateActiveBalance( userDiscordId: bigint, activeBalance: number ): Promise<boolean> {
     // 
-    // Update the Botbalance of a user in mongodb
+    // Update the Activebalance of a user in mongodb
     // 
     let saveStatus: boolean = false
     await connect(uri)
     try {        
-        const updateOutput = await BotBalanceModel.findOne({ "discordId": userDiscordId }).exec().then( async function(doc) {
-            if (doc) {
-                doc.activeBalance = botBalance
-                await doc.save()
-                saveStatus = true
-            }
-        })
+        await ActiveBalanceModel.findOne({ "discordId": userDiscordId }).exec()
+            .then( async function(doc: any) {
+                if (doc) {
+                    doc.activeBalance = activeBalance
+                    await doc.save()
+                    saveStatus = true
+                }
+            })
     }
     catch (err) {
-        errorHandler("updateBotBalance Failed: ", err)
+        errorHandler("updateActiveBalance Failed: ", err)
     }
     await disconnect()
     return saveStatus
@@ -255,17 +257,17 @@ export async function getLogEntries( discordId: bigint ): Promise<UserLog[]> {
     // 
     // Fetches a UserLog list, including activity as a receiver
     // Filters for unique entries (as to not have entries duplicated
-    // when the user is both a sender and receiver/a tranfser)
+    // when the user is activeh a sender and receiver/a tranfser)
     // 
     let logEntries: UserLog[] = []
     await connect(uri)
     try {        
-        await UserLogModel.find({"discordId": discordId}).exec().then( async function(docs) {
+        await UserLogModel.find({"discordId": discordId}).exec().then( async function(docs: any) {
             for (let doc in docs) {
                 logEntries.push(docs[doc])
             }
         })
-        await UserLogModel.find({"recipient": discordId}).exec().then( async function(docs) {
+        await UserLogModel.find({"recipient": discordId}).exec().then( async function(docs: any) {
             for (let doc in docs) {
                 logEntries.push(docs[doc])
             }
@@ -283,7 +285,7 @@ export async function getLatestEntry(): Promise<PriceData> {
     let latestEntry: PriceData = new PriceDataModel
     await connect(uri)
     try {
-        await PriceDataModel.findOne().sort('-dateCreated').exec().then(function(item) {
+        await PriceDataModel.findOne().sort('-dateCreated').exec().then(function(item: any) {
             if (item) {
                 latestEntry = item
             }

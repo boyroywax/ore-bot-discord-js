@@ -9,8 +9,6 @@ import { verifySign } from "./actions/verifySign"
 import { checkOreIdLink } from "./actions/checkOreIdLink"
 import { getActiveBalance } from "./actions/activeBalance"
 import { getOreIdBalance } from "./actions/oreIdBalance"
-import { ActiveBalanceModel } from "models/DiscordUserModel"
-import { oreId } from "utils/oreid"
 
 
 const app = express()
@@ -176,7 +174,8 @@ app.get('/api/balance', async (request: Request, response: Response) => {
 				break
 			}
 			default: {
-				const activeBalance = await getActiveBalance( BigInt(discordUser) )
+				const activeBalanceRaw = await getActiveBalance( BigInt(discordUser) )
+				const activeBalance = activeBalanceRaw + " ORE"
 				const oreIdResult = await getOreIdBalance( BigInt(discordUser) )
 				result = { "activeBalance": activeBalance, "oreIdBalance": oreIdResult.oreIdBalance, "oreIdAccount": oreIdResult.oreIdAccountName }
 				break

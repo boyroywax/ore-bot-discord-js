@@ -1,14 +1,22 @@
 import { JsonRpc } from 'eosjs'
+import { RequestInfo, RequestInit } from "node-fetch";
+
+const fetch = (url: RequestInfo, init?: RequestInit) =>  import("node-fetch").then(({ default: fetch }) => fetch(url, init));
 
 export class Ore {
     oreEndpoint: { url: string } = {
-        url: process.env.CURRENCY_MAINNET || "https://ore.openrights.exchange"
+        url: process.env.CURRENCY_TESTNET + ":443" || "https://ore.openrights.exchange:443"
     }
     rpc: JsonRpc = new JsonRpc( this.oreEndpoint.url )
+}
 
-    public async getAccount(accountName: string): Promise<any> {
+const ore = new Ore()
+
+    // public async getAccount(accountName: string): Promise<any> {
+    export const getAccount = async (accountName: string) => {
         try {
-            const accountInfo = await this.rpc.get_account(accountName)
+            const rpc: JsonRpc = new JsonRpc( ore.oreEndpoint.url, {fetch} )
+            const accountInfo = await rpc.get_account(accountName)
             return accountInfo
         }
         catch (err) {
@@ -16,10 +24,13 @@ export class Ore {
         }
     }
 
-    public async getBalance( accountName: string ): Promise<string> {
-        let balance: string = "0.0000 ORE"
+    // public async getBalance( accountName: string ): Promise<string> {
+    export const getBalance = async ( accountName: string ): Promise<string>  => {
+
+        let balance: string = "0.0000"
         try {
-            const balances = await this.rpc.get_currency_balance('eosio.token', accountName, 'ORE')
+            const rpc: JsonRpc = new JsonRpc( ore.oreEndpoint.url, {fetch} )
+            const balances = await rpc.get_currency_balance('eosio.token', accountName, 'ORE')
             console.log(balances)
             
             if (balances.length !== 0) {
@@ -31,4 +42,4 @@ export class Ore {
         }
         return balance
     }
-}
+
