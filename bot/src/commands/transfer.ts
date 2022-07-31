@@ -30,11 +30,21 @@ function createEmbed(
             String(transferAmount),
             false
         )
-        .addField(
-            "Transfer status",
-            String(transferStatus),
-            false
-        )
+        if (direction === "active") {
+            embed.addField(
+                "Transfer Link",
+                String(transferStatus),
+                false
+            )
+        }
+        else {
+            embed.addField(
+                "Transfer status",
+                String(transferStatus),
+                false
+            )
+        }
+        
     return embed
 }
 
@@ -51,7 +61,7 @@ export const transfer: CommandInt = {
                     {name: "ORE-ID Account", value: "oreid"}
                 )
         )       
-        .addNumberOption(option => option.setName("amount").setDescription("Enter withdrawal amount").setRequired(true)),
+        .addNumberOption(option => option.setName("amount").setDescription("Enter amount to transfer").setRequired(true)),
     run: async (interaction) => {
         // 
         // Transfer tokens between a users accounts
@@ -75,34 +85,54 @@ export const transfer: CommandInt = {
                 // create an ephemeral message
                 await interaction.deferReply({ ephemeral: true})
                 const [ transferCompleted, transferStatus ] = await transferFunds(userDiscordId, transferAmount, direction)
-
                 let transferMessage = undefined
-                if (!transferCompleted){
-                    transferMessage = createEmbed(
-                        "❌ ORE Transfer Failed",
-                        "Your funds have not been transfered.",
-                        direction,
-                        transferAmount,
-                        transferStatus
-                    )
+
+
+                if (transferStatus === "Funds Successfully Transferred!") {
+                    if (!transferCompleted){
+                        transferMessage = createEmbed(
+                            "❌ ORE Transfer Failed",
+                            "Your funds have not been transfered.",
+                            direction,
+                            transferAmount,
+                            transferStatus
+                        )
+                    }
+                    else {
+                        transferMessage = createEmbed(
+                            "✅ ORE Transfer Succeeded",
+                            "Your funds have been transfered.",
+                            direction,
+                            transferAmount,
+                            transferStatus
+                        )  
+                    }
                 }
                 else {
-                    transferMessage = createEmbed(
-                        "✅ ORE Transfer Succeeded",
-                        "Your funds have been transfered.",
-                        direction,
-                        transferAmount,
-                        transferStatus
-                    )  
+                    // Compose User's log entry for a transfer
+                    if ( transferCompleted ) {
+                        transferMessage = createEmbed(
+                            "👇 🖊 ORE Transfer Initiated",
+                            "Follow the link and sign the transaction.",
+                            direction,
+                            transferAmount,
+                            transferStatus
+                        )  
+                        status = "Initiated"
+                    }
+                    else {
+                        transferMessage = createEmbed(
+                            "❌ ORE Transfer Failed",
+                            "Please try the transaction again.",
+                            direction,
+                            transferAmount,
+                            transferStatus
+                        )  
+                        status = "Failed"
+                    }
                 }
-                // Compose User's log entry for a transfer
-                if ( transferCompleted ) {
-                    status = "Completed"
-                }
-                else (
-                    status = "Failed"
-                )
-
+                
+                
                 const logArgs: UserLogKWArgs = { 
                     recipient: BigInt(userDiscordId),
                     amount: transferAmount,

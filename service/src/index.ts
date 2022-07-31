@@ -262,7 +262,7 @@ app.get('/api/getUser', async (request: Request, response: Response) => {
 	}
 	catch (err) {
 		errorLogger('/api/getUser', err)
-		return response.status(404).send(result)
+		return response.status(404).send({"error": "Could not get user from DB"})
 	}
 })
 

@@ -3,7 +3,7 @@ import { AxiosInstance } from "axios"
 import { initApi } from "./apiCall"
 
 
-export const setSigned = async (state: string, account: string): Promise<boolean> => {
+export const setSigned = async (account: string, state: string): Promise<boolean> => {
     let response: boolean = false
     try {
         const instance: AxiosInstance = initApi()

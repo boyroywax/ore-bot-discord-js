@@ -29,7 +29,7 @@ export const Transfer: React.FC = () => {
     };
 
     const onSuccess = async ( result: any ) => {
-        await setSigned(state.state, state.toaddress)
+        await setSigned(state.toaddress, state.state)
         console.log( 
             "Transaction Successful. ", JSON.stringify(result)
         );
@@ -65,7 +65,8 @@ export const Transfer: React.FC = () => {
         const errorMsg = `User does not have any accounts on ${chainNetwork}`;
     
         if (!signingAccount) {
-            console.log(errorMsg)        
+            setError({"message": errorMsg} as Error)
+            return    
         };
 
         console.log(signingAccount)
@@ -125,6 +126,7 @@ export const Transfer: React.FC = () => {
                 <h3>To: {state?.toaddress}</h3>
                 {/* <h3>{state?.txtype}</h3> */}
                 {error && <div className="App-error">Error: {error.message}</div>}
+                {txnId && <div className="App-error">Transaction Id: {txnId}</div>}
             </div>
         </section>
 	)
