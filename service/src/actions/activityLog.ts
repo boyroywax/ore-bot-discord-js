@@ -1,8 +1,9 @@
-import { connect, disconnect } from 'mongoose'
+
+import { connect, disconnect, QueryOptions } from 'mongoose'
 
 import { UserLog, UserLogKWArgs } from '../interfaces/DiscordUser'
 import { UserLogModel } from '../models/DiscordUserModel'
-import { errorLogger } from "../utils/logHandler"
+import { debugLogger, errorLogger } from "../utils/logHandler"
 import { mongoUri } from '../utils/mongo'
 
 
@@ -61,16 +62,19 @@ async function getEntries( discordId: bigint ): Promise<UserLog[]> {
     // 
     let logEntries: UserLog[] = []
     await connect(mongoUri)
-    try {        
-        await UserLogModel.find({"discordId": discordId}).exec().then( async function(docs) {
-            for (let doc in docs) {
-                logEntries.push(docs[doc])
-            }
+    try {
+        const options: QueryOptions = {}
+        await UserLogModel.find({"discordId": discordId}).limit(30).exec()
+            .then( async function(docs) {
+                for (let doc in docs) {
+                    logEntries.push(docs[doc])
+                }
         })
-        await UserLogModel.find({"recipient": discordId}).exec().then( async function(docs) {
-            for (let doc in docs) {
-                logEntries.push(docs[doc])
-            }
+        await UserLogModel.find({"recipient": discordId}).limit(30).exec()
+            .then( async function(docs) {
+                for (let doc in docs) {
+                    logEntries.push(docs[doc])
+                }
         })
         // logEntries = compareLogEntries( logEntries )
     }
@@ -81,4 +85,61 @@ async function getEntries( discordId: bigint ): Promise<UserLog[]> {
         await disconnect()
     }
     return logEntries
+}
+
+export async function logEntry (
+    action: string,
+    discordId: bigint,
+    entry?: UserLogKWArgs ): Promise<boolean> {
+    // 
+    // Logs the user's activity into their user log.
+    // 
+    let savedLogEntry = false
+    try  {
+        // logHandler.info("logEntry passed to logEntry function: " + JSON.stringify(entry))
+        const userLogEntry: UserLog = new UserLogModel({
+            action: action,
+            amount: entry?.amount || 0,
+            comment: entry?.comment || "NA",
+            date: new Date,
+            discordId: discordId,
+            oreId: entry?.oreId || "NA",
+            recipient: entry?.recipient || 0,
+            status: entry?.status || "NA",
+            txnId: entry?.txnId || "NA"
+        })
+        await createEntry(userLogEntry)
+        savedLogEntry = true
+    }
+    catch (err) {
+        errorLogger('logEntry in userLog.ts', err)
+    }
+    return savedLogEntry
+}
+
+export async function listActivity ( discordId: bigint ): Promise<UserLog[]> {
+    // 
+    // Returns a list of logEntries for a user
+    // Sorted in descending date order
+    // Leaves only uniqe values
+    // 
+    let userLogEntries: UserLog[] = []
+    try {
+        userLogEntries = await getEntries(discordId)
+        let sortedEntries = userLogEntries.sort((a: UserLog ,b: UserLog) => +new Date(b.date) - +new Date(a.date))
+        
+        // create a new list with only unique entries
+        let uniqueEntries = [sortedEntries[0]];
+        for (let i = 1; i < sortedEntries.length; i++) { //Start loop at 1: arr[0] can never be a duplicate
+            if (sortedEntries[i-1].date.toString() != sortedEntries[i].date.toString()) {
+                debugLogger(JSON.stringify(sortedEntries[i]))
+                uniqueEntries.push(sortedEntries[i]);
+            }
+        }
+        userLogEntries = uniqueEntries
+    }
+    catch (err) {
+        errorLogger("listActivity in userLog.ts", err)
+    }
+    return userLogEntries
 }
