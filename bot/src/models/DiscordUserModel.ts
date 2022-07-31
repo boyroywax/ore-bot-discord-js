@@ -1,7 +1,7 @@
 import mongoose, { Schema, model } from "mongoose"
 import mongooseLong from 'mongoose-long'
 
-import { BotBalance, DiscordUser, UserLog } from "../interfaces/DiscordUser"
+import { ActiveBalance, DiscordUser, UserLog } from "../interfaces/DiscordUser"
 
 mongooseLong(mongoose)
 
@@ -23,13 +23,13 @@ export const DiscordUserModel = model<DiscordUser>('DiscordUser', discordSchema)
 //  
 // User's balance on the bot application
 // 
-export const botBalanceSchema = new Schema<BotBalance>({
+export const activeBalanceSchema = new Schema<ActiveBalance>({
     discordId: { type: Schema.Types.Long, required: true, index: true },
-    botToken: { type: String, required: true , default: process.env.CURRENCY_TOKEN},
-    botBalance: { type: Number, required: true },
+    activeToken: { type: String, required: true , default: process.env.CURRENCY_TOKEN},
+    activeBalance: { type: Number, required: true },
 })
 
-export const BotBalanceModel = model<BotBalance>('BotBalance', botBalanceSchema)
+export const ActiveBalanceModel = model<ActiveBalance>('ActiveBalance', activeBalanceSchema)
 
 // 
 // Logging a user's actions

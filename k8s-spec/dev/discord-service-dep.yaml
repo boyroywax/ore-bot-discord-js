@@ -46,7 +46,7 @@ spec:
           httpGet:
             path: /liveness-check
             port: 53134
-          failureThreshold: 5
+          failureThreshold: 10
           periodSeconds: 3
         readinessProbe:
           httpGet:

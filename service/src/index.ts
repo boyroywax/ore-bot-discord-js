@@ -7,6 +7,11 @@ import { verifyLogin } from "./actions/verifyLogin"
 import { loginError } from "./actions/loginError"
 import { verifySign } from "./actions/verifySign"
 import { checkOreIdLink } from "./actions/checkOreIdLink"
+import { getActiveBalance } from "./actions/activeBalance"
+import { getOreIdBalance } from "./actions/oreIdBalance"
+import { DiscordUser } from "./interfaces/DiscordUser"
+import { getDiscordUserFromDiscordId, getDiscordUserFromOreId, getDiscordUserFromState } from "./actions/getUser"
+import { DiscordUserModel } from "models/DiscordUserModel"
 
 
 const app = express()
@@ -151,6 +156,42 @@ app.get('/api/sign', async (request: Request, response: Response) => {
 
 })
 
+app.get('/api/balance', async (request: Request, response: Response) => {
+	// 
+	// Send the User's Active Balance 
+	// 
+	const balanceType: string = request.query.type?.toString() || 'default'
+	const discordUser: string = request.query.user?.toString() || ''
+	let result: {} = { "activeBalance": "None", "oreIdBalance": "None", "oreIdAccount": "None" }
+
+	try {
+		switch (balanceType){
+			case "active": {
+				const activeBalance = await getActiveBalance( BigInt(discordUser) )
+				result = { "activeBalance": activeBalance, "oreIdBalance": "None", "oreIdAccount": "None" }
+				break
+			}
+			case "oreid": {
+				const oreIdResult = await getOreIdBalance( BigInt(discordUser) )
+				result = { "activeBalance": "None", "oreIdBalance": oreIdResult.oreIdBalance, "oreIdAccount": oreIdResult.oreIdAccountName }
+				break
+			}
+			default: {
+				const activeBalance = await getActiveBalance( BigInt(discordUser) )
+				const oreIdResult = await getOreIdBalance( BigInt(discordUser) )
+				result = { "activeBalance": activeBalance, "oreIdBalance": oreIdResult.oreIdBalance, "oreIdAccount": oreIdResult.oreIdAccountName }
+				break
+			}
+		}
+		return response.status(200).send(result)
+	}
+	catch (err) {
+		errorLogger('/api/balance', err)
+		return response.status(404).send(result)
+	}
+
+})
+
 app.get('/api/priceOre', async( request: Request, response: Response ) => {
 	eventLogger({
 		message: "/api/priceOre Hit",
@@ -181,6 +222,47 @@ app.get('/api/checkOreIdLink', async(request: Request, response: Response) => {
 	catch (err) {
 		errorLogger('/api/checkOreIdLink', err)
 		return response.status(404).send({error: "Could not verify account link request"})
+	}
+})
+
+app.get('/api/getUser', async (request: Request, response: Response) => {
+	// 
+	// Send the User's Active Balance 
+	// 
+	const userType: string = request.query.type?.toString() || 'default'
+	const user: string = request.query.user?.toString() || ''
+	let resultData: DiscordUser = ({} as DiscordUser)
+	let result: {} = {}
+
+	try {
+		switch (userType){
+			case "oreid": {
+				resultData = await getDiscordUserFromOreId( user )
+				break
+			}
+			case "discordid": {
+				resultData = await getDiscordUserFromDiscordId( BigInt(user) )
+				break
+			}
+			case 'state': {
+				resultData = await getDiscordUserFromState( user )
+				break
+			}
+		}
+		result = {
+			discordId: resultData.discordId.toString(),
+			loggedIn: resultData.loggedIn,
+			lastLogin: resultData.lastLogin,
+			dateCreated: resultData.dateCreated,
+			oreId: resultData.oreId,
+			state: resultData.state,
+			pendingTransaction: resultData.pendingTransaction
+		}
+		return response.status(200).send(result)
+	}
+	catch (err) {
+		errorLogger('/api/getUser', err)
+		return response.status(404).send({"error": "Could not get user from DB"})
 	}
 })
 

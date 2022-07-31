@@ -14,10 +14,10 @@ export interface DiscordUser {
 // 
 // Interface for the discord user's bot balance.
 // 
-export interface BotBalance {
+export interface ActiveBalance {
     discordId: bigint
-    botToken: string
-    botBalance: number
+    activeToken: string
+    activeBalance: number
 }
 
 //

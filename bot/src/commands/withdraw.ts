@@ -11,7 +11,7 @@ import { logEntry } from "../utils/userLog"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
 import { OreBalance } from "../interfaces/OreChain"
 import { OreTreasury } from "../modules/oreTreasury"
-import { validateAddress, verifyBotBalance, verifyOreIdBalance} from "../utils/transaction"
+import { validateAddress, verifyActiveBalance, verifyOreIdBalance} from "../utils/transaction"
 
 
 export const withdraw: CommandInt = {
@@ -57,7 +57,7 @@ export const withdraw: CommandInt = {
                     withdrawError = "That address is not valid!"
                 }
                 else {
-                    const [ userBalanceVerify, userBalanceStatus ] = await verifyBotBalance(userDiscordId, withdrawAmount)
+                    const [ userBalanceVerify, userBalanceStatus ] = await verifyActiveBalance(userDiscordId, withdrawAmount)
                     if (!userBalanceVerify) {
                         withdrawError = userBalanceStatus
                     }
