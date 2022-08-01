@@ -21,7 +21,7 @@ export const getBalances = async ( userDiscordId: bigint ): Promise<{
         }
     }
     catch (err) {
-        console.error("getBalance()", err)           
+        console.error("getBalances", err)           
     }
     return response
 }

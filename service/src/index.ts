@@ -9,9 +9,10 @@ import { verifySign } from "./actions/verifySign"
 import { checkOreIdLink } from "./actions/checkOreIdLink"
 import { getActiveBalance } from "./actions/activeBalance"
 import { getOreIdBalance } from "./actions/oreIdBalance"
-import { DiscordUser } from "./interfaces/DiscordUser"
+import { DiscordUser, DiscordUserReturn } from "./interfaces/DiscordUser"
 import { getDiscordUserFromDiscordId, getDiscordUserFromOreId, getDiscordUserFromState } from "./actions/getUser"
-import { DiscordUserModel } from "models/DiscordUserModel"
+import { listLastActivity } from "./actions/activityLog"
+import { getTotalTips, listLastTips } from "./actions/getTips"
 
 
 const app = express()
@@ -103,6 +104,81 @@ app.get('/api/loginError', async (request: Request, response: Response) => {
 		errorLogger("/api/loginError", err)
 		return response.status(404).send({result: false})
 	}
+})
+
+app.get('/api/activity', async (request: Request, response: Response) => {
+    // 
+    // Returns a list of logEntries for a user
+    // Sorted in descending date order
+    // Leaves only unique values
+    // 
+	eventLogger({
+		message: "/activity Hit",
+		request: request
+	})
+	const user: bigint = BigInt( request.query.user?.toString() || '0')
+	const min: number = Number(request.query.min?.toString() || "0")
+	const limit: number = Number(request.query.limit?.toString() || "20")
+
+	try {
+		await listLastActivity( user, min, limit ).then(function(userLogEntries) {
+
+			debugLogger("logs: " + userLogEntries)
+			if (userLogEntries) {
+				return response.status(200).send(userLogEntries)
+			}
+			else {
+				return response.status(404).send({result: false})
+			}
+		})
+	}
+	catch (err) {
+		errorLogger("/api/activity", err)
+		return response.status(404).send({result: false})
+	}
+
+})
+
+app.get('/api/tips', async (request: Request, response: Response) => {
+    // 
+    // Returns a list of logEntries for a user
+    // Sorted in descending date order
+    // Leaves only unique values
+    // 
+	eventLogger({
+		message: "/tips Hit",
+		request: request
+	})
+	const user: bigint = BigInt( request.query.user?.toString() || '0')
+	const min: number = Number(request.query.min?.toString() || "1")
+	const limit: number = Number(request.query.limit?.toString() || "20")
+	const format: string = request.query.format?.toString() || "list"
+
+	try {
+		switch(format) {
+			case "list": {
+				await listLastTips( user, min, limit ).then(function(userLogEntries) {
+					debugLogger("logs: " + userLogEntries)
+					if (userLogEntries) {
+						return response.status(200).send(userLogEntries)
+					}
+					else {
+						return response.status(404).send({result: false})
+					}
+				})
+			}
+			case "total": {
+				const totalTips = await getTotalTips( user )
+				return response.status(200).send(totalTips)
+			}
+		}
+		
+	}
+	catch (err) {
+		errorLogger("/api/tips", err)
+		return response.status(404).send({result: false})
+	}
+
 })
 
 app.get('/api/logout', async (request: Request, response: Response) => {
@@ -216,7 +292,7 @@ app.get('/api/checkOreIdLink', async(request: Request, response: Response) => {
 	const state: string = request.query.state?.toString() || ""
 	try {
 		const result = await checkOreIdLink(currentUserOreId, state)
-		console.log(result)
+		// console.log(result)
 		return response.status(200).send(result)
 	}
 	catch (err) {
@@ -231,8 +307,7 @@ app.get('/api/getUser', async (request: Request, response: Response) => {
 	// 
 	const userType: string = request.query.type?.toString() || 'default'
 	const user: string = request.query.user?.toString() || ''
-	let resultData: DiscordUser = ({} as DiscordUser)
-	let result: {} = {}
+	let resultData: DiscordUserReturn = ({} as DiscordUserReturn)
 
 	try {
 		switch (userType){
@@ -249,16 +324,17 @@ app.get('/api/getUser', async (request: Request, response: Response) => {
 				break
 			}
 		}
-		result = {
-			discordId: resultData.discordId.toString(),
-			loggedIn: resultData.loggedIn,
-			lastLogin: resultData.lastLogin,
-			dateCreated: resultData.dateCreated,
-			oreId: resultData.oreId,
-			state: resultData.state,
-			pendingTransaction: resultData.pendingTransaction
-		}
-		return response.status(200).send(result)
+		// result = {
+		// 	discordId: resultData.discordId.toString(),
+		// 	loggedIn: resultData.loggedIn,
+		// 	lastLogin: resultData.lastLogin,
+		// 	dateCreated: resultData.dateCreated,
+		// 	oreId: resultData.oreId,
+		// 	state: resultData.state,
+		// 	pendingTransaction: resultData.pendingTransaction
+		// }
+		// result = convertToReturn(resultData)
+		return response.status(200).send(resultData)
 	}
 	catch (err) {
 		errorLogger('/api/getUser', err)

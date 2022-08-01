@@ -1,6 +1,6 @@
 import { connect, disconnect } from 'mongoose'
 
-import { DiscordUser, UserLog } from '../interfaces/DiscordUser'
+import { DiscordUser, UserLog, UserLogReturn } from '../interfaces/DiscordUser'
 import { DiscordUserModel, ActiveBalanceModel, UserLogModel } from '../models/DiscordUserModel'
 import { PriceDataModel } from '../models/PriceDataModel'
 import { errorHandler } from '../utils/errorHandler'
@@ -274,7 +274,7 @@ export async function getLogEntries( discordId: bigint ): Promise<UserLog[]> {
         // logEntries = compareLogEntries( logEntries )
     }
     catch (err) {
-        errorHandler("addLog Entry Failed: ", err)
+        errorHandler("getLogEntries", err)
     }
     await disconnect()
     return logEntries
@@ -319,4 +319,20 @@ export async function createPriceEntry( apiData: Price ): Promise<PriceData> {
     }
     await disconnect()
     return priceData
+}
+
+export const convertLogToRaw = (result: UserLogReturn): UserLog => {
+    const entry: UserLog = {
+        action: result.action,
+        status: result.status,
+        amount: result.amount,
+        date: result.date,
+        ip: result.ip,
+        discordId: BigInt(result.discordId),
+        oreId: result.oreId,
+        recipient: BigInt(result.recipient || 0),
+        txnId: result.txnId,
+        comment: result.comment
+    }
+    return entry
 }

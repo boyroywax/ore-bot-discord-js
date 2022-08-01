@@ -25,7 +25,7 @@ export async function getActiveBalance( userDiscordId: bigint ): Promise<number>
         }
     }
     catch(err) {
-        errorLogger('getActiveBalance failed: ', err)
+        errorLogger('getActiveBalance', err)
     }
     finally {
         await disconnect()

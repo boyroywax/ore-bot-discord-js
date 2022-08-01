@@ -1,7 +1,7 @@
 import { getBalance } from '../utils/ore'
 import { debugLogger, errorLogger } from '../utils/logHandler'
 import { getDiscordUserFromDiscordId } from './getUser'
-import { DiscordUser } from '../interfaces/DiscordUser'
+import { DiscordUserReturn } from '../interfaces/DiscordUser'
 
 
 export async function getOreIdBalance( discordId: bigint ): Promise<{ oreIdAccountName: string, oreIdBalance: string}> {
@@ -12,7 +12,7 @@ export async function getOreIdBalance( discordId: bigint ): Promise<{ oreIdAccou
     let oreIdAccountName: string = "None"
     let oreIdBalance: string = "0.0000"
     try{
-        const discordUser: DiscordUser = await getDiscordUserFromDiscordId( discordId )
+        const discordUser: DiscordUserReturn = await getDiscordUserFromDiscordId( discordId )
         oreIdAccountName = discordUser.oreId || ""
         oreIdBalance = await getBalance( oreIdAccountName )
         debugLogger("oreIdAccountName: " + oreIdAccountName + " oreIdBalance: " + oreIdBalance)

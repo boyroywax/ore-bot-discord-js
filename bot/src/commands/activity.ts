@@ -3,12 +3,11 @@ import { MessageEmbed } from "discord.js"
 
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
-import { checkLoggedIn } from "../utils/mongo"
-import { logHandler } from "../utils/logHandler"
-import { UserLog } from "../interfaces/DiscordUser"
-import { listActivity } from "../utils/userLog"
+import { checkLoggedIn, convertLogToRaw } from "../utils/mongo"
+import { UserLog, UserLogReturn } from "../interfaces/DiscordUser"
 import { UserLogModel } from "../models/DiscordUserModel"
 import { unauthorizedCommand } from "../utils/loginCheck"
+import { getActivity } from "../serviceCalls/getActivity"
 
 const maxLogActivity: number = Number(process.env.BOT_ACTIVITY_LOG_MAX) || 10
 
@@ -35,14 +34,15 @@ export const activity: CommandInt = {
                 await interaction.deferReply({ ephemeral: true })
 
                 // Fetch the user's activites on the bot
-                const logEntries: UserLog[] = await listActivity(userDiscordId)
+                const logEntries: UserLogReturn[] = await getActivity(userDiscordId)
 
                 // Create the Embed from the logEntries
                 let index: number = 0
                 const userActivity: MessageEmbed = new MessageEmbed()
                 for (let entry in logEntries) {
                     index += 1
-                    let parseEntry: UserLog = new UserLogModel(logEntries[entry])
+                    let convertEntry: UserLog = convertLogToRaw(logEntries[entry])
+                    let parseEntry: UserLog = new UserLogModel(convertEntry)
 
                     // There should never be no logs
                     if (logEntries.length == 0) {
