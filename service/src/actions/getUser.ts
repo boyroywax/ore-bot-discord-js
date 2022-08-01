@@ -1,15 +1,16 @@
 import { connect, disconnect } from "mongoose"
-import { mongoUri } from "../utils/mongo"
-import { DiscordUser } from "../interfaces/DiscordUser"
+import { convertToReturn, mongoUri } from "../utils/mongo"
+import { DiscordUser, DiscordUserReturn } from "../interfaces/DiscordUser"
 import { DiscordUserModel } from "../models/DiscordUserModel"
 import { errorLogger } from "../utils/logHandler"
 
 
-export const getDiscordUserFromState = async (state: string): Promise<DiscordUser> => {
-    let discordUser: DiscordUser = {discordId: BigInt(0)} as DiscordUser
+export const getDiscordUserFromState = async (state: string): Promise<DiscordUserReturn> => {
+    let discordUser: DiscordUserReturn = {discordId: "0"} as DiscordUserReturn
     await connect(mongoUri)
     try {
-        discordUser = (await DiscordUserModel.findOne({"state": state})) as DiscordUser
+        const result = (await DiscordUserModel.findOne({"state": state})) as DiscordUser
+        discordUser = convertToReturn(result)
     }
     catch (err) {
         errorLogger("getDiscordUserFromState", err)
@@ -21,11 +22,12 @@ export const getDiscordUserFromState = async (state: string): Promise<DiscordUse
     return discordUser
 }
 
-export const getDiscordUserFromOreId = async (oreId: string): Promise<DiscordUser> => {
-    let discordUser: DiscordUser = {discordId: BigInt(0)} as DiscordUser
+export const getDiscordUserFromOreId = async (oreId: string): Promise<DiscordUserReturn> => {
+    let discordUser: DiscordUserReturn = {discordId: "0"} as DiscordUserReturn
     await connect(mongoUri)
     try {
-        discordUser = (await DiscordUserModel.findOne({"oreId": oreId})) as DiscordUser
+        const result = (await DiscordUserModel.findOne({"oreId": oreId})) as DiscordUser
+        discordUser = convertToReturn(result)
     }
     catch (err) {
         errorLogger("getDiscordUserFromOreId", err)
@@ -37,11 +39,12 @@ export const getDiscordUserFromOreId = async (oreId: string): Promise<DiscordUse
     return discordUser
 }
 
-export const getDiscordUserFromDiscordId = async (discordId: bigint): Promise<DiscordUser> => {
-    let discordUser: DiscordUser = {discordId: BigInt(0)} as DiscordUser
+export const getDiscordUserFromDiscordId = async (discordId: bigint): Promise<DiscordUserReturn> => {
+    let discordUser: DiscordUserReturn = {discordId: "0"} as DiscordUserReturn
     await connect(mongoUri)
     try {
-        discordUser = (await DiscordUserModel.findOne({"discordId": discordId})) as DiscordUser
+        const result = (await DiscordUserModel.findOne({"discordId": discordId})) as DiscordUser
+        discordUser = convertToReturn(result)
     }
     catch (err) {
         errorLogger("getDiscordUserFromDiscordId", err)

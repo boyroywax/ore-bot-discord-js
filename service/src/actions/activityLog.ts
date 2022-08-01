@@ -1,10 +1,10 @@
 
 import { connect, disconnect, QueryOptions } from 'mongoose'
 
-import { UserLog, UserLogKWArgs } from '../interfaces/DiscordUser'
+import { UserLog, UserLogKWArgs, UserLogReturn } from '../interfaces/DiscordUser'
 import { UserLogModel } from '../models/DiscordUserModel'
 import { debugLogger, errorLogger } from "../utils/logHandler"
-import { mongoUri } from '../utils/mongo'
+import { convertLogToReturn, mongoUri } from '../utils/mongo'
 
 
 async function createEntry( entry: UserLog ): Promise<boolean> {
@@ -90,29 +90,32 @@ export async function logEntry (
     return savedLogEntry
 }
 
-export async function listLastActivity ( discordId: bigint, min: number = 0, limit: number = 20 ): Promise<UserLog[]> {
+export async function listLastActivity ( discordId: bigint, min: number = 0, limit: number = 20 ): Promise<UserLogReturn[]> {
     // 
     // Returns a list of logEntries for a user
     // Sorted in descending date order
     // Leaves only uniqe values
     // 
     let userLogEntries: UserLog[] = []
+    let userLogEntriesReturn: UserLogReturn[] = []
     try {
         userLogEntries = await getEntries(discordId, min, limit)
         let sortedEntries = userLogEntries.sort((a: UserLog ,b: UserLog) => +new Date(b.date) - +new Date(a.date))
+        const firstEntrtResult: UserLogReturn = convertLogToReturn(sortedEntries[0])
         
         // create a new list with only unique entries
-        let uniqueEntries = [sortedEntries[0]];
+        let uniqueEntries: UserLogReturn[] = [firstEntrtResult]
         for (let i = 1; i < sortedEntries.length; i++) { //Start loop at 1: arr[0] can never be a duplicate
             if (sortedEntries[i-1].date.toString() != sortedEntries[i].date.toString()) {
                 debugLogger(JSON.stringify(sortedEntries[i]))
-                uniqueEntries.push(sortedEntries[i]);
+                const fixedEntry: UserLogReturn = convertLogToReturn(sortedEntries[i])
+                uniqueEntries.push(fixedEntry);
             }
         }
-        userLogEntries = uniqueEntries
+        userLogEntriesReturn = uniqueEntries
     }
     catch (err) {
         errorLogger("listLastActivity in userLog.ts", err)
     }
-    return userLogEntries
+    return userLogEntriesReturn
 }

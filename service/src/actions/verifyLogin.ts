@@ -19,8 +19,8 @@ export async function verifyLogin(
     try {
         // Declare the DiscordUser model and search mongodb for
         // a state that matches the callback value
-        const findUser = await DiscordUserModel.findOne({ "state": String(stateIn) })
-        .exec().then(async function(doc) {
+        await DiscordUserModel.findOne({ "state": String(stateIn) }).exec()
+            .then(async function(doc) {
             // If the doc exists, set the loggedIn value to true
             // Reset the state to "None"
             if (doc) {
@@ -39,7 +39,7 @@ export async function verifyLogin(
                 await logEntry('Login', doc.discordId, logArgs)
             }
             else {
-                const findUser = await DiscordUserModel.findOne({ "oreId": userOreId })
+                await DiscordUserModel.findOne({ "oreId": userOreId })
                 .exec().then(async function(doc) {
                     if (doc?.discordId) {
                         const logArgs: UserLogKWArgs = {

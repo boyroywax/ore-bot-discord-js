@@ -9,7 +9,7 @@ import { verifySign } from "./actions/verifySign"
 import { checkOreIdLink } from "./actions/checkOreIdLink"
 import { getActiveBalance } from "./actions/activeBalance"
 import { getOreIdBalance } from "./actions/oreIdBalance"
-import { DiscordUser } from "./interfaces/DiscordUser"
+import { DiscordUser, DiscordUserReturn } from "./interfaces/DiscordUser"
 import { getDiscordUserFromDiscordId, getDiscordUserFromOreId, getDiscordUserFromState } from "./actions/getUser"
 import { listLastActivity } from "./actions/activityLog"
 import { getTotalTips, listLastTips } from "./actions/getTips"
@@ -291,7 +291,7 @@ app.get('/api/checkOreIdLink', async(request: Request, response: Response) => {
 	const state: string = request.query.state?.toString() || ""
 	try {
 		const result = await checkOreIdLink(currentUserOreId, state)
-		console.log(result)
+		// console.log(result)
 		return response.status(200).send(result)
 	}
 	catch (err) {
@@ -306,8 +306,7 @@ app.get('/api/getUser', async (request: Request, response: Response) => {
 	// 
 	const userType: string = request.query.type?.toString() || 'default'
 	const user: string = request.query.user?.toString() || ''
-	let resultData: DiscordUser = ({} as DiscordUser)
-	let result: {} = {}
+	let resultData: DiscordUserReturn = ({} as DiscordUserReturn)
 
 	try {
 		switch (userType){
@@ -324,16 +323,17 @@ app.get('/api/getUser', async (request: Request, response: Response) => {
 				break
 			}
 		}
-		result = {
-			discordId: resultData.discordId.toString(),
-			loggedIn: resultData.loggedIn,
-			lastLogin: resultData.lastLogin,
-			dateCreated: resultData.dateCreated,
-			oreId: resultData.oreId,
-			state: resultData.state,
-			pendingTransaction: resultData.pendingTransaction
-		}
-		return response.status(200).send(result)
+		// result = {
+		// 	discordId: resultData.discordId.toString(),
+		// 	loggedIn: resultData.loggedIn,
+		// 	lastLogin: resultData.lastLogin,
+		// 	dateCreated: resultData.dateCreated,
+		// 	oreId: resultData.oreId,
+		// 	state: resultData.state,
+		// 	pendingTransaction: resultData.pendingTransaction
+		// }
+		// result = convertToReturn(resultData)
+		return response.status(200).send(resultData)
 	}
 	catch (err) {
 		errorLogger('/api/getUser', err)
