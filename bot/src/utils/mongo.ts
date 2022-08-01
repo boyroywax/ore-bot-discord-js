@@ -274,7 +274,7 @@ export async function getLogEntries( discordId: bigint ): Promise<UserLog[]> {
         // logEntries = compareLogEntries( logEntries )
     }
     catch (err) {
-        errorHandler("addLog Entry Failed: ", err)
+        errorHandler("getLogEntries", err)
     }
     await disconnect()
     return logEntries

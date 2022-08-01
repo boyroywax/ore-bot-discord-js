@@ -4,7 +4,7 @@ import { connect, disconnect, model } from 'mongoose'
 import { mongoUri } from '../utils/mongo'
 import { debugLogger, errorLogger } from '../utils/logHandler'
 import { DiscordUserModel, UserLogModel } from '../models/DiscordUserModel'
-import { addLogEntry } from "./activityLog"
+import { logEntry } from "./activityLog"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
 
 export async function verifyLogout( stateIn: string ): Promise<boolean> {
@@ -38,14 +38,14 @@ export async function verifyLogout( stateIn: string ): Promise<boolean> {
                     const logArgs: UserLogKWArgs = { 
                         status: "Complete"
                     } 
-                    await addLogEntry('LogOut', doc.discordId, logArgs)
+                    await logEntry('LogOut', doc.discordId, logArgs)
                 }
                 else {
                     const logArgs: UserLogKWArgs = {
                         status: "Failed",
                         comment: "Cannot verify discordID."
                     } 
-                    await addLogEntry('LogOut', BigInt(0), logArgs)
+                    await logEntry('LogOut', BigInt(0), logArgs)
                     errorLogger('verifyLogout', ({message: "Cannot verify state in DB"} as Error))
                 }
             })

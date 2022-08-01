@@ -2,7 +2,7 @@ import { connect, disconnect } from 'mongoose'
 
 import { errorLogger } from '../utils/logHandler'
 import { DiscordUserModel, ActiveBalanceModel} from '../models/DiscordUserModel'
-import { addLogEntry } from "./activityLog"
+import { logEntry } from "./activityLog"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
 import { mongoUri } from '../utils/mongo'
 
@@ -43,7 +43,7 @@ export async function verifySign(
                     oreId: userOreId,
                     status: "Complete"
                 } 
-                await addLogEntry('Transfer', doc.discordId, logArgs)
+                await logEntry('Transfer', doc.discordId, logArgs)
             }
             else {
                 await DiscordUserModel.findOne({ "oreId": userOreId })
@@ -54,7 +54,7 @@ export async function verifySign(
                             status: "Failed",
                             comment: "Cannot Find ORE-ID User, please request a new /transfer"
                         } 
-                        await addLogEntry('Transfer', doc?.discordId, logArgs)
+                        await logEntry('Transfer', doc?.discordId, logArgs)
                     }
                     else {
                         const logArgs: UserLogKWArgs = {
@@ -62,7 +62,7 @@ export async function verifySign(
                             status: "Failed",
                             comment: "Cannot verify discordID, This may be the users first time logging in."
                         } 
-                        await addLogEntry('Transfer', BigInt(0), logArgs)
+                        await logEntry('Transfer', BigInt(0), logArgs)
                     }
                 })
             }

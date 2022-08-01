@@ -2,7 +2,7 @@ import { connect, disconnect } from 'mongoose'
 
 import { debugLogger, errorLogger } from '../utils/logHandler'
 import { DiscordUserModel } from '../models/DiscordUserModel'
-import { addLogEntry } from "./activityLog"
+import { logEntry } from "./activityLog"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
 import { mongoUri } from '../utils/mongo'
 
@@ -36,7 +36,7 @@ export async function verifyLogin(
                     oreId: userOreId,
                     status: "Complete"
                 } 
-                await addLogEntry('Login', doc.discordId, logArgs)
+                await logEntry('Login', doc.discordId, logArgs)
             }
             else {
                 const findUser = await DiscordUserModel.findOne({ "oreId": userOreId })
@@ -47,7 +47,7 @@ export async function verifyLogin(
                             status: "Failed",
                             comment: "User needs to request new /login"
                         } 
-                        await addLogEntry('Login', doc?.discordId, logArgs)
+                        await logEntry('Login', doc?.discordId, logArgs)
                     }
                     else {
                         const logArgs: UserLogKWArgs = {
@@ -55,7 +55,7 @@ export async function verifyLogin(
                             status: "Failed",
                             comment: "Cannot verify discordID, This may be the users first time logging in."
                         } 
-                        await addLogEntry('Login', BigInt(0), logArgs)
+                        await logEntry('Login', BigInt(0), logArgs)
                     }
                 })
             }

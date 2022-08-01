@@ -4,11 +4,11 @@ import { MessageEmbed } from "discord.js"
 import { CommandInt } from "../interfaces/CommandInt"
 import { errorHandler } from "../utils/errorHandler"
 import { checkLoggedIn } from "../utils/mongo"
-import { logHandler } from "../utils/logHandler"
 import { UserLog } from "../interfaces/DiscordUser"
-import { listActivity } from "../utils/userLog"
+// import { listActivity } from "../utils/userLog"
 import { UserLogModel } from "../models/DiscordUserModel"
 import { unauthorizedCommand } from "../utils/loginCheck"
+import { getActivity } from "../serviceCalls/getActivity"
 
 const maxLogActivity: number = Number(process.env.BOT_ACTIVITY_LOG_MAX) || 10
 
@@ -35,7 +35,7 @@ export const activity: CommandInt = {
                 await interaction.deferReply({ ephemeral: true })
 
                 // Fetch the user's activites on the bot
-                const logEntries: UserLog[] = await listActivity(userDiscordId)
+                const logEntries: UserLog[] = await getActivity(userDiscordId)
 
                 // Create the Embed from the logEntries
                 let index: number = 0

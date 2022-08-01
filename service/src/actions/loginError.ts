@@ -2,7 +2,7 @@ import { connect, disconnect } from 'mongoose'
 
 import { errorLogger, eventLogger } from '../utils/logHandler'
 import { DiscordUserModel } from '../models/DiscordUserModel'
-import { addLogEntry } from "./activityLog"
+import { logEntry } from "./activityLog"
 import { UserLogKWArgs } from "../interfaces/DiscordUser"
 import { mongoUri } from '../utils/mongo'
 
@@ -36,7 +36,7 @@ export async function loginError(
                         status: "Failed",
                         comment: errorMsg.replace(/_+/g, ' ')
                     } 
-                    await addLogEntry('Login', doc.discordId, logArgs)
+                    await logEntry('Login', doc.discordId, logArgs)
                 }
                 else {
                     const logArgsError: UserLogKWArgs = {

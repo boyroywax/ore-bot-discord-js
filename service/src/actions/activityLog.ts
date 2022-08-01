@@ -7,37 +7,6 @@ import { debugLogger, errorLogger } from "../utils/logHandler"
 import { mongoUri } from '../utils/mongo'
 
 
-export async function addLogEntry (
-    action: string,
-    discordId: BigInt,
-    entry?: UserLogKWArgs ): Promise<boolean> {
-    // 
-    // Logs the user's activity into their user log.
-    // 
-    let savedLogEntry = false
-    try  {
-        // debugLogger("logEntry passed to logEntry function: " + entry)
-        let userLogEntry: UserLog = new UserLogModel({
-            action: action,
-            amount: entry?.amount || 0,
-            date: new Date,
-            discordId: discordId || BigInt(0),
-            ip: entry?.ip || "NA",
-            oreId: entry?.oreId || "NA",
-            recipient: entry?.recipient || 0,
-            txnId: entry?.txnId || "NA",
-            status: entry?.status || "NA",
-            comment: entry?.comment || "NA"
-        })
-        await createEntry(userLogEntry)
-        savedLogEntry = true
-    }
-    catch (err) {
-        errorLogger('logEntry failed: ', err)
-    }
-    return savedLogEntry
-}
-
 async function createEntry( entry: UserLog ): Promise<boolean> {
     let saveStatus: boolean = false
     await connect(mongoUri)
@@ -46,7 +15,7 @@ async function createEntry( entry: UserLog ): Promise<boolean> {
         saveStatus = true
     }
     catch (err) {
-        errorLogger("addLog Entry Failed: ", err)
+        errorLogger("addLog", err)
     }
     finally {
         await disconnect()
@@ -54,7 +23,7 @@ async function createEntry( entry: UserLog ): Promise<boolean> {
     return saveStatus
 }
 
-async function getEntries( discordId: bigint ): Promise<UserLog[]> {
+async function getEntries( discordId: bigint, min: number, limit: number ): Promise<UserLog[]> {
     // 
     // Fetches a UserLog list, including activity as a receiver
     // Filters for unique entries (as to not have entries duplicated
@@ -64,13 +33,17 @@ async function getEntries( discordId: bigint ): Promise<UserLog[]> {
     await connect(mongoUri)
     try {
         const options: QueryOptions = {}
-        await UserLogModel.find({"discordId": discordId}).limit(30).exec()
+        await UserLogModel.find({"discordId": discordId})
+            .sort("-date")
+            .limit(limit).skip(min).exec()
             .then( async function(docs) {
                 for (let doc in docs) {
                     logEntries.push(docs[doc])
                 }
         })
-        await UserLogModel.find({"recipient": discordId}).limit(30).exec()
+        await UserLogModel.find({"recipient": discordId})
+            .sort("-date")
+            .limit(limit).skip(min).exec()
             .then( async function(docs) {
                 for (let doc in docs) {
                     logEntries.push(docs[doc])
@@ -79,7 +52,7 @@ async function getEntries( discordId: bigint ): Promise<UserLog[]> {
         // logEntries = compareLogEntries( logEntries )
     }
     catch (err) {
-        errorLogger("addLog Entry Failed: ", err)
+        errorLogger("getEntries", err)
     }
     finally {
         await disconnect()
@@ -117,7 +90,7 @@ export async function logEntry (
     return savedLogEntry
 }
 
-export async function listActivity ( discordId: bigint ): Promise<UserLog[]> {
+export async function listLastActivity ( discordId: bigint, min: number = 0, limit: number = 20 ): Promise<UserLog[]> {
     // 
     // Returns a list of logEntries for a user
     // Sorted in descending date order
@@ -125,7 +98,7 @@ export async function listActivity ( discordId: bigint ): Promise<UserLog[]> {
     // 
     let userLogEntries: UserLog[] = []
     try {
-        userLogEntries = await getEntries(discordId)
+        userLogEntries = await getEntries(discordId, 0, 20)
         let sortedEntries = userLogEntries.sort((a: UserLog ,b: UserLog) => +new Date(b.date) - +new Date(a.date))
         
         // create a new list with only unique entries
@@ -139,7 +112,7 @@ export async function listActivity ( discordId: bigint ): Promise<UserLog[]> {
         userLogEntries = uniqueEntries
     }
     catch (err) {
-        errorLogger("listActivity in userLog.ts", err)
+        errorLogger("listLastActivity in userLog.ts", err)
     }
     return userLogEntries
 }
