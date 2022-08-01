@@ -25,7 +25,7 @@ export const convertLogToReturn = (result: UserLog): UserLogReturn => {
         amount: result.amount,
         date: result.date,
         ip: result.ip,
-        discordId: result.discordId.toString(),
+        discordId: result.discordId?.toString(),
         oreId: result.oreId,
         recipient: result.recipient?.toString(),
         txnId: result.txnId,

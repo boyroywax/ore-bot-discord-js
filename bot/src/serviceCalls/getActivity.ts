@@ -1,11 +1,10 @@
-import { UserLog } from "../interfaces/DiscordUser"
-import { PriceData } from "../interfaces/PriceData"
+import { UserLogReturn } from "../interfaces/DiscordUser"
 import { errorLogger, debugLogger } from "../utils/logHandler"
 import { initApi } from "./apiCall"
 
 
-export const getActivity = async ( userDiscordId: bigint ): Promise<UserLog[]> => {
-    let response: UserLog[] = []
+export const getActivity = async ( userDiscordId: bigint ): Promise<UserLogReturn[]> => {
+    let response: UserLogReturn[] = []
     try {
         const instance = initApi()
     

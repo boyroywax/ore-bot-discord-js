@@ -117,11 +117,12 @@ app.get('/api/activity', async (request: Request, response: Response) => {
 		request: request
 	})
 	const user: bigint = BigInt( request.query.user?.toString() || '0')
-	const min: number = Number(request.query.min?.toString() || "1")
+	const min: number = Number(request.query.min?.toString() || "0")
 	const limit: number = Number(request.query.limit?.toString() || "20")
 
 	try {
 		await listLastActivity( user, min, limit ).then(function(userLogEntries) {
+
 			debugLogger("logs: " + userLogEntries)
 			if (userLogEntries) {
 				return response.status(200).send(userLogEntries)
