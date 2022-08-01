@@ -15,7 +15,7 @@ async function createEntry( entry: UserLog ): Promise<boolean> {
         saveStatus = true
     }
     catch (err) {
-        errorLogger("addLog", err)
+        errorLogger("createEntry", err)
     }
     finally {
         await disconnect()
@@ -85,7 +85,7 @@ export async function logEntry (
         savedLogEntry = true
     }
     catch (err) {
-        errorLogger('logEntry in userLog.ts', err)
+        errorLogger('logEntry', err)
     }
     return savedLogEntry
 }
@@ -98,7 +98,7 @@ export async function listLastActivity ( discordId: bigint, min: number = 0, lim
     // 
     let userLogEntries: UserLog[] = []
     try {
-        userLogEntries = await getEntries(discordId, 0, 20)
+        userLogEntries = await getEntries(discordId, min, limit)
         let sortedEntries = userLogEntries.sort((a: UserLog ,b: UserLog) => +new Date(b.date) - +new Date(a.date))
         
         // create a new list with only unique entries

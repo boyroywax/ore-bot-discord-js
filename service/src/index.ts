@@ -12,6 +12,7 @@ import { getOreIdBalance } from "./actions/oreIdBalance"
 import { DiscordUser } from "./interfaces/DiscordUser"
 import { getDiscordUserFromDiscordId, getDiscordUserFromOreId, getDiscordUserFromState } from "./actions/getUser"
 import { listLastActivity } from "./actions/activityLog"
+import { getTotalTips, listLastTips } from "./actions/getTips"
 
 
 const app = express()
@@ -132,6 +133,48 @@ app.get('/api/activity', async (request: Request, response: Response) => {
 	}
 	catch (err) {
 		errorLogger("/api/activity", err)
+		return response.status(404).send({result: false})
+	}
+
+})
+
+app.get('/api/tips', async (request: Request, response: Response) => {
+    // 
+    // Returns a list of logEntries for a user
+    // Sorted in descending date order
+    // Leaves only unique values
+    // 
+	eventLogger({
+		message: "/tips Hit",
+		request: request
+	})
+	const user: bigint = BigInt( request.query.user?.toString() || '0')
+	const min: number = Number(request.query.min?.toString() || "1")
+	const limit: number = Number(request.query.limit?.toString() || "20")
+	const format: string = request.query.format?.toString() || "list"
+
+	try {
+		switch(format) {
+			case "list": {
+				await listLastTips( user, min, limit ).then(function(userLogEntries) {
+					debugLogger("logs: " + userLogEntries)
+					if (userLogEntries) {
+						return response.status(200).send(userLogEntries)
+					}
+					else {
+						return response.status(404).send({result: false})
+					}
+				})
+			}
+			case "total": {
+				const totalTips = await getTotalTips( user )
+				return response.status(200).send(totalTips)
+			}
+		}
+		
+	}
+	catch (err) {
+		errorLogger("/api/tips", err)
 		return response.status(404).send({result: false})
 	}
 
