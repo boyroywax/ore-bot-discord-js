@@ -9,10 +9,11 @@ import { verifySign } from "./actions/verifySign"
 import { checkOreIdLink } from "./actions/checkOreIdLink"
 import { getActiveBalance } from "./actions/activeBalance"
 import { getOreIdBalance } from "./actions/oreIdBalance"
-import { DiscordUser, DiscordUserReturn } from "./interfaces/DiscordUser"
+import { DiscordUserReturn } from "./interfaces/DiscordUser"
 import { getDiscordUserFromDiscordId, getDiscordUserFromOreId, getDiscordUserFromState } from "./actions/getUser"
 import { listLastActivity } from "./actions/activityLog"
 import { getTotalTips, listLastTips } from "./actions/getTips"
+import { getChainAccount } from "./actions/getAccount"
 
 
 const app = express()
@@ -204,6 +205,28 @@ app.get('/api/logout', async (request: Request, response: Response) => {
 	}
 	catch (err) {
 		errorLogger("/api/logout", err)
+		return response.status(404).send({result: false})
+	}
+
+})
+
+app.get('/api/account', async (request: Request, response: Response) => {
+	// 
+	// Verify if the transactions was signed
+	// 
+	const user: string = request.query.name?.toString() || ''
+
+	try {
+		const chainAccount = await getChainAccount(user)
+		if (chainAccount) {
+			return response.status(200).send(chainAccount)
+		}
+		else {
+			return response.status(404).send({result: false})
+		}
+	}
+	catch (err) {
+		errorLogger('/api/account', err)
 		return response.status(404).send({result: false})
 	}
 

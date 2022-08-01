@@ -12,40 +12,52 @@ export const UserPage: React.FC = () => {
     const loggedIn = useIsLoggedIn()
     const [ active, setActive ] = useState<number>(0)
     const [ oreIdBalance, setOreIdBalance ] = useState<number>(0)
-    const [ discordId, setDiscordId ] = useState<string>("Not Linked")
-    const [ logEntries, setLogEntries ] = useState()
+    const [ discordId, setDiscordId ] = useState<string | null>(null)
+    const [ logEntries, setLogEntries ] = useState<string | null>(null)
     const [ loadedEntries, setLoadedEntries ] = useState<boolean>(false)
-    const [ totalTips, setTotaltips ] = useState<number>(0)
+    const [ totalTips, setTotaltips ] = useState<number | null>(null)
 
     let log: any = "Loading Activity..."
 
-    const fetchData = async() => {
+    const getDiscordId = async () => {
         const userData = await getUser((user?.accountName || "None"), "oreid")
-
         if (userData.discordId) {
             setDiscordId(userData.discordId)
         }
-        if (userData.discordId && !loadedEntries) {
-            const logEntries = await getActivity(userData.discordId)
-            log = logEntries.map(
-                (item: any) => {return (<li key={item._id}>{item.action}</li>)}
-            )
-            setLogEntries(log)
-            const userTotalTips = await getTips(userData.discordId, "total")
-            setTotaltips( userTotalTips.result )
+    }
 
-            setLoadedEntries(true)
-        }
-        
-        const balances = await getBalances(BigInt(userData.discordId) || BigInt(0))
+    const fetchData = async ( discordId: bigint ) => {
+        const balances = await getBalances(discordId)
         setActive(Number(balances.activeBalance))
         setOreIdBalance(Number(balances.oreIdBalance))
     }
 
+    const loadEntries = async (discordId: bigint) => {
+        const logEntries = await getActivity(discordId)
+        log = logEntries.map(
+            (item: any) => {return (<li key={item._id}>{item.action}</li>)}
+        )
+        setLogEntries(log)
+        setLoadedEntries(true)
+    } 
+
+    const getUserTips = async (discordId: bigint) => {
+        const userTotalTips = await getTips(discordId, "total")
+        setTotaltips( userTotalTips.result )    
+    }
+
     useEffect(() => {
-        if ((loggedIn) && (user) && (!loadedEntries)) {
-            fetchData()
-            return
+        if ((loggedIn) && (user !== undefined) && (discordId === null)) {
+            getDiscordId()
+        }
+        if ((loggedIn) && (user !== undefined) && (discordId !== null)) {
+            fetchData(BigInt(discordId))
+        }
+        if ((discordId !== null) && (user !== undefined) && (loadedEntries === false)) {
+            loadEntries(BigInt(discordId))
+        }
+        if ((totalTips === null) && (user !== undefined) && (discordId !== null)) {
+            getUserTips(BigInt(discordId))
         }
     })
 
