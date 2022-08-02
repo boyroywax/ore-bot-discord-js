@@ -13,10 +13,11 @@ export async function getActiveBalance( userDiscordId: bigint ): Promise<number>
 
     let activeBalance: number = 0.00
     try {
-        await connect(mongoUri).then( async (db) => {
+        // await connect(mongoUri).then( async (db) => {
             const userInfo = await ActiveBalanceModel.findOne({"discordId": userDiscordId})
             if (userInfo) {
                 activeBalance = userInfo.activeBalance
+                // await db.disconnect()
             }
             else {
                 const zeroCompleted: boolean = await zeroActiveBalance(userDiscordId)
@@ -24,16 +25,11 @@ export async function getActiveBalance( userDiscordId: bigint ): Promise<number>
                     debugLogger('Successfully zeroed ' + userDiscordId + " activeBalance")
                 }
             }
-            await db.disconnect()
         // }).finally(async () => await disconnect())
-        })
-        
+        // })
     }
     catch(err) {
         errorLogger('getActiveBalance', err)
-    }
-    finally {
-
     }
     return activeBalance
 }
@@ -43,7 +39,7 @@ export async function zeroActiveBalance ( userDiscordId: bigint ): Promise<boole
     // Sets a user's bot balance back to zero, used when creating a new user.
     // 
     let balanceZeroed = false
-    const db = await connect(mongoUri)
+    // const db = await connect(mongoUri)
     try {
         await ActiveBalanceModel.findOne({ "discordId": userDiscordId })
             .exec()
@@ -62,7 +58,7 @@ export async function zeroActiveBalance ( userDiscordId: bigint ): Promise<boole
                     await doc.save()
                     balanceZeroed = true
                 }
-                await db.disconnect()
+                // await db.disconnect()
             })
     }
     catch (err) {

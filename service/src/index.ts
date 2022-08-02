@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express"
+import mongoose, { ConnectOptions } from "mongoose"
 
 import { eventLogger, errorLogger, debugLogger } from "./utils/logHandler"
 import { getPriceData } from "./actions/priceCheck"
@@ -14,11 +15,17 @@ import { getDiscordUserFromDiscordId, getDiscordUserFromOreId, getDiscordUserFro
 import { listLastActivity } from "./actions/activityLog"
 import { getTotalTips, listLastTips } from "./actions/getTips"
 import { getChainAccount } from "./actions/getAccount"
+import { mongoUri } from "./utils/mongo"
 
 
 const app = express()
 const port: number = Number(process.env.OREID_CALLBACK_PORT) || 53134
 const redirectUrl: string = process.env.DISCORD_INVITE_URL || ''
+const options: ConnectOptions = {autoIndex: true, autoCreate: true}
+
+mongoose.connect(mongoUri, options)
+	.then(result => app.listen(port, "0.0.0.0", () => console.log(`app running on port ${port}`)))
+	.catch(err => console.log(err))
 
 app.get('/', (request: Request, response: Response) => {
 	// 
@@ -365,4 +372,4 @@ app.get('/api/getUser', async (request: Request, response: Response) => {
 	}
 })
 
-app.listen(port, '0.0.0.0', () => debugLogger(`App listening at http://0.0.0.0:${port}`));
+// app.listen(port, '0.0.0.0', () => debugLogger(`App listening at http://0.0.0.0:${port}`));

@@ -5,6 +5,7 @@ import { getBalances } from "../serviceCalls/getBalances";
 import styles from "./UserPage.module.scss";
 import { getActivity } from "../serviceCalls/getActivity";
 import { getTips } from "../serviceCalls/getTips"
+import { DiscordUserData } from "./LoadUserPage";
 
 
 export const UserPage: React.FC = () => {
@@ -14,7 +15,7 @@ export const UserPage: React.FC = () => {
     const [ oreIdBalance, setOreIdBalance ] = useState<number>(0)
     const [ balances, setBalances] = useState<boolean>(false)
     const [ discordId, setDiscordId ] = useState<string | null>(null)
-    const [ logEntries, setLogEntries ] = useState<string | null>(null)
+    const [ logEntries, setLogEntries ] = useState<any[] | null>(null)
     const [ loadedEntries, setLoadedEntries ] = useState<boolean>(false)
     const [ totalTips, setTotaltips ] = useState<number | null>(null)
 
@@ -64,9 +65,30 @@ export const UserPage: React.FC = () => {
         return
     })
 
-    if (!loadedEntries) {
-        return <>..Loading</>
-    }
+
+    // useEffect(() => {
+
+    //     if (user !== undefined) { 
+    //         const discordUserData = new DiscordUserData(user)
+
+    //         discordUserData.loadUserData()
+    //         setDiscordId(discordUserData.discordId.toString())
+    //         setActive(Number(discordUserData.activeBalance))
+    //         setOreIdBalance(Number(discordUserData.oreIdBalance))
+
+    //         const log = discordUserData.logEntries.map(
+    //             (item: any) => {return (<li key={item._id}>{item.action} | {item.status}</li>)}
+    //         )
+    //         const logSlice = log.slice(0,10)
+    //         setLogEntries(logSlice)
+    //         setTotaltips( discordUserData.tipCount )
+    //         setLoadedEntries(true)
+    //     }
+    // }, [user])
+
+    // if (!loadedEntries) {
+    //     return <>..Loading</>
+    // }
 
     return (
         <section className={styles.UserPage}>

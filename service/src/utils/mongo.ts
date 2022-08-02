@@ -1,3 +1,4 @@
+import mongoose from "mongoose"
 import { DiscordUser, DiscordUserReturn, UserLog, UserLogReturn } from "../interfaces/DiscordUser"
 
 export const mongoUri = process.env.MONGO_URI || "mongodb://" 

@@ -35,7 +35,7 @@ export const LoginPage: React.FC = () => {
 		//
 		const {available, oreIdLinked} = await checkOreIdLink(user.accountName, state.state)
 		console.log(oreIdLinked)
-		if (oreIdLinked == "None") { 
+		if (oreIdLinked === "None") { 
 			if ( state.state === "None" ) {
 				await setLoginError(`${user.accountName}_state_is_none`, "0")
 				setError(({message: "Please login using the Discord bot."}) as Error)
@@ -50,7 +50,7 @@ export const LoginPage: React.FC = () => {
 						setError(err)
 					})
 				setState({state: state.state, loggedIn: true, account: user.accountName })
-				if (window.location.href == "/app/login") {
+				if (window.location.href === "/app/login") {
 					window.location.replace("/app/landing")
 				}
 			}
