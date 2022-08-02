@@ -9,7 +9,7 @@ import { convertLogToReturn, mongoUri } from '../utils/mongo'
 
 async function createEntry( entry: UserLog ): Promise<boolean> {
     let saveStatus: boolean = false
-    await connect(mongoUri)
+    const db = await connect(mongoUri)
     try {        
         await UserLogModel.create(entry)
         saveStatus = true
@@ -18,7 +18,7 @@ async function createEntry( entry: UserLog ): Promise<boolean> {
         errorLogger("createEntry", err)
     }
     finally {
-        await disconnect()
+        await db.disconnect()
     }
     return saveStatus
 }
@@ -30,8 +30,9 @@ async function getEntries( discordId: bigint, min: number, limit: number ): Prom
     // when the user is both a sender and receiver/a tranfser)
     // 
     let logEntries: UserLog[] = []
-    await connect(mongoUri)
+
     try {
+        const db = await connect(mongoUri)
         const options: QueryOptions = {}
         await UserLogModel.find({"discordId": discordId})
             .sort("-date")
@@ -40,17 +41,17 @@ async function getEntries( discordId: bigint, min: number, limit: number ): Prom
                 for (let doc in docs) {
                     logEntries.push(docs[doc])
                 }
-        })
+                await db.disconnect()
+            })
     }
     catch (err) {
         errorLogger("getEntries discordId", err)
     }
-    finally {
-        await disconnect()
-    }
 
-    await connect(mongoUri)
+
+
     try {
+        const db = await connect(mongoUri)
         await UserLogModel.find({"recipient": discordId})
             .sort("-date")
             .limit(limit).skip(min).exec()
@@ -58,14 +59,12 @@ async function getEntries( discordId: bigint, min: number, limit: number ): Prom
                 for (let doc in docs) {
                     logEntries.push(docs[doc])
                 }
-        })
+                await db.disconnect()
+            })
         // logEntries = compareLogEntries( logEntries )
     }
     catch (err) {
         errorLogger("getEntries recipient", err)
-    }
-    finally {
-        await disconnect()
     }
     return logEntries
 }

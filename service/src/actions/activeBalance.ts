@@ -10,25 +10,30 @@ export async function getActiveBalance( userDiscordId: bigint ): Promise<number>
     // Retrieves the user's balance in the user's bot account
     // Creates a activeBalance entry for the user if they do not have one
     // 
-    await connect(mongoUri)
+
     let activeBalance: number = 0.00
     try {
-        const userInfo = await ActiveBalanceModel.findOne({"discordId": userDiscordId})
-        if (userInfo) {
-            activeBalance = userInfo.activeBalance
-        }
-        else {
-            const zeroCompleted: boolean = await zeroActiveBalance(userDiscordId)
-            if (zeroCompleted) {
-                debugLogger('Successfully zeroed ' + userDiscordId + " activeBalance")
+        await connect(mongoUri).then( async (db) => {
+            const userInfo = await ActiveBalanceModel.findOne({"discordId": userDiscordId})
+            if (userInfo) {
+                activeBalance = userInfo.activeBalance
             }
-        }
+            else {
+                const zeroCompleted: boolean = await zeroActiveBalance(userDiscordId)
+                if (zeroCompleted) {
+                    debugLogger('Successfully zeroed ' + userDiscordId + " activeBalance")
+                }
+            }
+            await db.disconnect()
+        // }).finally(async () => await disconnect())
+        })
+        
     }
     catch(err) {
         errorLogger('getActiveBalance', err)
     }
     finally {
-        await disconnect()
+
     }
     return activeBalance
 }
@@ -38,9 +43,9 @@ export async function zeroActiveBalance ( userDiscordId: bigint ): Promise<boole
     // Sets a user's bot balance back to zero, used when creating a new user.
     // 
     let balanceZeroed = false
-    await connect(mongoUri)
+    const db = await connect(mongoUri)
     try {
-        const updateOutput = await ActiveBalanceModel.findOne({ "discordId": userDiscordId })
+        await ActiveBalanceModel.findOne({ "discordId": userDiscordId })
             .exec()
             .then( async function(doc) {
                 if (!doc) {
@@ -57,13 +62,14 @@ export async function zeroActiveBalance ( userDiscordId: bigint ): Promise<boole
                     await doc.save()
                     balanceZeroed = true
                 }
+                await db.disconnect()
             })
     }
     catch (err) {
         errorLogger("zeroActiveBalance", err)
     }
     finally {
-        await disconnect()
+
     }
     return balanceZeroed
 }

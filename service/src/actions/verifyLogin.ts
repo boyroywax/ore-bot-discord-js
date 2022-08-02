@@ -15,7 +15,7 @@ export async function verifyLogin(
     // Returns true if the user was logged in correctly
     //
     let loggedIn = false
-    await connect(mongoUri)
+    const db = await connect(mongoUri)
     try {
         // Declare the DiscordUser model and search mongodb for
         // a state that matches the callback value
@@ -65,7 +65,7 @@ export async function verifyLogin(
         errorLogger("verifyLogin", err)
     }
     finally {
-        await disconnect()
+        await db.disconnect()
     }
     return loggedIn
 }
