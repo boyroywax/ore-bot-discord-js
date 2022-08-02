@@ -5,7 +5,7 @@ export const mongoUri = process.env.MONGO_URI || "mongodb://"
     + ":" + process.env.MONGO_PORT 
     + "/test?retryWrites=true&w=majority"
 
-export const convertToReturn = (result: DiscordUser): DiscordUserReturn => {
+export const convertUserToReturn = (result: DiscordUser): DiscordUserReturn => {
     const discordUser: DiscordUserReturn = {
         discordId: result.discordId.toString(),
         loggedIn: result.loggedIn,

@@ -41,6 +41,16 @@ async function getEntries( discordId: bigint, min: number, limit: number ): Prom
                     logEntries.push(docs[doc])
                 }
         })
+    }
+    catch (err) {
+        errorLogger("getEntries discordId", err)
+    }
+    finally {
+        await disconnect()
+    }
+
+    await connect(mongoUri)
+    try {
         await UserLogModel.find({"recipient": discordId})
             .sort("-date")
             .limit(limit).skip(min).exec()
@@ -52,7 +62,7 @@ async function getEntries( discordId: bigint, min: number, limit: number ): Prom
         // logEntries = compareLogEntries( logEntries )
     }
     catch (err) {
-        errorLogger("getEntries", err)
+        errorLogger("getEntries recipient", err)
     }
     finally {
         await disconnect()
@@ -115,7 +125,7 @@ export async function listLastActivity ( discordId: bigint, min: number = 0, lim
         userLogEntriesReturn = uniqueEntries
     }
     catch (err) {
-        errorLogger("listLastActivity in userLog.ts", err)
+        errorLogger("listLastActivity", err)
     }
     return userLogEntriesReturn
 }

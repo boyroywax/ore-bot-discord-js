@@ -1,5 +1,5 @@
 import { connect, disconnect } from "mongoose"
-import { convertToReturn, mongoUri } from "../utils/mongo"
+import { convertUserToReturn, mongoUri } from "../utils/mongo"
 import { DiscordUser, DiscordUserReturn } from "../interfaces/DiscordUser"
 import { DiscordUserModel } from "../models/DiscordUserModel"
 import { errorLogger } from "../utils/logHandler"
@@ -10,7 +10,7 @@ export const getDiscordUserFromState = async (state: string): Promise<DiscordUse
     await connect(mongoUri)
     try {
         const result = (await DiscordUserModel.findOne({"state": state})) as DiscordUser
-        discordUser = convertToReturn(result)
+        discordUser = convertUserToReturn(result)
     }
     catch (err) {
         errorLogger("getDiscordUserFromState", err)
@@ -27,7 +27,7 @@ export const getDiscordUserFromOreId = async (oreId: string): Promise<DiscordUse
     await connect(mongoUri)
     try {
         const result = (await DiscordUserModel.findOne({"oreId": oreId})) as DiscordUser
-        discordUser = convertToReturn(result)
+        discordUser = convertUserToReturn(result)
     }
     catch (err) {
         errorLogger("getDiscordUserFromOreId", err)
@@ -44,7 +44,7 @@ export const getDiscordUserFromDiscordId = async (discordId: bigint): Promise<Di
     await connect(mongoUri)
     try {
         const result = (await DiscordUserModel.findOne({"discordId": discordId})) as DiscordUser
-        discordUser = convertToReturn(result)
+        discordUser = convertUserToReturn(result)
     }
     catch (err) {
         errorLogger("getDiscordUserFromDiscordId", err)

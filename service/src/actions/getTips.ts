@@ -24,6 +24,16 @@ async function getTips( discordId: bigint, min: number, limit: number ): Promise
                     tips.push(docs[doc])
                 }
         })
+    }
+    catch (err) {
+        errorLogger("getTips discordId", err)
+    }
+    finally {
+        await disconnect()
+    }
+
+    await connect(mongoUri)
+    try {
         await UserLogModel.find({"recipient": discordId, "action": "Tip"})
             .sort("-date")
             .limit(limit).skip(min).exec()
@@ -34,7 +44,7 @@ async function getTips( discordId: bigint, min: number, limit: number ): Promise
         })
     }
     catch (err) {
-        errorLogger("getTips", err)
+        errorLogger("getTips recipient", err)
     }
     finally {
         await disconnect()

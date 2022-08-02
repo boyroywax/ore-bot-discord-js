@@ -12,6 +12,7 @@ export const UserPage: React.FC = () => {
     const loggedIn = useIsLoggedIn()
     const [ active, setActive ] = useState<number>(0)
     const [ oreIdBalance, setOreIdBalance ] = useState<number>(0)
+    const [ balances, setBalances] = useState<boolean>(false)
     const [ discordId, setDiscordId ] = useState<string | null>(null)
     const [ logEntries, setLogEntries ] = useState<string | null>(null)
     const [ loadedEntries, setLoadedEntries ] = useState<boolean>(false)
@@ -27,17 +28,18 @@ export const UserPage: React.FC = () => {
     }
 
     const fetchData = async ( discordId: bigint ) => {
-        const balances = await getBalances(discordId)
-        setActive(Number(balances.activeBalance))
-        setOreIdBalance(Number(balances.oreIdBalance))
+        const balance = await getBalances(discordId)
+        setActive(Number(balance.activeBalance))
+        setOreIdBalance(Number(balance.oreIdBalance))
+        setBalances(true)
     }
 
     const loadEntries = async (discordId: bigint) => {
         const logEntries = await getActivity(discordId)
         log = logEntries.map(
-            (item: any) => {return (<li key={item._id}>{item.action}</li>)}
+            (item: any) => {return (<li key={item._id}>{item.action} | {item.status}</li>)}
         )
-        setLogEntries(log)
+        setLogEntries(log.slice(0,10))
         setLoadedEntries(true)
     } 
 
@@ -50,16 +52,21 @@ export const UserPage: React.FC = () => {
         if ((loggedIn) && (user !== undefined) && (discordId === null)) {
             getDiscordId()
         }
-        if ((loggedIn) && (user !== undefined) && (discordId !== null)) {
+        if ((loggedIn) && (user !== undefined) && (discordId !== null) && (!balances)) {
             fetchData(BigInt(discordId))
-        }
-        if ((discordId !== null) && (user !== undefined) && (loadedEntries === false)) {
-            loadEntries(BigInt(discordId))
         }
         if ((totalTips === null) && (user !== undefined) && (discordId !== null)) {
             getUserTips(BigInt(discordId))
         }
+        if ((discordId !== null) && (user !== undefined) && (loadedEntries === false)) {
+            loadEntries(BigInt(discordId))
+        }
+        return
     })
+
+    if (!loadedEntries) {
+        return <>..Loading</>
+    }
 
     return (
         <section className={styles.UserPage}>
