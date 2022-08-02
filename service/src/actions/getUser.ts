@@ -7,7 +7,7 @@ import { errorLogger } from "../utils/logHandler"
 
 export const getDiscordUserFromState = async (state: string): Promise<DiscordUserReturn> => {
     let discordUser: DiscordUserReturn = {discordId: "0"} as DiscordUserReturn
-    // const db = await connect(mongoUri)
+
     try {
         const result = (await DiscordUserModel.findOne({"state": state})) as DiscordUser
         discordUser = convertUserToReturn(result)
@@ -15,16 +15,13 @@ export const getDiscordUserFromState = async (state: string): Promise<DiscordUse
     catch (err) {
         errorLogger("getDiscordUserFromState", err)
     }
-    finally {
-        // await db.disconnect()
-    }
 
     return discordUser
 }
 
 export const getDiscordUserFromOreId = async (oreId: string): Promise<DiscordUserReturn> => {
     let discordUser: DiscordUserReturn = {discordId: "0"} as DiscordUserReturn
-    // const db = await connect(mongoUri)
+
     try {
         const result = (await DiscordUserModel.findOne({"oreId": oreId})) as DiscordUser
         discordUser = convertUserToReturn(result)
@@ -32,25 +29,19 @@ export const getDiscordUserFromOreId = async (oreId: string): Promise<DiscordUse
     catch (err) {
         errorLogger("getDiscordUserFromOreId", err)
     }
-    finally {
-        // await db.disconnect()
-    }
 
     return discordUser
 }
 
 export const getDiscordUserFromDiscordId = async (discordId: bigint): Promise<DiscordUserReturn> => {
     let discordUser: DiscordUserReturn = {discordId: "0"} as DiscordUserReturn
-    // const db = await connect(mongoUri)
+
     try {
         const result = (await DiscordUserModel.findOne({"discordId": discordId})) as DiscordUser
         discordUser = convertUserToReturn(result)
     }
     catch (err) {
         errorLogger("getDiscordUserFromDiscordId", err)
-    }
-    finally {
-        // await db.disconnect()
     }
 
     return discordUser

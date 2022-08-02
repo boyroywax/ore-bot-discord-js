@@ -16,7 +16,7 @@ async function getTips( discordId: bigint, min: number, limit: number ): Promise
     let tips: UserLog[] = []
 
     try {
-        // const db = await connect(mongoUri)
+    
         await UserLogModel.find({"discordId": discordId, "action": "Tip"})
             .sort("-date")
             .limit(limit).skip(min).exec()
@@ -33,7 +33,7 @@ async function getTips( discordId: bigint, min: number, limit: number ): Promise
 
 
     try {
-        // const db = await connect(mongoUri)
+    
         await UserLogModel.find({"recipient": discordId, "action": "Tip"})
             .sort("-date")
             .limit(limit).skip(min).exec()

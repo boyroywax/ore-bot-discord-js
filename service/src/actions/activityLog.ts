@@ -9,7 +9,7 @@ import { convertLogToReturn, mongoUri } from '../utils/mongo'
 
 async function createEntry( entry: UserLog ): Promise<boolean> {
     let saveStatus: boolean = false
-    // const db = await connect(mongoUri)
+
     try {        
         await UserLogModel.create(entry)
         saveStatus = true
@@ -17,9 +17,7 @@ async function createEntry( entry: UserLog ): Promise<boolean> {
     catch (err) {
         errorLogger("createEntry", err)
     }
-    finally {
-        // await db.disconnect()
-    }
+
     return saveStatus
 }
 
@@ -32,7 +30,7 @@ async function getEntries( discordId: bigint, min: number, limit: number ): Prom
     let logEntries: UserLog[] = []
 
     try {
-        // const db = await connect(mongoUri)
+    
         const options: QueryOptions = {}
         await UserLogModel.find({"discordId": discordId})
             .sort("-date")
@@ -51,7 +49,7 @@ async function getEntries( discordId: bigint, min: number, limit: number ): Prom
 
 
     try {
-        // const db = await connect(mongoUri)
+    
         await UserLogModel.find({"recipient": discordId})
             .sort("-date")
             .limit(limit).skip(min).exec()

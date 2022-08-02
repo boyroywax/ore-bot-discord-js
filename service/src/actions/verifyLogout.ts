@@ -13,7 +13,7 @@ export async function verifyLogout( stateIn: string ): Promise<boolean> {
     // Returns true if the user was logged in correctly
     //
     let logoutSuccess: boolean = false
-    // const db = await connect(mongoUri)
+
     // Connect to mongoDB
     debugLogger('Connected to MongoDB!')
     try {

@@ -15,7 +15,7 @@ export async function loginError(
     // Returns true if the user was logged in correctly
     //
     let errorLogged = false
-    // const db = await connect(mongoUri)
+
     try {
         // Declare the DiscordUser model and search mongodb for
         // a state that matches the callback value
@@ -54,8 +54,6 @@ export async function loginError(
     catch (err) {
         errorLogger("verifyLogin", err)
     }
-    finally {
-        // await db.disconnect()
-    }
+
     return errorLogged
 }

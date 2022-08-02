@@ -10,16 +10,22 @@ import { DiscordUserData } from "./LoadUserPage";
 
 export const UserPage: React.FC = () => {
     const user = useUser()
-    const loggedIn = useIsLoggedIn()
-    const [ active, setActive ] = useState<number>(0)
-    const [ oreIdBalance, setOreIdBalance ] = useState<number>(0)
-    const [ balances, setBalances] = useState<boolean>(false)
+    const loggedIn = useIsLoggedIn() || false
+    const [ userData, setUserData ] = useState<{
+        activeBalance: null | number, 
+        oreIdBalance: null | number,
+        discordId: null | string,
+        logEntries: null | any[],
+        totalTips: null | number
+    }>({
+        activeBalance: null, 
+        oreIdBalance: null,
+        discordId: null,
+        logEntries: null,
+        totalTips: null
+    })
     const [ discordId, setDiscordId ] = useState<string | null>(null)
-    const [ logEntries, setLogEntries ] = useState<any[] | null>(null)
     const [ loadedEntries, setLoadedEntries ] = useState<boolean>(false)
-    const [ totalTips, setTotaltips ] = useState<number | null>(null)
-
-    let log: any = "Loading Activity..."
 
     const getDiscordId = async () => {
         const userData = await getUser((user?.accountName || "None"), "oreid")
@@ -30,80 +36,58 @@ export const UserPage: React.FC = () => {
 
     const fetchData = async ( discordId: bigint ) => {
         const balance = await getBalances(discordId)
-        setActive(Number(balance.activeBalance))
-        setOreIdBalance(Number(balance.oreIdBalance))
-        setBalances(true)
-    }
 
-    const loadEntries = async (discordId: bigint) => {
         const logEntries = await getActivity(discordId)
-        log = logEntries.map(
+        const log = logEntries.map(
             (item: any) => {return (<li key={item._id}>{item.action} | {item.status}</li>)}
         )
-        setLogEntries(log.slice(0,10))
-        setLoadedEntries(true)
-    } 
 
-    const getUserTips = async (discordId: bigint) => {
         const userTotalTips = await getTips(discordId, "total")
-        setTotaltips( userTotalTips.result )    
+
+        setUserData({
+            activeBalance: Number(balance.activeBalance),
+            oreIdBalance: Number(balance.oreIdBalance),
+            discordId: discordId.toString(),
+            logEntries: log.slice(0,10),
+            totalTips: Number(userTotalTips.result)
+        })
+        setLoadedEntries(true)
     }
 
     useEffect(() => {
         if ((loggedIn) && (user !== undefined) && (discordId === null)) {
             getDiscordId()
         }
-        if ((loggedIn) && (user !== undefined) && (discordId !== null) && (!balances)) {
+        else if ((loggedIn) && (user !== undefined) && (discordId !== null) && !loadedEntries) {
             fetchData(BigInt(discordId))
+            return
         }
-        if ((totalTips === null) && (user !== undefined) && (discordId !== null)) {
-            getUserTips(BigInt(discordId))
+        else if((loggedIn) && (user !== undefined) && loadedEntries ){
+            return
         }
-        if ((discordId !== null) && (user !== undefined) && (loadedEntries === false)) {
-            loadEntries(BigInt(discordId))
+        else if (!loggedIn || user === undefined){
+            return
+        }
+        else {
+            return
         }
         return
     })
-
-
-    // useEffect(() => {
-
-    //     if (user !== undefined) { 
-    //         const discordUserData = new DiscordUserData(user)
-
-    //         discordUserData.loadUserData()
-    //         setDiscordId(discordUserData.discordId.toString())
-    //         setActive(Number(discordUserData.activeBalance))
-    //         setOreIdBalance(Number(discordUserData.oreIdBalance))
-
-    //         const log = discordUserData.logEntries.map(
-    //             (item: any) => {return (<li key={item._id}>{item.action} | {item.status}</li>)}
-    //         )
-    //         const logSlice = log.slice(0,10)
-    //         setLogEntries(logSlice)
-    //         setTotaltips( discordUserData.tipCount )
-    //         setLoadedEntries(true)
-    //     }
-    // }, [user])
-
-    // if (!loadedEntries) {
-    //     return <>..Loading</>
-    // }
 
     return (
         <section className={styles.UserPage}>
             <div className={styles.firstbox} >
                 <section className={styles.Balance}>
                     <div className={styles.card} >
-                        <h3>Active Balance:<br />{active} ORE</h3>
-                        <h3>ORE-ID Balance | {user?.accountName}<br />{oreIdBalance} ORE</h3>
-                        <h3>DiscordId Linked:<br /> {discordId}</h3>
-                        <h3>Total Tips:<br />{totalTips}</h3>
+                        <h3>Active Balance:<br />{userData.activeBalance} ORE</h3>
+                        <h3>ORE-ID Balance | {user?.accountName}<br />{userData.oreIdBalance} ORE</h3>
+                        <h3>DiscordId Linked:<br /> {userData.discordId}</h3>
+                        <h3>Total Tips:<br />{userData.totalTips}</h3>
                     </div>
                     <div className={styles.card} >
                         { loadedEntries ? 
                         <ol>
-                            {logEntries}
+                            {userData.logEntries}
                         </ol>
                         : "Loading Activity..." }
                     </div>
