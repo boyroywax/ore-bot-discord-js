@@ -143,7 +143,7 @@ export async function getPriceData(source: string): Promise<PriceData> {
 
 async function getLatestEntry(): Promise<PriceData> {
     let latestEntry: PriceData = new PriceDataModel
-    const db = await connect(mongoUri)
+    // const db = await connect(mongoUri)
     try {
         await PriceDataModel.findOne().sort('-dateCreated').exec().then(function(item) {
             if (item) {
@@ -156,14 +156,14 @@ async function getLatestEntry(): Promise<PriceData> {
         errorLogger('getLatestEntry', err)
     }
     finally {
-        await db.disconnect()
+        // await db.disconnect()
     }
     return latestEntry
 }
 
 async function createPriceEntry( apiData: Price ): Promise<PriceData> {
     let priceData: PriceData = new PriceDataModel
-    const db = await connect(mongoUri)
+    // const db = await connect(mongoUri)
     try {
         priceData = {
             dateCreated: apiData.dateCreated,
@@ -181,7 +181,7 @@ async function createPriceEntry( apiData: Price ): Promise<PriceData> {
         errorLogger('createPriceEntry', err)
     }
     finally {
-        await db.disconnect()
+        // await db.disconnect()
     }
     return priceData
 }
