@@ -15,7 +15,7 @@ export async function verifySign(
     // Returns true if the user was logged in correctly
     //
     let signed = false
-    await connect(mongoUri)
+
     try {
         // Declare the DiscordUser model and search mongodb for
         // a state that matches the callback value
@@ -71,8 +71,6 @@ export async function verifySign(
     catch (err) {
         errorLogger("verifySign", err)
     }
-    finally {
-        await disconnect()
-    }
+
     return signed
 }

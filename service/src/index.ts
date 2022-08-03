@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express"
+import mongoose, { ConnectOptions } from "mongoose"
 
 import { eventLogger, errorLogger, debugLogger } from "./utils/logHandler"
 import { getPriceData } from "./actions/priceCheck"
@@ -9,15 +10,22 @@ import { verifySign } from "./actions/verifySign"
 import { checkOreIdLink } from "./actions/checkOreIdLink"
 import { getActiveBalance } from "./actions/activeBalance"
 import { getOreIdBalance } from "./actions/oreIdBalance"
-import { DiscordUser, DiscordUserReturn } from "./interfaces/DiscordUser"
+import { DiscordUserReturn } from "./interfaces/DiscordUser"
 import { getDiscordUserFromDiscordId, getDiscordUserFromOreId, getDiscordUserFromState } from "./actions/getUser"
 import { listLastActivity } from "./actions/activityLog"
 import { getTotalTips, listLastTips } from "./actions/getTips"
+import { getChainAccount } from "./actions/getAccount"
+import { mongoUri } from "./utils/mongo"
 
 
 const app = express()
 const port: number = Number(process.env.OREID_CALLBACK_PORT) || 53134
 const redirectUrl: string = process.env.DISCORD_INVITE_URL || ''
+const options: ConnectOptions = {autoIndex: true, autoCreate: true}
+
+mongoose.connect(mongoUri, options)
+	.then(result => app.listen(port, "0.0.0.0", () => console.log(`app running on port ${port}`)))
+	.catch(err => console.log(err))
 
 app.get('/', (request: Request, response: Response) => {
 	// 
@@ -209,6 +217,28 @@ app.get('/api/logout', async (request: Request, response: Response) => {
 
 })
 
+app.get('/api/account', async (request: Request, response: Response) => {
+	// 
+	// Verify if the transactions was signed
+	// 
+	const user: string = request.query.name?.toString() || ''
+
+	try {
+		const chainAccount = await getChainAccount(user)
+		if (chainAccount) {
+			return response.status(200).send(chainAccount)
+		}
+		else {
+			return response.status(404).send({result: false})
+		}
+	}
+	catch (err) {
+		errorLogger('/api/account', err)
+		return response.status(404).send({result: false})
+	}
+
+})
+
 app.get('/api/sign', async (request: Request, response: Response) => {
 	// 
 	// Verify if the transactions was signed
@@ -342,4 +372,4 @@ app.get('/api/getUser', async (request: Request, response: Response) => {
 	}
 })
 
-app.listen(port, '0.0.0.0', () => debugLogger(`App listening at http://0.0.0.0:${port}`));
+// app.listen(port, '0.0.0.0', () => debugLogger(`App listening at http://0.0.0.0:${port}`));

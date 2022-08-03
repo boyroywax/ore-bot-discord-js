@@ -9,7 +9,7 @@ import { convertLogToReturn, mongoUri } from '../utils/mongo'
 
 async function createEntry( entry: UserLog ): Promise<boolean> {
     let saveStatus: boolean = false
-    await connect(mongoUri)
+
     try {        
         await UserLogModel.create(entry)
         saveStatus = true
@@ -17,9 +17,7 @@ async function createEntry( entry: UserLog ): Promise<boolean> {
     catch (err) {
         errorLogger("createEntry", err)
     }
-    finally {
-        await disconnect()
-    }
+
     return saveStatus
 }
 
@@ -30,8 +28,9 @@ async function getEntries( discordId: bigint, min: number, limit: number ): Prom
     // when the user is both a sender and receiver/a tranfser)
     // 
     let logEntries: UserLog[] = []
-    await connect(mongoUri)
+
     try {
+    
         const options: QueryOptions = {}
         await UserLogModel.find({"discordId": discordId})
             .sort("-date")
@@ -40,7 +39,17 @@ async function getEntries( discordId: bigint, min: number, limit: number ): Prom
                 for (let doc in docs) {
                     logEntries.push(docs[doc])
                 }
-        })
+                // await db.disconnect()
+            })
+    }
+    catch (err) {
+        errorLogger("getEntries discordId", err)
+    }
+
+
+
+    try {
+    
         await UserLogModel.find({"recipient": discordId})
             .sort("-date")
             .limit(limit).skip(min).exec()
@@ -48,15 +57,15 @@ async function getEntries( discordId: bigint, min: number, limit: number ): Prom
                 for (let doc in docs) {
                     logEntries.push(docs[doc])
                 }
-        })
+                // await db.disconnect()
+            })
+       
         // logEntries = compareLogEntries( logEntries )
     }
     catch (err) {
-        errorLogger("getEntries", err)
+        errorLogger("getEntries recipient", err)
     }
-    finally {
-        await disconnect()
-    }
+
     return logEntries
 }
 
@@ -115,7 +124,7 @@ export async function listLastActivity ( discordId: bigint, min: number = 0, lim
         userLogEntriesReturn = uniqueEntries
     }
     catch (err) {
-        errorLogger("listLastActivity in userLog.ts", err)
+        errorLogger("listLastActivity", err)
     }
     return userLogEntriesReturn
 }

@@ -14,8 +14,9 @@ async function getTips( discordId: bigint, min: number, limit: number ): Promise
     // when the user is both a sender and receiver/a tranfser)
     // 
     let tips: UserLog[] = []
-    await connect(mongoUri)
+
     try {
+    
         await UserLogModel.find({"discordId": discordId, "action": "Tip"})
             .sort("-date")
             .limit(limit).skip(min).exec()
@@ -23,7 +24,16 @@ async function getTips( discordId: bigint, min: number, limit: number ): Promise
                 for (let doc in docs) {
                     tips.push(docs[doc])
                 }
-        })
+                // await db.disconnect()
+            })
+    }
+    catch (err) {
+        errorLogger("getTips discordId", err)
+    }
+
+
+    try {
+    
         await UserLogModel.find({"recipient": discordId, "action": "Tip"})
             .sort("-date")
             .limit(limit).skip(min).exec()
@@ -31,13 +41,14 @@ async function getTips( discordId: bigint, min: number, limit: number ): Promise
                 for (let doc in docs) {
                     tips.push(docs[doc])
                 }
-        })
+                // await db.disconnect()
+            })
     }
     catch (err) {
-        errorLogger("getTips", err)
+        errorLogger("getTips recipient", err)
     }
     finally {
-        await disconnect()
+
     }
     return tips
 }
