@@ -99,8 +99,8 @@ app.get('/api/loginError', async (request: Request, response: Response) => {
 	const errorMsg: string = request.query.error?.toString() || ''
 	const state: string = request.query.state?.toString() || ''
 	try {
-		await loginError(errorMsg, state).then(async function(errorSuccess: boolean) {
-			if ((errorSuccess == true)) {
+		await loginError(errorMsg, state).then((errorSuccess: boolean) => {
+			if (errorSuccess === true) {
 				return response.status(200).send({result: true})
 			}
 			else {

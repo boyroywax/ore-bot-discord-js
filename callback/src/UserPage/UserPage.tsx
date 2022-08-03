@@ -1,16 +1,21 @@
-import { useOreId, useIsLoggedIn, useUser } from "oreid-react";
+// import { useOreId, useIsLoggedIn, useUser } from "oreid-react";
 import React, { useEffect, useState } from "react";
 import { getUser } from "../serviceCalls/getUser";
 import { getBalances } from "../serviceCalls/getBalances";
 import styles from "./UserPage.module.scss";
 import { getActivity } from "../serviceCalls/getActivity";
 import { getTips } from "../serviceCalls/getTips"
-import { DiscordUserData } from "./LoadUserPage";
+// import { DiscordUserData } from "./LoadUserPage";
 import { UserData } from "oreid-js";
 
+interface Props {
+    user: UserData | null
+}
 
-export const UserPage: React.FC = () => {
-    const loggedIn = useIsLoggedIn() || false
+export const UserPage: React.FC<Props> = ({
+    user
+}) => {
+    // const loggedIn = useIsLoggedIn() || false
     const [ userData, setUserData ] = useState<{
         oreAccount: null | string,
         activeBalance: null | number, 
@@ -28,7 +33,7 @@ export const UserPage: React.FC = () => {
     })
     // const [ discordId, setDiscordId ] = useState<string | null>(null)
     // const [ loadedEntries, setLoadedEntries ] = useState<boolean>(false)
-    let user: UserData | undefined = useUser() || undefined
+    // let user: UserData | undefined = useUser() || undefined
 
     const getDiscordId = async () => {
         // user = useUser()
@@ -61,7 +66,7 @@ export const UserPage: React.FC = () => {
     }
 
     useEffect(() => {
-        if ((loggedIn) && (user !== undefined) && (userData.discordId === null)) {
+        if ((user !== null) && (userData.discordId === null)) {
             getDiscordId()
         }
         // else if ((loggedIn) && (user !== undefined) && (userData.discordId !== null) && !userData.loadedEntries) {
