@@ -32,10 +32,11 @@ const oreId = new OreId({
 });
 
 const LoggedInView: React.FC = () => {
+	const user = useUser() || null
 	return(
 		<>
 		<Routes>
-			<Route path="/app" element={<UserPage />} />
+			<Route path="/app" element={<UserPage user={user}/>} />
 			<Route path="/app/login" element={<AutoLogin />} />
 			<Route path="/app/landing" element={<Landing />} />
 			<Route path="/app/sign" element={<Transfer />} />
