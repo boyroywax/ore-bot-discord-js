@@ -1,11 +1,11 @@
-import { useOreId, useIsLoggedIn, useUser } from "oreid-react";
+// import { useOreId, useIsLoggedIn, useUser } from "oreid-react";
 import React, { useEffect, useState } from "react";
 import { getUser } from "../serviceCalls/getUser";
 import { getBalances } from "../serviceCalls/getBalances";
 import styles from "./UserPage.module.scss";
 import { getActivity } from "../serviceCalls/getActivity";
 import { getTips } from "../serviceCalls/getTips"
-import { DiscordUserData } from "./LoadUserPage";
+// import { DiscordUserData } from "./LoadUserPage";
 import { UserData } from "oreid-js";
 
 interface Props {

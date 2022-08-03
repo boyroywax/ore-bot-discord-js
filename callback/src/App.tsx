@@ -2,11 +2,8 @@ import { OreId } from "oreid-js";
 import { OreidProvider, useIsLoggedIn, useUser } from "oreid-react";
 import { WebPopup } from "oreid-webpopup";
 import React, { useEffect, useState } from "react";
-import useUrlState from "@ahooksjs/use-url-state"
 import { BrowserRouter } from "react-router-dom"
 import { Routes, Route } from "react-router"
-import dotenv from "dotenv"
-
 
 import { Transfer } from "./Transfer"
 import "./App.scss";
@@ -18,6 +15,7 @@ import { Landing } from "./Landing";
 import { AutoLogin } from "./AutoLogin/AutoLogin";
 import { UserPage } from "./UserPage";
 import { Nav } from "./Nav";
+import { CastVote } from "./Vote/CastVote";
 
 
 // dotenv.config()
@@ -41,6 +39,7 @@ const LoggedInView: React.FC = () => {
 			<Route path="/app/landing" element={<Landing />} />
 			<Route path="/app/sign" element={<Transfer />} />
 			<Route path="/app/logout" element={<LogOut />} />
+			<Route path="/app/vote" element={<CastVote user={user} />} />
 		</Routes>
 		</>
 	)
