@@ -30,7 +30,7 @@ export const activeBalanceSchema = new Schema<ActiveBalance>({
 
 })
 
-export const ActiveBalanceModel = model<ActiveBalance>('ActiveBalanceBalance', activeBalanceSchema)
+export const ActiveBalanceModel = model<ActiveBalance>('ActiveBalance', activeBalanceSchema)
 
 // 
 // Logging a user's actions

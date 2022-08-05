@@ -16,6 +16,8 @@ import { listLastActivity } from "./actions/activityLog"
 import { getTotalTips, listLastTips } from "./actions/getTips"
 import { getChainAccount } from "./actions/getAccount"
 import { mongoUri } from "./utils/mongo"
+import { Proposals } from "./actions/makeProposal"
+import { Proposal } from "./interfaces/VoterData"
 
 
 const app = express()
@@ -40,7 +42,7 @@ app.get('/', (request: Request, response: Response) => {
 
 app.get('/health-check', (request: Request, response: Response) => {
 	// 
-	// Default index response
+	// Health-check response
 	// 
 	eventLogger({
 		message: "/health-check hit",
@@ -94,7 +96,7 @@ app.get('/api/login', async (request: Request, response: Response) => {
 })
 app.get('/api/loginError', async (request: Request, response: Response) => {
 	//
-	// Login authentication callback
+	// LoginError authentication callback
 	// 
 	const errorMsg: string = request.query.error?.toString() || ''
 	const state: string = request.query.state?.toString() || ''
@@ -354,16 +356,6 @@ app.get('/api/getUser', async (request: Request, response: Response) => {
 				break
 			}
 		}
-		// result = {
-		// 	discordId: resultData.discordId.toString(),
-		// 	loggedIn: resultData.loggedIn,
-		// 	lastLogin: resultData.lastLogin,
-		// 	dateCreated: resultData.dateCreated,
-		// 	oreId: resultData.oreId,
-		// 	state: resultData.state,
-		// 	pendingTransaction: resultData.pendingTransaction
-		// }
-		// result = convertToReturn(resultData)
 		return response.status(200).send(resultData)
 	}
 	catch (err) {
@@ -371,5 +363,40 @@ app.get('/api/getUser', async (request: Request, response: Response) => {
 		return response.status(404).send({"error": "Could not get user from DB"})
 	}
 })
+
+app.post('/api/proposal', async (request: Request, response: Response) => {
+	// 
+	// Send the User's Active Balance 
+	// 
+	const action: string = request.body.action?.toString() || 'default'
+	const caseNumber: number = Number(request.body.user?.toString()) || 0
+	const data: {} = JSON.parse(request.body.data?.toString()) || {}
+	const resultData: Proposal = new Proposals()
+
+	try {
+		switch (action){
+			case "get": {
+				await resultData.loadCase(caseNumber)
+				resultData
+				break
+			}
+			case "update": {
+				await resultData.updateCase(data)
+				break
+			}
+			case 'new': {
+				await resultData.updateCase(data)
+				break
+			}
+		}
+		return response.status(200).send(resultData)
+	}
+	catch (err) {
+		errorLogger('/api/proposal', err)
+		return response.status(404).send(err)
+	}
+})
+
+
 
 // app.listen(port, '0.0.0.0', () => debugLogger(`App listening at http://0.0.0.0:${port}`));

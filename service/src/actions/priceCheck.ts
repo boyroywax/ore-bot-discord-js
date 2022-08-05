@@ -1,8 +1,6 @@
 import axios from "axios"
-import { connect, disconnect } from "mongoose"
 
 import { debugLogger, errorLogger, eventLogger } from "../utils/logHandler"
-import { mongoUri } from "../utils/mongo"
 import { PriceData } from "../interfaces/PriceData"
 import { PriceDataModel } from "../models/PriceDataModel"
 
