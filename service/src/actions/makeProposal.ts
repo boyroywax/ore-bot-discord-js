@@ -18,17 +18,27 @@ export class Proposals implements Proposal {
     voteMinimum: number = 100.0
     votes: Vote[] = []
 
-    constructor(
-        title?: string,
-        creator?: bigint | string,
-        proposed?: string,
-        selections?: string[],
-        changeVote?: boolean,
-        endDate?: Date,
-        status?: string,
-        voteThreshold?: number,
-        voteMinimum?: number
-    ) {
+    constructor({
+        title,
+        creator,
+        proposed,
+        selections,
+        changeVote,
+        endDate,
+        status,
+        voteThreshold,
+        voteMinimum
+    }: {
+        title: string,
+        creator: bigint | string,
+        proposed: string,
+        selections: string[],
+        changeVote: boolean,
+        endDate: Date,
+        status: string,
+        voteThreshold: number,
+        voteMinimum: number
+    }) {
         this.title = title || this.title
         this.creator = creator || this.creator
         this.proposed = proposed || this.proposed
@@ -39,6 +49,7 @@ export class Proposals implements Proposal {
         this.voteThreshold = voteThreshold || this.voteThreshold
         this.voteMinimum = voteMinimum || this.voteMinimum
     }
+
 
     public async loadCase( caseNumber: number ): Promise<boolean> {
         let loadComplete: boolean = false
@@ -130,8 +141,8 @@ export class Proposals implements Proposal {
         try {
             if ( vote.caseNumber === this.caseNumber ) {
                 this.votes.push(vote)
-                added = true
                 await this.saveCase()
+                added = true
             }
         }
         catch (err) {

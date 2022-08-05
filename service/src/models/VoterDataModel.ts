@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from "mongoose"
+import { Schema, model } from "mongoose"
 
 import { Docket, Proposal, Vote } from "../interfaces/VoterData"
 
@@ -11,6 +11,7 @@ export const voteSchema = new Schema<Vote>({
     dateVoted: { type: Date, required: true },
     caseNumber: { type: Number, required: true },
     voteWeight: { type: Number, required: true },
+    signed: { type: [String], required: true }
 })
 
 export const VoteModel = model<Vote>("Vote", voteSchema)

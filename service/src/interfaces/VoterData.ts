@@ -27,6 +27,7 @@ export interface Proposal {
     loadCase(caseNumber: number): Promise<boolean>
     saveCase(): Promise<boolean>
     updateCase(data: {}): Promise<boolean>
+    addVote(vote: Vote): Promise<boolean>
 }
 
 // 
@@ -40,4 +41,5 @@ export interface Vote {
     dateVoted: Date
     caseNumber: number
     voteWeight: number
+    signed: string[]
 }
