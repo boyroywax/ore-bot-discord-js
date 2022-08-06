@@ -106,23 +106,32 @@ export class UserVote implements Vote {
         try {
             if ((updatedVote.discordId === this.discordId)
             && (updatedVote.caseNumber === this.caseNumber)) {
-                const vote: Vote | null = await VoteModel.findOne({
-                    "discordId": this.discordId,
-                    "caseNumber": this.caseNumber
-                })
-                if (vote !== null) {
-                    this.oreId = updatedVote.oreId || vote.oreId
-                    this.balanceAtVote = updatedVote.balanceAtVote || vote.balanceAtVote
-                    this.voteSelection = updatedVote.voteSelection || vote.voteSelection
-                    this.dateVoted = updatedVote.dateVoted || vote.dateVoted
-                    this.voteWeight = updatedVote.voteWeight || vote.voteWeight
-                    this.signed = updatedVote.signed || vote.signed
+                // const vote: Vote | null = await VoteModel.findOne({
+                //     "discordId": this.discordId,
+                //     "caseNumber": this.caseNumber
+                // })
+                // if (vote !== null) {
+                // this.oreId = updatedVote.oreId || vote.oreId
+                // this.balanceAtVote = updatedVote.balanceAtVote || vote.balanceAtVote
+                // this.voteSelection = updatedVote.voteSelection || vote.voteSelection
+                // this.dateVoted = updatedVote.dateVoted || vote.dateVoted
+                // this.voteWeight = updatedVote.voteWeight || vote.voteWeight
+                // this.signed = updatedVote.signed || vote.signed
+                this.oreId = updatedVote.oreId || this.oreId
+                this.balanceAtVote = updatedVote.balanceAtVote || this.balanceAtVote
+                this.voteSelection = updatedVote.voteSelection || this.voteSelection
+                this.dateVoted = updatedVote.dateVoted || this.dateVoted
+                this.voteWeight = updatedVote.voteWeight || this.voteWeight
+                this.signed = updatedVote.signed || this.signed
 
-                    const saved = await this.save()
-                    if (saved) {
-                        updateComplete = true
-                    }
+                const saved = await this.save()
+                if (saved) {
+                    updateComplete = true
                 }
+                // }
+            }
+            else {
+                errorLogger("UserVote.update.if/else", {message: "Attempted to update incorrect caseNumber or discordId"} as Error)
             }
         }
         catch (err) {
