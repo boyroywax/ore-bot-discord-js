@@ -26,7 +26,7 @@ export interface Proposal {
     votes: Vote[]
     loadCase(caseNumber: number): Promise<boolean>
     saveCase(): Promise<boolean>
-    updateCase(data: {}): Promise<boolean>
+    updateCase(updatedProposal: {}): Promise<boolean>
     addVote(vote: Vote): Promise<boolean>
 }
 
@@ -42,4 +42,7 @@ export interface Vote {
     caseNumber: number
     voteWeight: number
     signed: string[]
+    load({discordId, caseNumber}: {discordId: bigint, caseNumber: number}): Promise<boolean>
+    save(): Promise<{ saved: boolean, savedDoc: any }>
+    update(updateVote: {}): Promise<boolean>
 }

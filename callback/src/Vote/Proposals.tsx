@@ -12,7 +12,7 @@ export const Proposals: React.FC<Props> = ({
     const [ state, setUrlState ] = useUrlState<{
         proposal: string,
     }>({
-        proposal: "None",
+        proposal: "0",
     })
 
     const onProposalClick = (e: any) => {
@@ -28,6 +28,11 @@ export const Proposals: React.FC<Props> = ({
                 onProposalClick(e)
             }
         >Proposal #1</button>
+        { state.proposal === "0" ? 
+            <CreateProposal />
+            :
+            <DisplayProposal case={state.proposal} />
+        }
         </>
     )
 }

@@ -12,7 +12,7 @@ export class Proposals implements Proposal {
     proposed: string = "Proposed"
     selections: string[] = ["Yes", "No"]
     changeVote: boolean = false
-    endDate: Date = new Date(this.dateCreated.valueOf() + (148 * 60 * 60 * 1000 ))
+    endDate: Date = new Date(this.dateCreated.valueOf() + (144 * 60 * 60 * 1000 ))
     status: string = "None"
     voteThreshold: number = 50.0
     voteMinimum: number = 100.0
@@ -29,15 +29,15 @@ export class Proposals implements Proposal {
         voteThreshold,
         voteMinimum
     }: {
-        title: string,
-        creator: bigint | string,
-        proposed: string,
-        selections: string[],
-        changeVote: boolean,
-        endDate: Date,
-        status: string,
-        voteThreshold: number,
-        voteMinimum: number
+        title?: string,
+        creator?: bigint | string,
+        proposed?: string,
+        selections?: string[],
+        changeVote?: boolean,
+        endDate?: Date,
+        status?: string,
+        voteThreshold?: number,
+        voteMinimum?: number
     }) {
         this.title = title || this.title
         this.creator = creator || this.creator
@@ -81,9 +81,9 @@ export class Proposals implements Proposal {
     public async saveCase(): Promise<boolean> {
         let saved: boolean = false
         try {
-            let savedProposal: Document | null = await ProposalModel.findOne({"caseNumber": this.caseNumber})
+            const savedProposal: Document | null = await ProposalModel.findOne({"caseNumber": this.caseNumber})
             if (savedProposal !== null) {
-                await ProposalModel.updateOne({"caseNumber": this.caseNumber}, this as Proposal)
+                await ProposalModel.updateOne({"caseNumber": this.caseNumber}, this as Proposal).exec()
             }
             else {
                 await ProposalModel.create(this as Proposal)
