@@ -18,12 +18,11 @@ import { getChainAccount } from "./actions/getAccount"
 import { mongoUri } from "./utils/mongo"
 import { Proposals } from "./actions/makeProposal"
 import { Proposal, Vote } from "./interfaces/VoterData"
-import { UserVote } from "actions/castVote"
+import { UserVote } from "./actions/castVote"
 
 
 const app = express()
 const port: number = Number(process.env.OREID_CALLBACK_PORT) || 53134
-const redirectUrl: string = process.env.DISCORD_INVITE_URL || ''
 const options: ConnectOptions = {autoIndex: true, autoCreate: true}
 
 mongoose.connect(mongoUri, options)
