@@ -19,7 +19,22 @@ export class Proposals implements Proposal {
     voteMinimum: number = 100.0
     votes: Vote[] = []
 
+    // dateCreated: Date
+    // caseNumber: number
+    // title: string
+    // creator: bigint | string
+    // proposed: string
+    // selections: string[]
+    // changeVote: boolean
+    // endDate: Date
+    // status: string
+    // voteThreshold: number
+    // voteMinimum: number
+    // votes: Vote[]
+
     constructor({
+        dateCreated,
+        caseNumber,
         title,
         creator,
         proposed,
@@ -28,8 +43,10 @@ export class Proposals implements Proposal {
         endDate,
         status,
         voteThreshold,
-        voteMinimum
+        voteMinimum,
     }: {
+        dateCreated?: Date,
+        caseNumber: number,
         title?: string,
         creator?: bigint | string,
         proposed?: string,
@@ -38,8 +55,10 @@ export class Proposals implements Proposal {
         endDate?: Date,
         status?: string,
         voteThreshold?: number,
-        voteMinimum?: number
+        voteMinimum?: number,
     }) {
+        this.dateCreated = dateCreated || this.dateCreated
+        this.caseNumber = caseNumber || this.caseNumber
         this.title = title || this.title
         this.creator = creator || this.creator
         this.proposed = proposed || this.proposed

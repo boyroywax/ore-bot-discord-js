@@ -5,8 +5,8 @@ export const getNextNewCase = async (): Promise<{"nextcase": number}> => {
     try {
         const instance = initApi()
     
-        const apiData = await instance.get(
-            '/proposal?action=nextcase'
+        const apiData = await instance.post(
+            '/proposal' , {"action": "nextcase"}
         )
         console.log('Data retrieved from Service: ' + JSON.stringify( apiData.data ))
         result = apiData.data

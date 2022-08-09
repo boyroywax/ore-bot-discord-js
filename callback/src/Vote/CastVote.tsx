@@ -24,7 +24,7 @@ export const CastVote: React.FC<Props> = ({
     return (
         <>
         <Proposals user={user} />
-        <DisplayProposal />
+        {/* <DisplayProposal /> */}
         </>
     )
 }

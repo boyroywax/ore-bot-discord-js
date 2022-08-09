@@ -39,8 +39,8 @@ export const Proposals: React.FC<Props> = ({
         { state.proposal === "0" ? 
             <CreateProposal user={user}/>
         :
-            () => null
-            // <DisplayProposal />
+            // () => null 
+            <DisplayProposal />
         }
         </>
     )

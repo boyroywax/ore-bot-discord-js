@@ -374,14 +374,27 @@ app.post('/api/proposal', async (request: Request, response: Response) => {
 	// Send the User's Active Balance 
 	// 
 	const action: string = request.body.action?.toString() || 'default'
-	const caseNumber: number = Number(request.query.case?.toString()) || 0
-	const data: {} = request.body.data
-	const resultData: Proposal = new Proposals({})
+	const caseNumber: number = Number(request.query.case?.toString())
+	const data: {
+		dateCreated: Date,
+		caseNumber: number,
+		title: string,
+		creator: bigint | string,
+		proposed: string,
+		selections: string[],
+		changeVote: boolean,
+		endDate: Date,
+		status: string,
+		voteThreshold: number,
+		voteMinimum: number
+	} = request.body.data
+	let resultData: Proposal = new Proposals({"caseNumber": caseNumber})
 
 	try {
 		switch (action){
 			case "get": {
 				await resultData.loadCase(caseNumber)
+				debugLogger("/api/proposal get result: " + JSON.stringify(resultData))
 				break
 			}
 			case "update": {
@@ -390,8 +403,22 @@ app.post('/api/proposal', async (request: Request, response: Response) => {
 				break
 			}
 			case 'new': {
-				const proposal: Proposal = new Proposals({...data})
+				const proposal: Proposal = new Proposals({
+					dateCreated: data.dateCreated,
+                    caseNumber: data.caseNumber,
+                    title: data.title,
+                    creator: data.creator,
+                    proposed: data.proposed,
+                    selections: data.selections,
+                    changeVote: data.changeVote,
+                    endDate: data.endDate,
+                    status: data.status,
+                    voteThreshold: data.voteThreshold,
+                    voteMinimum: data.voteMinimum
+				})
 				await proposal.saveCase()
+				resultData = proposal
+				debugLogger("/api/proposal new result: " + JSON.stringify(resultData))
 				break
 			}
 			case "nextcase": {
