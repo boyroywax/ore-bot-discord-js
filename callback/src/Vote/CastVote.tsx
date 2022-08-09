@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { UserData } from "oreid-js";
 import useUrlState from "@ahooksjs/use-url-state";
 import { Proposals } from "./Proposals";
+import { DisplayProposal } from "./DisplayProposal";
 
 interface Props {
     user: UserData | null
@@ -23,6 +24,7 @@ export const CastVote: React.FC<Props> = ({
     return (
         <>
         <Proposals user={user} />
+        <DisplayProposal />
         </>
     )
 }

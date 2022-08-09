@@ -68,28 +68,28 @@ export class UserVote implements Vote {
         return loadComplete
     }
 
-    public async save(): Promise<{saved: boolean, savedDoc: any}> {
+    public async save(): Promise<{saved: boolean, savedVote: any}> {
         let saved: boolean = false
-        let savedDoc: any | null = null
+        let savedVote: any | null = null
         try {
-            const savedVote: Document | null = await VoteModel.findOne({
+            savedVote = await VoteModel.findOne({
                 "discordId": this.discordId,
                 "caseNumber": this.caseNumber
             })
             if (savedVote !== null) {
-                savedDoc = await VoteModel.updateOne({
+                savedVote = await VoteModel.updateOne({
                     "discordId": this.discordId,
                     "caseNumber": this.caseNumber
                 }, this)
             }
             else {
-                savedDoc = await VoteModel.create(this)
+                savedVote = await VoteModel.create(this)
             }
         }
         catch (err) {
             errorLogger("UserVote.save", err)
         }
-        return { saved, savedDoc }
+        return { saved, savedVote }
     }
 
     public async update( updatedVote: {

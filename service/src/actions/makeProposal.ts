@@ -2,6 +2,7 @@ import { debugLogger, errorLogger, eventLogger } from "../utils/logHandler"
 import { Vote, Proposal, Docket } from "../interfaces/VoterData"
 import { ProposalModel } from "../models/VoterDataModel"
 import { Document } from "mongoose"
+import { Numeric } from "eosjs"
 
 
 export class Proposals implements Proposal {
@@ -112,23 +113,37 @@ export class Proposals implements Proposal {
     }): Promise<boolean> {
         let updateComplete = false
         try {
-            const proposal: Proposal | null = await ProposalModel.findOne({"caseNumber": updatedProposal.caseNumber})
+            // const proposal: Proposal | null = await ProposalModel.findOne({"caseNumber": updatedProposal.caseNumber})
 
-            if (proposal !== null) {
-                this.title = updatedProposal.title || proposal.title
-                this.creator = updatedProposal.creator || proposal.creator
-                this.proposed = updatedProposal.proposed || proposal.proposed
-                this.selections = updatedProposal.selections || proposal.selections
-                this.changeVote = updatedProposal.changeVote || proposal.changeVote
-                this.endDate = updatedProposal.endDate || proposal.endDate
-                this.status = updatedProposal.status || proposal.status
-                this.voteThreshold = updatedProposal.voteThreshold || proposal.voteThreshold
-                this.voteMinimum = updatedProposal.voteMinimum || proposal.voteMinimum
-            }
+            // if (proposal !== null) {
+            //     this.title = updatedProposal.title || proposal.title
+            //     this.creator = updatedProposal.creator || proposal.creator
+            //     this.proposed = updatedProposal.proposed || proposal.proposed
+            //     this.selections = updatedProposal.selections || proposal.selections
+            //     this.changeVote = updatedProposal.changeVote || proposal.changeVote
+            //     this.endDate = updatedProposal.endDate || proposal.endDate
+            //     this.status = updatedProposal.status || proposal.status
+            //     this.voteThreshold = updatedProposal.voteThreshold || proposal.voteThreshold
+            //     this.voteMinimum = updatedProposal.voteMinimum || proposal.voteMinimum
+            // }
+            if ((updatedProposal.caseNumber === this.caseNumber)) {
+
+                this.title = updatedProposal.title || this.title
+                this.creator = updatedProposal.creator || this.creator
+                this.proposed = updatedProposal.proposed || this.proposed
+                this.selections = updatedProposal.selections || this.selections
+                this.changeVote = updatedProposal.changeVote || this.changeVote
+                this.endDate = updatedProposal.endDate || this.endDate
+                this.status = updatedProposal.status || this.status
+                this.voteThreshold = updatedProposal.voteThreshold || this.voteThreshold
+                this.voteMinimum = updatedProposal.voteMinimum || this.voteMinimum
 
             // await ProposalModel.updateOne({"caseNumber": updatedProposal.caseNumber}, this as Proposal)
-            await this.saveCase()
-            updateComplete = true
+                const saved = await this.saveCase()
+                if (saved) {
+                    updateComplete = true
+                }
+            }
         }
         catch (err) {
             errorLogger("Proposal.update()", err)           
@@ -140,9 +155,14 @@ export class Proposals implements Proposal {
         let added: boolean = false
         try {
             if ( vote.caseNumber === this.caseNumber ) {
-                this.votes.push(vote)
-                await this.saveCase()
-                added = true
+                const { saved, savedVote } = await vote.save()
+                if (saved) {
+                    this.votes.push(savedVote)
+                    const savedCase = await this.saveCase()
+                    if (savedCase) {
+                        added = true
+                    }
+                }
             }
         }
         catch (err) {
@@ -150,5 +170,52 @@ export class Proposals implements Proposal {
         }
         return added
     }
+
+    public async loadCases({
+        min = 0,
+        num = 10
+    }: {
+        min: number,
+        num: number
+    }): Promise<any[]> {
+        let proposals: Proposal[] = []
+        try {
+            await ProposalModel.find()
+                .sort("dateCreated")
+                .limit(num).skip(min).exec()
+                .then( async function(docs) {
+                    for (let doc in docs) {
+                        proposals.push(docs[doc])
+                    }
+                })
+        }
+        catch (err) {
+            errorLogger("Proposals.listProposals", err)
+        }
+        return proposals
+    }
+
+    public async nextCaseNumber(): Promise<number> {
+        let nextCaseNumber: number = 1
+        const latestProposal: Proposal | null = await ProposalModel.findOne()
+            .sort("-caseNumber").exec()
+
+        if ( latestProposal !== null ) {
+            nextCaseNumber = latestProposal.caseNumber + 1
+        }
+        return nextCaseNumber
+    }
+
+    // public async deleteVote({
+    //     discordId, 
+    //     caseNum,
+    //     newVote,
+    // }: {
+    //     discordId: string,
+    //     caseNum: number,
+    //     newVote: string
+    // }) {
+
+    // }
 }
 

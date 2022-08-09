@@ -30,7 +30,6 @@ async function getEntries( discordId: bigint, min: number, limit: number ): Prom
     let logEntries: UserLog[] = []
 
     try {
-    
         const options: QueryOptions = {}
         await UserLogModel.find({"discordId": discordId})
             .sort("-date")
@@ -46,10 +45,7 @@ async function getEntries( discordId: bigint, min: number, limit: number ): Prom
         errorLogger("getEntries discordId", err)
     }
 
-
-
     try {
-    
         await UserLogModel.find({"recipient": discordId})
             .sort("-date")
             .limit(limit).skip(min).exec()

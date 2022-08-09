@@ -1,7 +1,7 @@
 import { initApi } from "./apiCall"
 
 
-export const getProposal = async ( caseNumber: number ): Promise<{ 
+export const getProposal = async ( caseNumberPassed: number ): Promise<{ 
     dateCreated: Date,
     caseNumber: number,
     title: string,
@@ -12,7 +12,8 @@ export const getProposal = async ( caseNumber: number ): Promise<{
     endDate: Date,
     status: string,
     voteThreshold: number,
-    voteMinimum: number
+    voteMinimum: number,
+    votes: any[]
 }> => {
     let response = {
         dateCreated: new Date,
@@ -25,17 +26,18 @@ export const getProposal = async ( caseNumber: number ): Promise<{
         endDate: new Date(new Date().valueOf() + (144 * 60 * 60 * 1000 )),
         status: "None",
         voteThreshold: 50.00,
-        voteMinimum: 100.00
+        voteMinimum: 100.00,
+        votes: [{}]
     }
     try {
         const instance = initApi()
     
         const apiData = await instance.post(
-            '/proposal?case=' + String( caseNumber ),
+            '/proposal?case=' + String( caseNumberPassed ),
             { "action": "get" }
         )
         console.log('Data retrieved from Service: ' + JSON.stringify( apiData.data ))
-        response = {...apiData.data}
+        response = apiData.data
     }
     catch (err) {
         console.error("getProposal", err)           

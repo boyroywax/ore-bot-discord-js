@@ -17,8 +17,9 @@ import { getTotalTips, listLastTips } from "./actions/getTips"
 import { getChainAccount } from "./actions/getAccount"
 import { mongoUri } from "./utils/mongo"
 import { Proposals } from "./actions/makeProposal"
-import { Proposal, Vote } from "./interfaces/VoterData"
+import { Proposal } from "./interfaces/VoterData"
 import { UserVote } from "./actions/castVote"
+import bodyParser from "body-parser"
 
 
 const app = express()
@@ -28,6 +29,10 @@ const options: ConnectOptions = {autoIndex: true, autoCreate: true}
 mongoose.connect(mongoUri, options)
 	.then(result => app.listen(port, "0.0.0.0", () => console.log(`app running on port ${port}`)))
 	.catch(err => console.log(err))
+
+	//Here we are configuring express to use body-parser as middle-ware.
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.get('/', (request: Request, response: Response) => {
 	// 
@@ -370,29 +375,34 @@ app.post('/api/proposal', async (request: Request, response: Response) => {
 	// 
 	const action: string = request.body.action?.toString() || 'default'
 	const caseNumber: number = Number(request.query.case?.toString()) || 0
-	const data: {} = JSON.parse(request.body.data?.toString()) || {}
+	const data: {} = request.body.data
 	const resultData: Proposal = new Proposals({})
 
 	try {
 		switch (action){
 			case "get": {
 				await resultData.loadCase(caseNumber)
-				resultData
 				break
 			}
 			case "update": {
+				await resultData.loadCase(caseNumber)
 				await resultData.updateCase(data)
 				break
 			}
 			case 'new': {
-				await resultData.updateCase(data)
+				const proposal: Proposal = new Proposals({...data})
+				await proposal.saveCase()
 				break
+			}
+			case "nextcase": {
+				const nextCaseNum = await resultData.nextCaseNumber()
+				return response.status(200).send({"nextcase": nextCaseNum})
 			}
 			case "vote": {
 				await resultData.loadCase(caseNumber)
 				const vote = new UserVote(data)
-				const { savedDoc } = await vote.save()
-				await resultData.addVote(savedDoc)
+				const { savedVote } = await vote.save()
+				await resultData.addVote(savedVote)
 				break
 			}
 		}
