@@ -5,7 +5,7 @@ import { getProposal } from "src/serviceCalls/getProposal";
 // import { CastVote } from "./CastVote";
 
 // interface Props {
-//     caseNum: number | null,
+//     case: number | null
 //     // user: UserData | null
 // }
 

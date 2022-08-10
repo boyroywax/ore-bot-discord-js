@@ -4,7 +4,7 @@ import { createProposal } from "../serviceCalls/createProposal";
 import { getNextNewCase } from "../serviceCalls/getNextNewCase";
 
 interface Props {
-    user: UserData | null
+    user: UserData | null | undefined
 }
 
 export const CreateProposal: React.FC<Props> = ({

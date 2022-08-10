@@ -394,6 +394,7 @@ app.post('/api/proposal', async (request: Request, response: Response) => {
 		switch (action){
 			case "get": {
 				await resultData.loadCase(caseNumber)
+				resultData.creator = resultData.creator.toString()
 				debugLogger("/api/proposal get result: " + JSON.stringify(resultData))
 				break
 			}

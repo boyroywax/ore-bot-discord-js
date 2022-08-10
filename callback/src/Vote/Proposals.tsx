@@ -5,7 +5,7 @@ import { CreateProposal } from "./CreateProposal";
 import { DisplayProposal } from "./DisplayProposal";
 
 interface Props {
-    user: UserData | null
+    user: UserData | null | undefined
 }
 
 export const Proposals: React.FC<Props> = ({
