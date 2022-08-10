@@ -379,7 +379,7 @@ app.post('/api/proposal', async (request: Request, response: Response) => {
 		dateCreated: Date,
 		caseNumber: number,
 		title: string,
-		creator: bigint | string,
+		creator: string,
 		proposed: string,
 		selections: string[],
 		changeVote: boolean,
@@ -394,7 +394,7 @@ app.post('/api/proposal', async (request: Request, response: Response) => {
 		switch (action){
 			case "get": {
 				await resultData.loadCase(caseNumber)
-				resultData.creator = resultData.creator.toString()
+				// resultData.creator = resultData.creator.toString()
 				debugLogger("/api/proposal get result: " + JSON.stringify(resultData))
 				break
 			}

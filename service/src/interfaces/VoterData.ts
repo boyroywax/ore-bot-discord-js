@@ -1,6 +1,6 @@
 export interface Docket {
     dateCreated: Date
-    creator: bigint | string
+    creator: string
     docketNumber: number
     proposals: Proposal[]
     status: string
@@ -15,7 +15,7 @@ export interface Proposal {
     dateCreated: Date
     caseNumber: number
     title: string
-    creator: bigint | string
+    creator: string
     proposed: string
     selections: string[]
     changeVote: boolean
@@ -37,7 +37,7 @@ export interface Proposal {
 // Interface for Votes
 // 
 export interface Vote {
-    discordId: bigint | string
+    discordId: string
     oreId: string
     balanceAtVote: number
     voteSelection: string[]
@@ -45,7 +45,7 @@ export interface Vote {
     caseNumber: number
     voteWeight: number
     signed: string[]
-    load({discordId, caseNumber}: {discordId: bigint, caseNumber: number}): Promise<boolean>
+    load({discordId, caseNumber}: {discordId: string, caseNumber: number}): Promise<boolean>
     save(): Promise<{ saved: boolean, savedVote: any }>
     update(updateVote: {}): Promise<boolean>
 }

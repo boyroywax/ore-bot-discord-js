@@ -5,7 +5,7 @@ import { Document } from "mongoose"
 
 
 export class UserVote implements Vote {
-    discordId: bigint | string = "None"
+    discordId: string = "None"
     oreId: string = "None"
     balanceAtVote: number = 0.00
     voteSelection: string[] = ["No"]
@@ -24,7 +24,7 @@ export class UserVote implements Vote {
         voteWeight,
         signed
     }: {
-        discordId?: bigint | string,
+        discordId?: string,
         oreId?: string,
         balanceAtVote?: number,
         voteSelection?: string[],
@@ -43,7 +43,7 @@ export class UserVote implements Vote {
         this.signed = signed || this.signed
     }
 
-    public async load({discordId, caseNumber}: { discordId: bigint, caseNumber: number }): Promise<boolean> {
+    public async load({discordId, caseNumber}: { discordId: string, caseNumber: number }): Promise<boolean> {
         let loadComplete: boolean = false
         try{
             const vote: Vote | null = await VoteModel.findOne({
@@ -93,7 +93,7 @@ export class UserVote implements Vote {
     }
 
     public async update( updatedVote: {
-        discordId: bigint | string,
+        discordId: string,
         oreId?: string,
         balanceAtVote?: number,
         voteSelection?: string[],

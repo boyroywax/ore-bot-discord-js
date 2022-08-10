@@ -9,7 +9,7 @@ export class Proposals implements Proposal {
     dateCreated: Date = new Date
     caseNumber: number = 0
     title: string = "Title"
-    creator: bigint | string = "None"
+    creator: string = "None"
     proposed: string = "Proposed"
     selections: string[] = ["Yes", "No"]
     changeVote: boolean = false
@@ -22,7 +22,7 @@ export class Proposals implements Proposal {
     // dateCreated: Date
     // caseNumber: number
     // title: string
-    // creator: bigint | string
+    // creator: string
     // proposed: string
     // selections: string[]
     // changeVote: boolean
@@ -48,7 +48,7 @@ export class Proposals implements Proposal {
         dateCreated?: Date,
         caseNumber: number,
         title?: string,
-        creator?: bigint | string,
+        creator?: string,
         proposed?: string,
         selections?: string[],
         changeVote?: boolean,
@@ -121,7 +121,7 @@ export class Proposals implements Proposal {
     public async updateCase( updatedProposal: {
         caseNumber: number,
         title?: string,
-        creator?: bigint | string,
+        creator?: string,
         proposed?: string,
         selections?: string[],
         changeVote?: boolean,

@@ -19,7 +19,7 @@ export const getProposal = async ( caseNumberPassed: number ): Promise<{
         dateCreated: new Date,
         caseNumber: 0,
         title: "None",
-        creator: "0",
+        creator: "None",
         proposed: "Proposal",
         selections: ["Yes", "No"],
         changeVote: false,
@@ -37,7 +37,7 @@ export const getProposal = async ( caseNumberPassed: number ): Promise<{
             { "action": "get" }
         )
         console.log('Data retrieved from Service: ' + JSON.stringify( apiData.data ))
-        response = apiData.data
+        response = {...apiData.data}
     }
     catch (err) {
         console.error("getProposal", err)           

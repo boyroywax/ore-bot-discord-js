@@ -21,8 +21,6 @@ export const DisplayProposal: React.FC = () => {
         voteThreshold: null | number,
         voteMinimum: null | number,
         // votes: any[]
-        fetched: null | boolean
-        ready: null | boolean
     }>({
         // dateCreated: new Date,
         // caseNumber: 0,
@@ -47,8 +45,6 @@ export const DisplayProposal: React.FC = () => {
         status: "Initializing",
         voteThreshold: null,
         voteMinimum: null,
-        fetched: false,
-        ready: true
     })
 
     const fetchProposal = async() => {
@@ -57,7 +53,7 @@ export const DisplayProposal: React.FC = () => {
             dateCreated: proposalData.dateCreated,
             caseNumber: proposalData.caseNumber,
             title: proposalData.title,
-            creator: proposalData.creator || "None",
+            creator: proposalData.creator,
             proposed: proposalData.proposed,
             // selections: ["Agree", "Disagree"],
             changeVote: proposalData.changeVote,
@@ -65,8 +61,6 @@ export const DisplayProposal: React.FC = () => {
             status: proposalData.status,
             voteThreshold: proposalData.voteThreshold,
             voteMinimum: proposalData.voteMinimum,
-            fetched: true,
-            ready: true
         })
 
     }

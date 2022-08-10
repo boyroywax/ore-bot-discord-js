@@ -12,7 +12,7 @@ export const CreateProposal: React.FC<Props> = ({
 }) => {
     const [state, setState] = useState<{
         title: string,
-        creator: string,
+        creator: bigint | string,
         endDate: Date,
         proposed: string,
         nextcase: null | number
@@ -30,7 +30,7 @@ export const CreateProposal: React.FC<Props> = ({
         const nextCase: number = (await getNextNewCase()).nextcase
         setState({
             title: state.title,
-            creator: state.creator,
+            creator: user?.accountName || "None",
             endDate: state.endDate,
             proposed: state.proposed,
             nextcase: nextCase
@@ -89,7 +89,12 @@ export const CreateProposal: React.FC<Props> = ({
                 <label>
                     Proposal <br />
                     <textarea value={state.proposed} onChange={handleChange} name="proposal" />
+                </label><br />
+                <label>
+                    Creator <br />
+                    <textarea value={state.creator.toString()} onChange={handleChange} name="creator" />
                 </label>
+
                 <input type="submit" value="Submit" />
             </form>
         </>
