@@ -433,6 +433,15 @@ app.post('/api/proposal', async (request: Request, response: Response) => {
 				await resultData.addVote(savedVote)
 				break
 			}
+			case "delete": {
+				const deleted: boolean = await resultData.deleteCase(caseNumber)
+				if (deleted) {
+					return response.status(200).send(deleted)
+				}
+				else {
+					return response.status(404).send(deleted)
+				}
+			}
 		}
 		return response.status(200).send(resultData)
 	}

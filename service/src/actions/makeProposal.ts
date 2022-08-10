@@ -216,13 +216,34 @@ export class Proposals implements Proposal {
 
     public async nextCaseNumber(): Promise<number> {
         let nextCaseNumber: number = 1
-        const latestProposal: Proposal | null = await ProposalModel.findOne()
-            .sort("-caseNumber").exec()
+        try {
+            const latestProposal: Proposal | null = await ProposalModel.findOne()
+                .sort("-caseNumber").exec()
 
-        if ( latestProposal !== null ) {
-            nextCaseNumber = latestProposal.caseNumber + 1
+            if ( latestProposal !== null ) {
+                nextCaseNumber = latestProposal.caseNumber + 1
+            }
+        }
+        catch (err) {
+            errorLogger("Proposals.nextCaseNumber", err)
         }
         return nextCaseNumber
+    }
+
+    public async deleteCase( caseNum: number): Promise<boolean> {
+        let deleted: boolean = false
+        try {
+            const latestProposal: Proposal | null = await ProposalModel.findOneAndDelete({
+                caseNumber: caseNum
+            }).exec()
+            if ( latestProposal?.caseNumber === caseNum ) {
+                deleted = true
+            }
+        }
+        catch (err) {
+            errorLogger("Proposals.deleteCase", err)
+        }
+        return deleted
     }
 
     // public async deleteVote({

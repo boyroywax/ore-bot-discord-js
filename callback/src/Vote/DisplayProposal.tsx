@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useUrlState from "@ahooksjs/use-url-state";
 import { getProposal } from "../serviceCalls/getProposal";
+import { deleteCase } from "../serviceCalls/deleteCase";
 
 
 export const DisplayProposal: React.FC = () => {
@@ -78,6 +79,10 @@ export const DisplayProposal: React.FC = () => {
         }
     })
 
+    const deleteCaseNumber = async () => {
+        await deleteCase(state.proposal)
+    }
+
     return (
         <>
             <h3>Case { state.proposal }</h3>
@@ -93,6 +98,10 @@ export const DisplayProposal: React.FC = () => {
                 <li>Vote Threshold: {proposal.voteThreshold} </li>
                 <li>Vote Minimum: {proposal.voteMinimum} </li>
             </ul>
+            <button
+                onClick = {deleteCaseNumber}
+            > Delete This Case </button>
+
         </>
     )
 }

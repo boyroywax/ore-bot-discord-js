@@ -30,6 +30,7 @@ export interface Proposal {
     addVote(vote: Vote): Promise<boolean>
     loadCases({min, num}: {min: number, num: number}):Promise<Proposal[]>
     nextCaseNumber(): Promise<number>
+    deleteCase(caseNum: number): Promise<boolean>
 }
 
 // 

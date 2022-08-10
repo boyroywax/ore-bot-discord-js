@@ -83,7 +83,7 @@ export const CreateProposal: React.FC<Props> = ({
         <>
             <form onSubmit={handleSubmit}>
                 <label>
-                    Title
+                    Title <br />
                     <textarea value={state.title} onChange={handleChange} name="title" />
                 </label><br />
                 <label>
