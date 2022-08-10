@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
-// import { UserData } from "oreid-js";
 import useUrlState from "@ahooksjs/use-url-state";
-import { getProposal } from "src/serviceCalls/getProposal";
-// import { CastVote } from "./CastVote";
+import { getProposal } from "../serviceCalls/getProposal";
 
-// interface Props {
-//     case: number | null
-//     // user: UserData | null
-// }
 
 export const DisplayProposal: React.FC = () => {
     const [ state, setState ] = useUrlState<{
@@ -26,6 +20,8 @@ export const DisplayProposal: React.FC = () => {
         voteThreshold: null | number,
         voteMinimum: null | number,
         // votes: any[]
+        fetched: null | boolean
+        ready: null | boolean
     }>({
         // dateCreated: new Date,
         // caseNumber: 0,
@@ -50,6 +46,8 @@ export const DisplayProposal: React.FC = () => {
         status: "Initializing",
         voteThreshold: null,
         voteMinimum: null,
+        fetched: false,
+        ready: true
     })
 
     const fetchProposal = async() => {
@@ -66,11 +64,16 @@ export const DisplayProposal: React.FC = () => {
             status: proposalData.status,
             voteThreshold: proposalData.voteThreshold,
             voteMinimum: proposalData.voteMinimum,
+            fetched: true,
+            ready: true
         })
+
     }
 
     useEffect(() => {
-        if (proposal.title === null) {
+        // fetchProposal()
+        console.log("propose.caseNumer: " + proposal.caseNumber + " state.proposal: " + state.proposal)
+        if (state.proposal != proposal.caseNumber) {
             fetchProposal().then(() => console.log("Proposal #" + state.proposal))
         }
     })

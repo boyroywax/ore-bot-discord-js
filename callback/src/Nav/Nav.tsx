@@ -9,7 +9,20 @@ export const Nav: React.FC = () => {
 				}}
 			>
 				Home 🏡
+			</button><button 
+				onClick={() => {
+					window.location.href = "/app/vote" 
+				}}
+			>
+				Vote 🗳
+			</button><button 
+				onClick={() => {
+					window.location.href = "/app/logout" 
+				}}
+			>
+				Settings ⚙️
 			</button>
+
 		</div>
 	);
 };

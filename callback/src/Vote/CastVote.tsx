@@ -12,17 +12,6 @@ interface Props {
 export const CastVote: React.FC<Props> = ({
     user
 }) => {
-    // const user = useUser()
-    // const [ state, setUrlState ] = useUrlState<{
-    //     proposal: string,
-    //     vote: string
-    // }>({
-    //     proposal: "None",
-    //     vote: "None"
-    // })
-
-
-
     return (
         <>
         <Proposals user={user} />

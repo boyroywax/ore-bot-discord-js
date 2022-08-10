@@ -69,19 +69,6 @@ export const UserPage: React.FC<Props> = ({
         if ((user !== null) && (userData.discordId === null)) {
             getDiscordId()
         }
-        // else if ((loggedIn) && (user !== undefined) && (userData.discordId !== null) && !userData.loadedEntries) {
-        //     // fetchData(BigInt(discordId))
-        //     return
-        // }
-        // else if((loggedIn) && (user !== undefined) && loadedEntries ){
-        //     return
-        // }
-        // else if (!loggedIn || user === undefined){
-        //     return
-        // }
-        else {
-            return
-        }
         return
     });
 
