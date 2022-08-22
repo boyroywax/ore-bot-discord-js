@@ -5,4 +5,4 @@ metadata:
   namespace: ore-dev
 spec:
   domains:
-    - cb.ore.network
+    - dev.cb.ore.network

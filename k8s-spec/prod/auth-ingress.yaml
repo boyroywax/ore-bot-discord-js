@@ -18,9 +18,16 @@ spec:
     http:
       paths:
       - pathType: Prefix
-        path: "/"
+        path: "/app/"
         backend:
           service:
             name: ore-callback-p
+            port:
+              name: http
+      - pathType: Prefix
+        path: "/api/"
+        backend:
+          service:
+            name: ore-service-p
             port:
               name: http

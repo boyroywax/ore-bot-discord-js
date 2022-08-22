@@ -8,7 +8,7 @@ function toHex(str: string): string{
     // 
     // Converts the encrypted message to a hex string
     // 
-    var result: string = ''
+    let result: string = ''
     for (var i=0; i<str.length; i++) {
       result += str.charCodeAt(i).toString(16)
     }
@@ -21,7 +21,7 @@ function fromHex(hex: string): string{
     // 
     let str: string = ''
     try{
-      let str = decodeURIComponent(hex.replace(/(..)/g,'%$1'))
+      str = decodeURIComponent(hex.replace(/(..)/g,'%$1'))
     }
     catch(error){
       logHandler.error('Invalid hex input: ' + hex)

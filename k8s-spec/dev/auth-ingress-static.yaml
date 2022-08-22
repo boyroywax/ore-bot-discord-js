@@ -31,10 +31,3 @@ spec:
             name: ore-service-d
             port:
               name: http
-
-# spec:
-#   defaultBackend:
-#     service:
-#       name: ore-callback-d
-#       port:
-#         name: http

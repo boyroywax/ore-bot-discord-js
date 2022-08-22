@@ -5,20 +5,20 @@ metadata:
   namespace: ore
   labels:
     app: discord-callback
-    tier: backend
+    tier: frontend
     env: production
 spec:
   replicas: 3
   selector:
     matchLabels:
       app: discord-callback
-      tier: backend
+      tier: frontend
       env: production
   template:
     metadata:
       labels:
         app: discord-callback
-        tier: backend
+        tier: frontend
         env: production
     spec:
       containers:
@@ -31,13 +31,8 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "250m"
-        envFrom:
-          - configMapRef:
-              name: config
-          - secretRef:
-              name: bot-secrets
         ports:
-        - containerPort: 53134
+        - containerPort: 3000
           name: ore-callback-p
       restartPolicy: Always
 ---
@@ -49,12 +44,12 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 53134
+    - port: 3000
       protocol: TCP
-      targetPort: 53134
+      targetPort: 3000
       name: http
   selector:
     app: discord-callback
-    tier: backend
+    tier: frontend
     env: production
 ---

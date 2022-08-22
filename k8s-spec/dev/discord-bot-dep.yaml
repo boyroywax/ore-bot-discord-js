@@ -5,20 +5,20 @@ metadata:
   namespace: ore-dev
   labels:
     app: discord-bot
-    tier: backend
+    tier: frontend
     env: development
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: discord-bot
-      tier: backend
+      tier: frontend
       env: development
   template:
     metadata:
       labels:
         app: discord-bot
-        tier: backend
+        tier: frontend
         env: development
     spec:
       containers:

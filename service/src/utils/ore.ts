@@ -10,8 +10,6 @@ export class Ore {
     rpc: JsonRpc = new JsonRpc( this.oreEndpoint.url )
 }
 
-
-
 // public async getAccount(accountName: string): Promise<any> {
 export const getAccount = async (accountName: string) => {
     try {
@@ -27,7 +25,6 @@ export const getAccount = async (accountName: string) => {
 
 // public async getBalance( accountName: string ): Promise<string> {
 export const getBalance = async ( accountName: string ): Promise<string>  => {
-
     let balance: string = "0.0000"
     try {
         const ore = new Ore()
