@@ -41,7 +41,6 @@ FROM node:16-alpine3.15
 WORKDIR /usr/app
 
 COPY --from=ts-remover /usr/app ./
-# COPY .env ./
 
 USER 1000
 
