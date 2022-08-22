@@ -40,7 +40,7 @@ FROM node:17.4-alpine3.15
 WORKDIR /usr/app
 
 COPY --from=ts-remover /usr/app ./
-# COPY .env ./
+
 COPY ./static ./
 
 USER 1000
